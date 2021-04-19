@@ -1,0 +1,48 @@
+﻿using System;
+using System.Threading.Tasks;
+using Synology.Api.Client.Apis.Auth.Models;
+using Synology.Api.Client.ApiDescription;
+using Synology.Api.Client.Shared.Models;
+
+namespace Synology.Api.Client.Apis.Auth
+{
+    public class AuthApi : IAuthApi
+    {
+        private readonly ISynologyHttpClient _synologyHttpClient;
+        private readonly IApiInfo _apiInfo;
+
+        public AuthApi(ISynologyHttpClient synologyHttpClient, IApiInfo apiInfo)
+        {
+            _synologyHttpClient = synologyHttpClient;
+            _apiInfo = apiInfo;
+        }
+
+        public Task<LoginResponse> LoginAsync(string username, string password, string otpCode = null)
+        {
+            if (string.IsNullOrWhiteSpace(username))
+            {
+                throw new ArgumentNullException(nameof(username));
+            }
+
+            if (string.IsNullOrWhiteSpace(password))
+            {
+                throw new ArgumentNullException(nameof(password));
+            }
+
+            var queryParams = new
+            {
+                account = username,
+                passwd = password,
+                format = "sid",
+                otp_code = otpCode
+            };
+
+            return _synologyHttpClient.GetAsync<LoginResponse>(_apiInfo, "login", queryParams);
+        }
+
+        public Task<BaseApiResponse> LogoutAsync(string sid)
+        {
+            return _synologyHttpClient.GetAsync<BaseApiResponse>(_apiInfo, "logout", new { _sid = sid });
+        }
+    }
+}

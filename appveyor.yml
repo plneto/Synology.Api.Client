@@ -1,0 +1,54 @@
+version: 0.1.{build}
+
+image: Visual Studio 2019
+
+dotnet_csproj:
+  patch: true
+  file: '**\*.csproj'
+  version: '{version}'
+  package_version: '{version}'
+  assembly_version: '{version}'
+  file_version: '{version}'
+  informational_version: '{version}'
+
+configuration: Debug
+
+build:
+  publish_nuget: false
+
+before_build:
+  - dotnet restore ".\src\Synology.Api.Client.sln"
+
+build_script:
+  - dotnet build ".\src\Synology.Api.Client.sln"
+
+test_script:
+  - dotnet test ".\src\Synology.Api.Client.Tests\Synology.Api.Client.Tests.csproj"
+  
+nuget:
+  disable_publish_on_pr: true
+
+for:
+-
+  branches:
+    only:
+      - master
+
+  configuration: Release
+
+  build:
+    publish_nuget: true
+
+  after_build:
+    - dotnet pack .\src\Synology.Api.Client\Synology.Api.Client.csproj -c Release -o .\artifacts --include-symbols -p:SymbolPackageFormat=snupkg
+
+  artifacts:
+    - path: '**\*.nupkg'
+    - path: '**\*.snupkg'
+      
+  deploy:
+    - provider: NuGet
+      api_key:
+        secure: ENJzzbHUfAdAi5+R2DRqZGe25kwBr11/5WcI2vCey8yGChP8rLm0wBTLDOg6U5XH
+      skip_symbols: false
+      artifact: /.*(\.|\.s)nupkg/
