@@ -2,6 +2,8 @@ using System;
 using AutoFixture;
 using Flurl.Http.Testing;
 using Synology.Api.Client.ApiDescription;
+using Synology.Api.Client.Apis.Auth.Models;
+using Synology.Api.Client.Shared.Models;
 using Xunit;
 
 namespace Synology.Api.Client.Tests
@@ -32,6 +34,17 @@ namespace Synology.Api.Client.Tests
             var password = _fixture.Create<string>();
             var otpCode = _fixture.Create<string>();
 
+            var expectedResponse = new ApiResponse<LoginResponse>
+            {
+                Success = true,
+                Data = new LoginResponse
+                {
+                    Sid = _fixture.Create<string>()
+                }
+            };
+
+            _httpTest.RespondWithJson(expectedResponse);
+
             // act
             await _synologyClient.AuthApi().LoginAsync(username, password, otpCode);
 
@@ -48,7 +61,8 @@ namespace Synology.Api.Client.Tests
                     session = _apiInfo.SessionName,
                     format = "sid",
                     otp_code = otpCode
-                });
+                })
+                ;
         }
 
         public void Dispose()
