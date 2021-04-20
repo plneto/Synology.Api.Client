@@ -18,5 +18,7 @@ namespace Synology.Api.Client.Apis.DownloadStation.Task.Models
 
         [JsonProperty("status_extra")]
         public string StatusExtra { get; set; }
+
+        public DownloadStationTaskAdditional Additional { get; set; }
     }
 }
