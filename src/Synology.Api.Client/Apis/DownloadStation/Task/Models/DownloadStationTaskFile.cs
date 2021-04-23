@@ -6,11 +6,15 @@ namespace Synology.Api.Client.Apis.DownloadStation.Task.Models
     {
         public string Filename { get; set; }
 
+        public long Index { get; set; }
+
         public string Priority { get; set; }
 
-        public decimal Size { get; set; }
+        public long Size { get; set; }
 
         [JsonProperty("size_downloaded")]
-        public decimal SizeDownloaded { get; set; }
+        public long SizeDownloaded { get; set; }
+
+        public bool Wanted { get; set; }
     }
 }
