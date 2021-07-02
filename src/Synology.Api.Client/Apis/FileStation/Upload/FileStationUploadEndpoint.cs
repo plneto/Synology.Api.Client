@@ -21,32 +21,36 @@ namespace Synology.Api.Client.Apis.FileStation.Upload
             _session = session;
         }
 
-        public Task<FileStationUploadResponse> UploadAsync(string filePath, string destination)
+        /// <inheritdoc />
+        public Task<FileStationUploadResponse> UploadAsync(string filePath, string destination, bool overwrite)
         {
             var filename = Path.GetFileName(filePath);
             var fileStream = File.OpenRead(filePath);
 
-            return SendRequest(GetFileContent(fileStream, filename), destination);
+            return SendRequest(GetFileContent(fileStream, filename), destination, overwrite);
         }
 
-        public Task<FileStationUploadResponse> UploadAsync(byte[] bytes, string filename, string destination)
+        /// <inheritdoc />
+        public Task<FileStationUploadResponse> UploadAsync(byte[] bytes, string filename, string destination, bool overwrite)
         {
             var memoryStream = new MemoryStream(bytes);
 
-            return SendRequest(GetFileContent(memoryStream, filename), destination);
+            return SendRequest(GetFileContent(memoryStream, filename), destination, overwrite);
         }
 
-        private Task<FileStationUploadResponse> SendRequest(StreamContent fileContent, string destination)
+        private Task<FileStationUploadResponse> SendRequest(StreamContent fileContent, string destination, bool overwrite)
         {
             string boundaryDelimiter = $"----------{DateTime.Now.Ticks:x}";
 
             using (var formData = new MultipartFormDataContent(boundaryDelimiter))
             {
+                var overwriteValue = overwrite ? "overwrite" : "skip";
+
                 formData.Add(GetStringContent("api", _apiInfo.Name));
                 formData.Add(GetStringContent("version", _apiInfo.Version.ToString()));
                 formData.Add(GetStringContent("method", "upload"));
                 formData.Add(GetStringContent("path", destination));
-                formData.Add(GetStringContent("overwrite", "skip"));
+                formData.Add(GetStringContent("overwrite", overwriteValue));
                 formData.Add(fileContent);
 
                 // Remove quotes from ContentType Header

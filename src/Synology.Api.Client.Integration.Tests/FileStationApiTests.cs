@@ -42,7 +42,7 @@ namespace Synology.Api.Client.Integration.Tests
                 .Client
                 .FileStationApi()
                 .UploadEndpoint()
-                .UploadAsync(filePath, destination);
+                .UploadAsync(filePath, destination, true);
 
             // assert
             uploadResponse.Should().NotBeNull();
@@ -61,7 +61,7 @@ namespace Synology.Api.Client.Integration.Tests
                 .Client
                 .FileStationApi()
                 .UploadEndpoint()
-                .UploadAsync(helloWorld, "hello.txt", destination);
+                .UploadAsync(helloWorld, "hello.txt", destination, true);
 
             // assert
             uploadResponse.Should().NotBeNull();
