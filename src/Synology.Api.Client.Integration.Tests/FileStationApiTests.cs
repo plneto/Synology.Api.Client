@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.IO;
+using System.Text;
 using FluentAssertions;
 using Synology.Api.Client.Integration.Tests.Fixtures;
 using Xunit;
@@ -62,6 +63,24 @@ namespace Synology.Api.Client.Integration.Tests
                 .FileStationApi()
                 .UploadEndpoint()
                 .UploadAsync(helloWorld, "hello.txt", destination, true);
+
+            // assert
+            uploadResponse.Should().NotBeNull();
+        }
+
+        [Fact]
+        public async void FileStation_UploadFromByteArrayUsingFileReadAllBytes_Success()
+        {
+            // arrange
+            var source = File.ReadAllBytes(""); // TODO: set file path
+            var destination = ""; // TODO: set destination value
+
+            // act
+            var uploadResponse = await _fixture
+                .Client
+                .FileStationApi()
+                .UploadEndpoint()
+                .UploadAsync(source, "hello.txt", destination, true);
 
             // assert
             uploadResponse.Should().NotBeNull();
