@@ -11,11 +11,15 @@ namespace Synology.Api.Client.Exceptions
 
         public int ErrorCode { get; }
 
-        public SynologyApiException(IApiInfo apiInfo, string apiMethod, int errorCode)
-            : this($"The Synology API Request failed with code \"{errorCode}\".\n" +
+        public string ErrorDescription { get; }
+
+        public SynologyApiException(IApiInfo apiInfo, string apiMethod, int errorCode, string errorDescription = "")
+            : this($"The Synology API Request failed.\n" +
+                  $"Error Code: \"{errorCode}\"\n" +
+                  $"Error Description: \"{errorDescription}\"\n" +
                   $"API: \"{apiInfo.Name}\" \n" +
                   $"Method: \"{apiMethod}\" \n" +
-                  $"Version: \"{apiInfo.Version}\" ", apiInfo, apiMethod, errorCode)
+                  $"Version: \"{apiInfo.Version}\"", apiInfo, apiMethod, errorCode, errorDescription)
         {
         }
 
@@ -24,12 +28,14 @@ namespace Synology.Api.Client.Exceptions
             IApiInfo apiInfo,
             string apiMethod,
             int errorCode,
+            string errorDescription,
             Exception innerException = null)
             : base(message, innerException)
         {
             ApiInfo = apiInfo;
             ApiMethod = apiMethod;
             ErrorCode = errorCode;
+            ErrorDescription = errorDescription;
         }
     }
 }

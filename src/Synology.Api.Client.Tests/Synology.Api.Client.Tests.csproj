@@ -18,6 +18,7 @@
     <PackageReference Include="Flurl.Http" Version="3.2.0" />
     <PackageReference Include="AutoFixture" Version="4.17.0" />
     <PackageReference Include="FluentAssertions" Version="5.10.3" />
+    <PackageReference Include="System.IO.Abstractions.TestingHelpers" Version="13.2.38" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.IO.Abstractions;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Synology.Api.Client.ApiDescription;
@@ -13,19 +14,29 @@ namespace Synology.Api.Client.Apis.FileStation.Upload
         private readonly ISynologyHttpClient _synologyHttpClient;
         private readonly IApiInfo _apiInfo;
         private readonly ISynologySession _session;
+        private readonly IFileSystem _fileSystem;
 
         public FileStationUploadEndpoint(ISynologyHttpClient synologyHttpClient, IApiInfo apiInfo, ISynologySession session)
+            : this(synologyHttpClient, apiInfo, session, new FileSystem())
+        {
+        }
+
+        public FileStationUploadEndpoint(ISynologyHttpClient synologyHttpClient,
+                                         IApiInfo apiInfo,
+                                         ISynologySession session,
+                                         IFileSystem fileSystem)
         {
             _synologyHttpClient = synologyHttpClient;
             _apiInfo = apiInfo;
             _session = session;
+            _fileSystem = fileSystem;
         }
 
         /// <inheritdoc />
         public Task<FileStationUploadResponse> UploadAsync(string filePath, string destination, bool overwrite)
         {
-            var filename = Path.GetFileName(filePath);
-            var fileStream = File.OpenRead(filePath);
+            var filename = _fileSystem.Path.GetFileName(filePath);
+            var fileStream = _fileSystem.File.OpenRead(filePath);
 
             return SendRequest(GetFileContent(fileStream, filename), destination, overwrite);
         }

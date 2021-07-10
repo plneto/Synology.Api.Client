@@ -2,28 +2,32 @@ using System;
 using AutoFixture;
 using Flurl.Http.Testing;
 using Synology.Api.Client.ApiDescription;
+using Synology.Api.Client.Apis.Auth;
 using Synology.Api.Client.Apis.Auth.Models;
 using Synology.Api.Client.Shared.Models;
+using Synology.Api.Client.Tests.Fixtures;
 using Xunit;
 
 namespace Synology.Api.Client.Tests
 {
-    public class AuthApiTests : IDisposable
+    public class AuthApiTests : IClassFixture<SynologyFixture>, IDisposable
     {
-        private const string dsmUrl = "http://dsm-url.com";
-
+        private readonly SynologyFixture _synologyFixture;
         private readonly Fixture _fixture;
         private readonly HttpTest _httpTest;
-        private readonly ISynologyClient _synologyClient;
+        private readonly AuthApi _authApi;
         private readonly IApiInfo _apiInfo;
 
-        public AuthApiTests()
+        public AuthApiTests(SynologyFixture synologyFixture)
         {
             _fixture = new Fixture();
             _httpTest = new HttpTest();
-            _synologyClient = new SynologyClient(dsmUrl);
+            _synologyFixture = synologyFixture;
+            _apiInfo = _synologyFixture.ApisInfo.FileStationUploadApi;
 
-            _apiInfo = _synologyClient.ApisInfo.AuthApi;
+            _authApi = new AuthApi(
+                synologyFixture.SynologyHttpClient,
+                _apiInfo);
         }
 
         [Fact]
@@ -37,20 +41,17 @@ namespace Synology.Api.Client.Tests
             var expectedResponse = new ApiResponse<LoginResponse>
             {
                 Success = true,
-                Data = new LoginResponse
-                {
-                    Sid = _fixture.Create<string>()
-                }
+                Data = _fixture.Create<LoginResponse>()
             };
 
             _httpTest.RespondWithJson(expectedResponse);
 
             // act
-            await _synologyClient.AuthApi().LoginAsync(username, password, otpCode);
+            await _authApi.LoginAsync(username, password, otpCode);
 
             // assert
             _httpTest
-                .ShouldHaveCalled($"{dsmUrl}/webapi/{_apiInfo.Path}*")
+                .ShouldHaveCalled($"{_synologyFixture.BaseUrl}/{_apiInfo.Path}*")
                 .WithQueryParams(new
                 {
                     api = _apiInfo.Name,
@@ -61,8 +62,7 @@ namespace Synology.Api.Client.Tests
                     session = _apiInfo.SessionName,
                     format = "sid",
                     otp_code = otpCode
-                })
-                ;
+                });
         }
 
         public void Dispose()

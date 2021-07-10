@@ -4,6 +4,8 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Flurl.Http;
 using Synology.Api.Client.ApiDescription;
+using Synology.Api.Client.Constants;
+using Synology.Api.Client.Errors;
 using Synology.Api.Client.Exceptions;
 using Synology.Api.Client.Session;
 using Synology.Api.Client.Shared.Models;
@@ -83,7 +85,9 @@ namespace Synology.Api.Client
 
                     if (!response.Success)
                     {
-                        throw new SynologyApiException(apiInfo, apiMethod, response.Error.Code);
+                        var errorDescription = GetErrorMessage(response?.Error?.Code ?? 0, apiInfo.Name);
+
+                        throw new SynologyApiException(apiInfo, apiMethod, response.Error.Code, errorDescription);
                     }
 
                     if (typeof(T) == typeof(BaseApiResponse))
@@ -96,6 +100,34 @@ namespace Synology.Api.Client
                 default:
                     throw new UnexpectedResponseStatusException((HttpStatusCode)httpResponse.StatusCode); ;
             }
+        }
+
+        private string GetErrorMessage(int errorCode, string apiName)
+        {
+            var errorDescription = "";
+
+            if (ErrorMessages.CommonErrors.ContainsKey(errorCode))
+            {
+                ErrorMessages.CommonErrors.TryGetValue(errorCode, out errorDescription);
+            }
+            else if (apiName == ApiNames.AuthApiName)
+            {
+                ErrorMessages.AuthApiErrors.TryGetValue(errorCode, out errorDescription);
+            }
+            else if (apiName.Contains("FileStation"))
+            {
+                ErrorMessages.FileStationApiErrors.TryGetValue(errorCode, out errorDescription);
+            }
+            else if (apiName == ApiNames.DownloadStationTaskApiName)
+            {
+                ErrorMessages.DownloadStationTaskApiErrors.TryGetValue(errorCode, out errorDescription);
+            }
+            else if (apiName == ApiNames.DownloadStationBtSearchApiName)
+            {
+                ErrorMessages.DownloadStationBtSearchApiErrors.TryGetValue(errorCode, out errorDescription);
+            }
+
+            return errorDescription;
         }
     }
 }

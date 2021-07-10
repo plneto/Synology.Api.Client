@@ -63,7 +63,7 @@ namespace Synology.Api.Client
         {
             if (!IsLoggedIn)
             {
-                throw new SecurityException(ErrorMessages.SessionNotAuthenticated);
+                throw new SecurityException(CustomErrorMessages.SessionNotAuthenticated);
             }
 
             return new DownloadStationApi(_synologyHttpClient, ApisInfo, Session);
@@ -73,7 +73,7 @@ namespace Synology.Api.Client
         {
             if (!IsLoggedIn)
             {
-                throw new SecurityException(ErrorMessages.SessionNotAuthenticated);
+                throw new SecurityException(CustomErrorMessages.SessionNotAuthenticated);
             }
 
             return new FileStationApi(_synologyHttpClient, ApisInfo, Session);
