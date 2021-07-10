@@ -55,7 +55,12 @@ namespace Synology.Api.Client.Apis.FileStation.Upload
 
             using (var formData = new MultipartFormDataContent(boundaryDelimiter))
             {
-                var overwriteValue = overwrite ? "overwrite" : "skip";
+                var overwriteValue = overwrite ? "true" : "false";
+
+                if (_apiInfo.Version >= 3)
+                { 
+                    overwriteValue = overwrite ? "overwrite" : "skip";
+                }
 
                 formData.Add(GetStringContent("api", _apiInfo.Name));
                 formData.Add(GetStringContent("version", _apiInfo.Version.ToString()));

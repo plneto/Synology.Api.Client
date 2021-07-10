@@ -48,7 +48,7 @@ namespace Synology.Api.Client.Apis
             FileStationUploadApi = new ApiInfo(
                 ApiNames.FileStationUploadApiName,
                 "entry.cgi",
-                3,
+                2,
                 FileStationSessionName);
         }
 
