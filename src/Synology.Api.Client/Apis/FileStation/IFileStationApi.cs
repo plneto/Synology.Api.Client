@@ -1,6 +1,7 @@
 ﻿using Synology.Api.Client.Apis.FileStation.CopyMove;
 using Synology.Api.Client.Apis.FileStation.Extract;
 using Synology.Api.Client.Apis.FileStation.List;
+using Synology.Api.Client.Apis.FileStation.Search;
 using Synology.Api.Client.Apis.FileStation.Upload;
 
 namespace Synology.Api.Client.Apis.FileStation
@@ -14,5 +15,7 @@ namespace Synology.Api.Client.Apis.FileStation
         IFileStationUploadEndpoint UploadEndpoint();
 
         IFileStationExtractEndpoint ExtractEndpoint();
+        
+        IFileStationSearchEndpoint SearchEndpoint();
     }
 }

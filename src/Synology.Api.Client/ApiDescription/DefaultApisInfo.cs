@@ -50,6 +50,12 @@ namespace Synology.Api.Client.Apis
                 "entry.cgi",
                 2,
                 FileStationSessionName);
+
+            FileStationSearchApi = new ApiInfo(
+                ApiNames.FileStationSearchApiName,
+                "entry.cgi",
+                2,
+                FileStationSessionName);
         }
 
         public IApiInfo InfoApi { get; set; }
@@ -65,5 +71,7 @@ namespace Synology.Api.Client.Apis
         public IApiInfo FileStationListApi { get; set; }
 
         public IApiInfo FileStationUploadApi { get; set; }
+        
+        public IApiInfo FileStationSearchApi { get; set; }
     }
 }

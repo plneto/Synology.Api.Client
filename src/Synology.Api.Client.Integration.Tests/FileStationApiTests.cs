@@ -190,5 +190,41 @@ namespace Synology.Api.Client.Integration.Tests
             // assert
             stopCopyResponse.Success.Should().BeTrue();
         }
+        
+        [Fact]
+        public async void FileStation_SearchStart_Success()
+        {
+            // arrange
+            var request = new FileStationSearchStartRequest(
+                "/shared_folder/dir",
+                extension: "rar");
+
+            // act
+            var startSearchResponse = await _fixture
+                .Client
+                .FileStationApi()
+                .SearchEndpoint()
+                .StartAsync(request);
+
+            // assert
+            startSearchResponse.TaskId.Should().NotBeNullOrWhiteSpace();
+        }
+        
+        [Fact]
+        public async void FileStation_SearchList_Success()
+        {
+            // arrange
+            var taskId = ""; // TODO: set task id
+            
+            // act
+            var listSearchResponse = await _fixture
+                .Client
+                .FileStationApi()
+                .SearchEndpoint()
+                .ListAsync(taskId);
+
+            // assert
+            listSearchResponse.Should().NotBeNull();
+        }
     }
 }

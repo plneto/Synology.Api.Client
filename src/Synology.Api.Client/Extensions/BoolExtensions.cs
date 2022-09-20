@@ -2,9 +2,9 @@
 {
     public static class BoolExtensions
     {
-        public static string ToLowerString(this bool _bool)
+        public static string ToLowerString(this bool @bool)
         {
-            return _bool.ToString().ToLower();
+            return @bool.ToString().ToLower();
         }
     }
 }

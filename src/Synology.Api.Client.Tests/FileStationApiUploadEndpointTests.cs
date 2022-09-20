@@ -92,7 +92,7 @@ namespace Synology.Api.Client.Tests
             // assert
             action
                 .Should()
-                .Throw<SynologyApiException>()
+                .ThrowAsync<SynologyApiException>().Result
                 .And
                 .ErrorDescription
                 .Should()

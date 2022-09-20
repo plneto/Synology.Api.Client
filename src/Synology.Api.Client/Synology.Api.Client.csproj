@@ -13,8 +13,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Flurl.Http" Version="3.2.0" />
-    <PackageReference Include="System.IO.Abstractions" Version="13.2.38" />
+    <PackageReference Include="Flurl.Http" Version="3.2.4" />
+    <PackageReference Include="System.IO.Abstractions" Version="17.2.3" />
   </ItemGroup>
 
 </Project>

@@ -2,6 +2,7 @@
 using Synology.Api.Client.Apis.FileStation.CopyMove;
 using Synology.Api.Client.Apis.FileStation.Extract;
 using Synology.Api.Client.Apis.FileStation.List;
+using Synology.Api.Client.Apis.FileStation.Search;
 using Synology.Api.Client.Apis.FileStation.Upload;
 using Synology.Api.Client.Session;
 
@@ -38,6 +39,11 @@ namespace Synology.Api.Client.Apis.FileStation
         public IFileStationExtractEndpoint ExtractEndpoint()
         {
             return new FileStationExtractEndpoint(_synologyHttpClient, _apisInfo.FileStationExtractApi, _session);
+        }
+
+        public IFileStationSearchEndpoint SearchEndpoint()
+        {
+            return new FileStationSearchEndpoint(_synologyHttpClient, _apisInfo.FileStationSearchApi, _session);
         }
     }
 }

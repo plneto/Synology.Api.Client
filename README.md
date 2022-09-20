@@ -7,6 +7,7 @@ A client written in .NET/C# for the Synology API - https://www.synology.com/en-u
 I've only implemented the endpoints that I'm currently using but please feel free to request changes or submit contributions.
 
 ## Usage:
+
 ```c#
 const string dsmUrl = "http://192.168.0.1:5001/";
 
@@ -29,19 +30,20 @@ await client.LogoutAsync(session);
 ```
 
 ## APIs Implemented
-| SYNO.API    | Methods             |
-| ----------- |:-------------------:|
-| Auth        | `login` `logout`    |
-| Info        | `query`             |
 
-| SYNO.FileStation  | Methods                         |
-| ----------------- |:-------------------------------:|
-| List              | `list_share`                    |
-| Upload            | `upload`                        |
-| CopyMove          | `start` `status` `stop`         |
-| Extract           | `start` `status` `stop` `list`  |
+| SYNO.API |     Methods      |
+| -------- | :--------------: |
+| Auth     | `login` `logout` |
+| Info     |     `query`      |
 
-| SYNO.DownloadStation  | Methods   |
-| --------------------- |:---------:|
-| Task                  | `list`    |
+| SYNO.FileStation |            Methods             |
+| ---------------- | :----------------------------: |
+| List             |          `list_share`          |
+| Search           |         `start` `list`         |
+| Upload           |            `upload`            |
+| CopyMove         |    `start` `status` `stop`     |
+| Extract          | `start` `status` `stop` `list` |
 
+| SYNO.DownloadStation | Methods |
+| -------------------- | :-----: |
+| Task                 | `list`  |
