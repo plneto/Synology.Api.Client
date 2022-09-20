@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using System.Text;
 using FluentAssertions;
+using Synology.Api.Client.Apis.FileStation.Search.Models;
 using Synology.Api.Client.Integration.Tests.Fixtures;
 using Xunit;
 
