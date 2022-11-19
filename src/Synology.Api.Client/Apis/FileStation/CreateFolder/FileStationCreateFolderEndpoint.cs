@@ -35,8 +35,8 @@ namespace Synology.Api.Client.Apis.FileStation.CreateFolder
             var folderNames = paths.Select(p => p.Substring(p.LastIndexOf('/') + 1));
             return new
             {
-                folder_path = $"[{folderPaths.ToCommaSeparatedAroundBrackets()}]",
-                name = $"[{folderNames.ToCommaSeparatedAroundBrackets()}]",
+                folder_path = folderPaths.ToCommaSeparatedAroundBrackets(),
+                name = folderNames.ToCommaSeparatedAroundBrackets(),
                 force_parent = createParentFolders,
                 additional = additionalParams.ToCommaSeparatedAroundBrackets()
             };
