@@ -1,8 +1,10 @@
-﻿namespace Synology.Api.Client.Extensions
+﻿using System.Collections.Generic;
+
+namespace Synology.Api.Client.Extensions
 {
     public static class StringArrayExtensions
     {
-        public static string ToCommaSeparatedAroundBrackets(this string[] list)
+        public static string ToCommaSeparatedAroundBrackets(this IEnumerable<string> list)
         {
             var param = "[";
 
