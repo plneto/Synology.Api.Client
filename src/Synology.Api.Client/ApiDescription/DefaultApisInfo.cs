@@ -36,7 +36,7 @@ namespace Synology.Api.Client.Apis
             FileStationCreateFolderApi = new ApiInfo(
                 ApiNames.FileStationCreateFolderApiName,
                 "entry.cgi",
-                3,
+                2,
                 FileStationSessionName);
 
             FileStationExtractApi = new ApiInfo(
