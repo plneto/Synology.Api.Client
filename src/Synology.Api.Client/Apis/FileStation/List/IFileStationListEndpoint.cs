@@ -5,6 +5,7 @@ namespace Synology.Api.Client.Apis.FileStation.List
 {
     public interface IFileStationListEndpoint
     {
+        Task<FileStationListResponse> ListAsync(FileStationListRequest fileStationListRequest);
         Task<FileStationListShareResponse> ListSharesAsync();
     }
 }
