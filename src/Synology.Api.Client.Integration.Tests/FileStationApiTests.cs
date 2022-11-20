@@ -191,7 +191,28 @@ namespace Synology.Api.Client.Integration.Tests
             // assert
             stopCopyResponse.Success.Should().BeTrue();
         }
-        
+
+        [Fact]
+        public async void FileStation_CreateFolder_Success()
+        {
+            // arrange
+            var paths = new[]
+            {
+                "/shared_folder/dir/new-dir",
+                "/shared_folder/dir2/new-dir"
+            };
+            
+            // act
+            var createFolderResponse = await _fixture
+                .Client
+                .FileStationApi()
+                .CreateFolderEndpoint()
+                .CreateAsync(paths, createParentFolders: true);
+
+            // assert
+            createFolderResponse.Folders.Should().NotBeNullOrEmpty();
+        }
+
         [Fact]
         public async void FileStation_SearchStart_Success()
         {

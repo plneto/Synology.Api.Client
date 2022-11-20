@@ -42,6 +42,7 @@ await client.LogoutAsync(session);
 | Search           |         `start` `list`         |
 | Upload           |            `upload`            |
 | CopyMove         |    `start` `status` `stop`     |
+| CreateFolder     |            `create`            |
 | Extract          | `start` `status` `stop` `list` |
 
 | SYNO.DownloadStation | Methods |

@@ -10,6 +10,8 @@
 
         IApiInfo FileStationCopyMoveApi { get; set; }
 
+        IApiInfo FileStationCreateFolderApi { get; set; }
+
         IApiInfo FileStationExtractApi { get; set; }
 
         IApiInfo FileStationListApi { get; set; }
