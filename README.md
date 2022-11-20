@@ -38,7 +38,7 @@ await client.LogoutAsync(session);
 
 | SYNO.FileStation |            Methods             |
 | ---------------- | :----------------------------: |
-| List             |          `list_share`          |
+| List             |       `list` `list_share`      |
 | Search           |         `start` `list`         |
 | Upload           |            `upload`            |
 | CopyMove         |    `start` `status` `stop`     |

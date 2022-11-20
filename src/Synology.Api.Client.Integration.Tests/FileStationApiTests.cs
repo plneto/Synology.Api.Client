@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using System.Text;
 using FluentAssertions;
+using Synology.Api.Client.Apis.FileStation.List.Models;
 using Synology.Api.Client.Apis.FileStation.Search.Models;
 using Synology.Api.Client.Integration.Tests.Fixtures;
 using Xunit;
@@ -30,6 +31,24 @@ namespace Synology.Api.Client.Integration.Tests
 
             // assert
             listShareResponse.Should().NotBeNull();
+        }
+
+        [Fact]
+        public async void FileStationApi_List_Success()
+        {
+            // arrange
+            var folderPath = "/shared_folder/dir";
+            var request = new FileStationListRequest(folderPath);
+
+            // act
+            var listResponse = await _fixture
+                .Client
+                .FileStationApi()
+                .ListEndpoint()
+                .ListAsync(request);
+
+            // assert
+            listResponse.Should().NotBeNull();
         }
 
         [Fact]
