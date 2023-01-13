@@ -28,5 +28,17 @@ namespace Synology.Api.Client.Integration.Tests
             // assert
             listResponse.Should().NotBeNull();
         }
+
+        [Fact]
+        public async void DownloadStationApi_DownloadStation_Info()
+        {
+            var infoResponse = await _fixture
+                .Client
+                .DownloadStationApi()
+                .InfoEndpoint()
+                .InfoAsync();
+
+            infoResponse.Should().NotBeNull();
+        }
     }
 }

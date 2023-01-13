@@ -25,6 +25,12 @@ namespace Synology.Api.Client.Apis
                 "DownloadStation/task.cgi",
                 1,
                 DownloadStationSessionName);
+            
+            DownloadStationInfoApi = new ApiInfo(
+                ApiNames.DownloadStationInfoApiName,
+                "DownloadStation/info.cgi",
+                1,
+                DownloadStationSessionName);
 
             FileStationCopyMoveApi = new ApiInfo(
                 ApiNames.FileStationCopyMoveApiName,
@@ -68,6 +74,8 @@ namespace Synology.Api.Client.Apis
         public IApiInfo AuthApi { get; set; }
 
         public IApiInfo DownloadStationTaskApi { get; set; }
+        
+        public IApiInfo DownloadStationInfoApi { get; set; }
 
         public IApiInfo FileStationCopyMoveApi { get; set; }
 
