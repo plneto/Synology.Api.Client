@@ -17,9 +17,8 @@ namespace Synology.Api.Client.Apis
 
             AuthApi = new ApiInfo(
                 ApiNames.AuthApiName,
-                "auth.cgi",
-                3,
-                FileStationSessionName);
+                "entry.cgi",
+                6);
 
             DownloadStationTaskApi = new ApiInfo(
                 ApiNames.DownloadStationTaskApiName,
