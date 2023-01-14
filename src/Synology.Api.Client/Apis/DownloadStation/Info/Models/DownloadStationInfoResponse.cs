@@ -5,10 +5,10 @@ namespace Synology.Api.Client.Apis.DownloadStation.Info.Models
     public class DownloadStationInfoResponse
     {
         [JsonProperty("is_manager")] 
-        public string IsManager;
+        public bool IsManager;
         
         [JsonProperty("version")] 
-        public string Version;
+        public int Version;
 
         [JsonProperty("version_string")] 
         public string VersionString;
