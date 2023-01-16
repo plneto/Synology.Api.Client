@@ -8,5 +8,7 @@ namespace Synology.Api.Client.Apis.DownloadStation.Info
         Task<DownloadStationInfoResponse> InfoAsync();
         
         Task<DownloadStationGetConfigResponse> GetConfigAsync();
+
+        Task<DownloadStationSetServerConfigResponse> SetServerConfigAsync(DownloadStationSetServerConfigRequest config);
     }
 }

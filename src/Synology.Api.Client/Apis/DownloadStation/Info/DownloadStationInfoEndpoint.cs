@@ -33,5 +33,33 @@ namespace Synology.Api.Client.Apis.DownloadStation.Info
                 "getconfig",
                 session: _session);
         }
+
+        public Task<DownloadStationSetServerConfigResponse> SetServerConfigAsync(DownloadStationSetServerConfigRequest config)
+        {
+
+            var queryParams = new
+            {
+                bt_max_download = config.BtMaxDownloadSpeed,
+                bt_max_upload = config.BtMaxUploadSpeed,
+                emule_enabled = config.EmulEnable,
+                emul_max_download = config.EmulMaxDownloadSpeed,
+                emul_max_upload = config.EmulMaxUploadSpeed,
+                ftp_max_download = config.FtpMaxDownloadSpeed,
+                http_max_download = config.HttpMaxDownloadSpeed,
+                nzb_max_download = config.NzbMaxDownloadSpeed,
+                unzip_service_enabled = config.UnzipServiceEnable,
+                default_destination = config.DefaultDestination,
+                emul_default_destination = config.EmulDefaultDestination
+            };
+
+            if (!(config.DefaultDestination is null || config.EmulDefaultDestination is null))
+                _apiInfo.Version = 2;
+
+            return _synologyHttpClient.GetAsync<DownloadStationSetServerConfigResponse>(
+                _apiInfo,
+                "setserverconfig",
+                null,
+                _session);
+        }
     }
 }
