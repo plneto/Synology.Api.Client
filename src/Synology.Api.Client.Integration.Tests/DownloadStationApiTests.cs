@@ -40,5 +40,17 @@ namespace Synology.Api.Client.Integration.Tests
 
             infoResponse.Should().NotBeNull();
         }
+
+        [Fact]
+        public async void DownloadStationApi_DownloadStation_GetConfig()
+        {
+            var getConfigResponse = await _fixture
+                .Client
+                .DownloadStationApi()
+                .InfoEndpoint()
+                .GetConfigAsync();
+
+            getConfigResponse.Should().NotBeNull();
+        }
     }
 }

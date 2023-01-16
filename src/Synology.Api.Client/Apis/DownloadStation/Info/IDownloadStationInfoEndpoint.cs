@@ -6,5 +6,7 @@ namespace Synology.Api.Client.Apis.DownloadStation.Info
     public interface IDownloadStationInfoEndpoint
     {
         Task<DownloadStationInfoResponse> InfoAsync();
+        
+        Task<DownloadStationGetConfigResponse> GetConfigAsync();
     }
 }

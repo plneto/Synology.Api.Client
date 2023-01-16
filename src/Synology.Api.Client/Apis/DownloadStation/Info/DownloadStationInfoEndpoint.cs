@@ -25,5 +25,13 @@ namespace Synology.Api.Client.Apis.DownloadStation.Info
                 "getinfo",
                 session: _session);
         }
+
+        public Task<DownloadStationGetConfigResponse> GetConfigAsync()
+        {
+            return _synologyHttpClient.GetAsync<DownloadStationGetConfigResponse>(
+                _apiInfo,
+                "getconfig",
+                session: _session);
+        }
     }
 }
