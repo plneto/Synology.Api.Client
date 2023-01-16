@@ -7,8 +7,7 @@ namespace Synology.Api.Client
 {
     public interface ISynologyHttpClient
     {
-        Task<T> GetAsync<T>(IApiInfo apiInfo, string apiMethod, ISynologySession session = null);
-        Task<T> GetAsync<T>(IApiInfo apiInfo, string apiMethod, object queryParams, ISynologySession session = null);
+        Task<T> GetAsync<T>(IApiInfo apiInfo, string apiMethod, object queryParams = null, ISynologySession session = null);
 
         Task<T> PostAsync<T>(IApiInfo apiInfo, string apiMethod, HttpContent content, ISynologySession session = null);
     }

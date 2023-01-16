@@ -20,24 +20,11 @@ namespace Synology.Api.Client
         {
             _flurlClient = flurlClient;
         }
-        
-        public async Task<T> GetAsync<T>(
-            IApiInfo apiInfo,
-            string apiMethod,
-            ISynologySession session = null)
-        {
-            var flurlRequest = BuildGetRequest(apiInfo, apiMethod, session);
-
-            using (var httpResponse = await flurlRequest.GetAsync())
-            {
-                return await HandleSynologyResponse<T>(httpResponse, apiInfo, apiMethod);
-            }
-        }
 
         public async Task<T> GetAsync<T>(
             IApiInfo apiInfo,
             string apiMethod,
-            object queryParams,
+            object queryParams = null,
             ISynologySession session = null)
         {
             var flurlRequest = BuildGetRequest(apiInfo, apiMethod, queryParams, session);
