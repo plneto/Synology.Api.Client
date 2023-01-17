@@ -26,15 +26,15 @@ namespace Synology.Api.Client.Apis.DownloadStation.Info
                 session: _session);
         }
 
-        public Task<DownloadStationGetConfigResponse> GetConfigAsync()
+        public Task<DownloadStationServerConfig> GetConfigAsync()
         {
-            return _synologyHttpClient.GetAsync<DownloadStationGetConfigResponse>(
+            return _synologyHttpClient.GetAsync<DownloadStationServerConfig>(
                 _apiInfo,
                 "getconfig",
                 session: _session);
         }
 
-        public Task<DownloadStationSetServerConfigResponse> SetServerConfigAsync(DownloadStationSetServerConfigRequest config)
+        public Task<DownloadStationServerConfig> SetServerConfigAsync(DownloadStationServerConfig config)
         {
 
             var queryParams = new
@@ -55,10 +55,10 @@ namespace Synology.Api.Client.Apis.DownloadStation.Info
             if (!(config.DefaultDestination is null || config.EmulDefaultDestination is null))
                 _apiInfo.Version = 2;
 
-            return _synologyHttpClient.GetAsync<DownloadStationSetServerConfigResponse>(
+            return _synologyHttpClient.GetAsync<DownloadStationServerConfig>(
                 _apiInfo,
                 "setserverconfig",
-                null,
+                queryParams,
                 _session);
         }
     }

@@ -1,4 +1,5 @@
 ﻿using FluentAssertions;
+using Synology.Api.Client.Apis.DownloadStation.Info.Models;
 using Synology.Api.Client.Integration.Tests.Fixtures;
 using Xunit;
 
@@ -51,6 +52,37 @@ namespace Synology.Api.Client.Integration.Tests
                 .GetConfigAsync();
 
             getConfigResponse.Should().NotBeNull();
+        }
+
+        [Fact]
+        public async void DownloadStationApi_DownloadStation_SetServerConfig()
+        {
+            var getConfigResponse = await _fixture
+                .Client
+                .DownloadStationApi()
+                .InfoEndpoint()
+                .GetConfigAsync();
+            
+            var config = new DownloadStationServerConfig(
+                btMaxDownloadSpeed: 100,
+                btMaxUploadSpeed: 100,
+                emulEnable: false,
+                emulMaxDownloadSpeed: 200,
+                emulMaxUploadSpeed: 200,
+                ftpMaxDownloadSpeed: 300,
+                httpMaxDownloadSpeed: 400,
+                nzbMaxDownloadSpeed: 500,
+                unzipServiceEnable: true,
+                defaultDestination: "/home/temp"
+            );
+            
+            var setConfigResponse = await _fixture
+                .Client
+                .DownloadStationApi()
+                .InfoEndpoint()
+                .SetServerConfigAsync(new DownloadStationServerConfig(emulEnable: true));
+
+            setConfigResponse.Should().NotBeNull();
         }
     }
 }

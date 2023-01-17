@@ -1,8 +1,10 @@
-﻿namespace Synology.Api.Client.Apis.DownloadStation.Info.Models
+﻿using Newtonsoft.Json;
+
+namespace Synology.Api.Client.Apis.DownloadStation.Info.Models
 {
-    public class DownloadStationSetServerConfigRequest
+    public class DownloadStationServerConfig
     {
-        public DownloadStationSetServerConfigRequest(
+        public DownloadStationServerConfig(
             int? btMaxDownloadSpeed = null, 
             int? btMaxUploadSpeed = null, 
             bool? emulEnable = null, 
@@ -28,16 +30,16 @@
             EmulDefaultDestination = emulDefaultDestination;
         }
 
-        public int? BtMaxDownloadSpeed { get; }
-        public int? BtMaxUploadSpeed { get; }
-        public bool? EmulEnable { get; }
-        public int? EmulMaxDownloadSpeed { get; }
-        public int? EmulMaxUploadSpeed { get; }
-        public int? FtpMaxDownloadSpeed { get; }
-        public int? HttpMaxDownloadSpeed { get; }
-        public int? NzbMaxDownloadSpeed { get; }
-        public bool? UnzipServiceEnable { get; }
-        public string DefaultDestination { get; }
-        public string EmulDefaultDestination { get; }
+        [JsonProperty("bt_max_download")] public int? BtMaxDownloadSpeed { get; }
+        [JsonProperty("bt_max_upload")] public int? BtMaxUploadSpeed { get; }
+        [JsonProperty("emule_enabled")] public bool? EmulEnable { get; }
+        [JsonProperty("emul_max_download")] public int? EmulMaxDownloadSpeed { get; }
+        [JsonProperty("emul_max_upload")] public int? EmulMaxUploadSpeed { get; }
+        [JsonProperty("ftp_max_download")] public int? FtpMaxDownloadSpeed { get; }
+        [JsonProperty("http_max_download")] public int? HttpMaxDownloadSpeed { get; }
+        [JsonProperty("nzb_max_download")] public int? NzbMaxDownloadSpeed { get; }
+        [JsonProperty("unzip_service_enabled")] public bool? UnzipServiceEnable { get; }
+        [JsonProperty("default_destination")] public string DefaultDestination { get; }
+        [JsonProperty("emul_default_destination")] public string EmulDefaultDestination { get; }
     }
 }
