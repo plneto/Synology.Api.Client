@@ -30,16 +30,55 @@ namespace Synology.Api.Client.Apis.DownloadStation.Info.Models
             EmulDefaultDestination = emulDefaultDestination;
         }
 
+        /// <summary>
+        /// Max BT download speed in KB/s (“0” means unlimited)
+        /// </summary>
         [JsonProperty("bt_max_download")] public int? BtMaxDownloadSpeed { get; }
+        /// <summary>
+        /// Max BT upload speed in KB/s (“0” means unlimited)
+        /// </summary>
         [JsonProperty("bt_max_upload")] public int? BtMaxUploadSpeed { get; }
+        /// <summary>
+        /// If eMule service is enabled
+        /// </summary>
         [JsonProperty("emule_enabled")] public bool? EmulEnable { get; }
+        /// <summary>
+        /// Max eMule download speed in KB/s (“0” means unlimited)
+        /// </summary>
         [JsonProperty("emul_max_download")] public int? EmulMaxDownloadSpeed { get; }
+        /// <summary>
+        /// Max eMule upload speed in KB/s (“0” means unlimited)
+        /// </summary>
         [JsonProperty("emul_max_upload")] public int? EmulMaxUploadSpeed { get; }
+        /// <summary>
+        /// Max FTP download speed in KB/s (“0” means unlimited).
+        /// Currently <paramref name="FtpMaxDownloadSpeed"/> and <paramref name="HttpMaxDownloadSpeed"/>
+        /// share the same config value. When both parameters are requested to be set at the same time, the requested
+        /// <paramref name="FtpMaxDownloadSpeed"/> rate will overwrite the requested <paramref name="HttpMaxDownloadSpeed"/> rate.
+        /// </summary>
         [JsonProperty("ftp_max_download")] public int? FtpMaxDownloadSpeed { get; }
+        /// <summary>
+        /// Max FTP download speed in KB/s (“0” means unlimited).
+        /// Currently <paramref name="FtpMaxDownloadSpeed"/> and <paramref name="HttpMaxDownloadSpeed"/>
+        /// share the same config value. When both parameters are requested to be set at the same time, the requested
+        /// <paramref name="FtpMaxDownloadSpeed"/> rate will overwrite the requested <paramref name="HttpMaxDownloadSpeed"/> rate.
+        /// </summary>
         [JsonProperty("http_max_download")] public int? HttpMaxDownloadSpeed { get; }
+        /// <summary>
+        /// Max NZB download speed in KB/s (“0” means unlimited)
+        /// </summary>
         [JsonProperty("nzb_max_download")] public int? NzbMaxDownloadSpeed { get; }
+        /// <summary>
+        /// If Auto unzip service is enabled for users except admin or administrators grou
+        /// </summary>
         [JsonProperty("unzip_service_enabled")] public bool? UnzipServiceEnable { get; }
+        /// <summary>
+        /// Default destination for fownloads
+        /// </summary>
         [JsonProperty("default_destination")] public string DefaultDestination { get; }
+        /// <summary>
+        /// Emule default destination. May be changed, if emul is already enable.
+        /// </summary>
         [JsonProperty("emul_default_destination")] public string EmulDefaultDestination { get; }
     }
 }

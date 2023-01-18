@@ -76,7 +76,7 @@ namespace Synology.Api.Client.Integration.Tests
                 unzipServiceEnable: !getConfigResponse.UnzipServiceEnable,
                 defaultDestination: getConfigResponse.DefaultDestination + "/tmp"
             );
-            
+
             var setConfigResponse = await _fixture
                 .Client
                 .DownloadStationApi()
