@@ -49,6 +49,27 @@ namespace Synology.Api.Client
                 return await HandleSynologyResponse<T>(httpResponse, apiInfo, apiMethod);
             }
         }
+        
+        public async Task<T> PostAsync<T>(IApiInfo apiInfo, string apiMethod, object queryParams = null, HttpContent content = null,
+            ISynologySession session = null)
+        {
+            var flurlRequest = _flurlClient.Request(apiInfo.Path);
+
+            if (session != null)
+            {
+                flurlRequest.SetQueryParam("_sid", session.Sid);
+            }
+
+            if (queryParams != null)
+            {
+                flurlRequest.SetQueryParams(queryParams);
+            }
+
+            using (var httpResponse = await flurlRequest.PostAsync(content))
+            {
+                return await HandleSynologyResponse<T>(httpResponse, apiInfo, apiMethod);
+            }
+        }
 
         private IFlurlRequest BuildGetRequest(IApiInfo apiInfo, string apiMethod, object queryParams, ISynologySession session = null)
         {
@@ -60,7 +81,7 @@ namespace Synology.Api.Client
                     version = apiInfo.Version,
                     method = apiMethod,
                 });
-
+            
             flurlRequest.SetQueryParams(queryParams);
 
             if (!string.IsNullOrWhiteSpace(apiInfo.SessionName))
