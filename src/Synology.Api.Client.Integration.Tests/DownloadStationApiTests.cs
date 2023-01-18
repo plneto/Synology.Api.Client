@@ -63,26 +63,52 @@ namespace Synology.Api.Client.Integration.Tests
                 .InfoEndpoint()
                 .GetConfigAsync();
             
+            // Changing current config DownloadStation
             var config = new DownloadStationServerConfig(
-                btMaxDownloadSpeed: 100,
-                btMaxUploadSpeed: 100,
-                emulEnable: false,
-                emulMaxDownloadSpeed: 200,
-                emulMaxUploadSpeed: 200,
-                ftpMaxDownloadSpeed: 300,
-                httpMaxDownloadSpeed: 400,
-                nzbMaxDownloadSpeed: 500,
-                unzipServiceEnable: true,
-                defaultDestination: "/home/temp"
+                btMaxDownloadSpeed: getConfigResponse.BtMaxDownloadSpeed + 100,
+                btMaxUploadSpeed: getConfigResponse.BtMaxUploadSpeed + 100,
+                emulEnable: !getConfigResponse.EmulEnable,
+                emulMaxDownloadSpeed: getConfigResponse.EmulMaxDownloadSpeed + 100,
+                emulMaxUploadSpeed: getConfigResponse.EmulMaxUploadSpeed + 100,
+                ftpMaxDownloadSpeed: getConfigResponse.FtpMaxDownloadSpeed + 100,
+                httpMaxDownloadSpeed: getConfigResponse.HttpMaxDownloadSpeed + 100,
+                nzbMaxDownloadSpeed: getConfigResponse.NzbMaxDownloadSpeed + 100,
+                unzipServiceEnable: !getConfigResponse.UnzipServiceEnable,
+                defaultDestination: getConfigResponse.DefaultDestination + "/tmp"
             );
             
             var setConfigResponse = await _fixture
                 .Client
                 .DownloadStationApi()
                 .InfoEndpoint()
-                .SetServerConfigAsync(new DownloadStationServerConfig(emulEnable: true));
+                .SetServerConfigAsync(config);
+            
+            // Edit emulDefaultDestination
+            setConfigResponse = await _fixture
+                .Client
+                .DownloadStationApi()
+                .InfoEndpoint()
+                .SetServerConfigAsync(
+                    new DownloadStationServerConfig(
+                        emulDefaultDestination: config.DefaultDestination
+                        )
+                    );
 
-            setConfigResponse.Should().NotBeNull();
+            // Check that the config has changed 
+            var getConfigResponseNew = await _fixture
+                .Client
+                .DownloadStationApi()
+                .InfoEndpoint()
+                .GetConfigAsync();
+            
+            // Changing config to original state
+            setConfigResponse = await _fixture
+                .Client
+                .DownloadStationApi()
+                .InfoEndpoint()
+                .SetServerConfigAsync(getConfigResponse);
+            
+            getConfigResponseNew.Should().BeEquivalentTo(config);
         }
     }
 }

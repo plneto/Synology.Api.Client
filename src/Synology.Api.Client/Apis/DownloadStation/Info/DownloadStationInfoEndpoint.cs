@@ -36,7 +36,6 @@ namespace Synology.Api.Client.Apis.DownloadStation.Info
 
         public Task<DownloadStationServerConfig> SetServerConfigAsync(DownloadStationServerConfig config)
         {
-
             var queryParams = new
             {
                 bt_max_download = config.BtMaxDownloadSpeed,
@@ -52,7 +51,7 @@ namespace Synology.Api.Client.Apis.DownloadStation.Info
                 emul_default_destination = config.EmulDefaultDestination
             };
 
-            if (!(config.DefaultDestination is null || config.EmulDefaultDestination is null))
+            if (config.DefaultDestination != null || config.EmulDefaultDestination != null)
                 _apiInfo.Version = 2;
 
             return _synologyHttpClient.GetAsync<DownloadStationServerConfig>(
