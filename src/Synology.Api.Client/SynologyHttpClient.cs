@@ -50,30 +50,6 @@ namespace Synology.Api.Client
             }
         }
 
-        private IFlurlRequest BuildGetRequest(IApiInfo apiInfo, string apiMethod, ISynologySession session = null)
-        {
-            var flurlRequest = _flurlClient
-                .Request(apiInfo.Path)
-                .SetQueryParams(new
-                {
-                    api = apiInfo.Name,
-                    version = apiInfo.Version,
-                    method = apiMethod,
-                });
-
-            if (!string.IsNullOrWhiteSpace(apiInfo.SessionName))
-            {
-                flurlRequest.SetQueryParam("session", apiInfo.SessionName);
-            }
-
-            if (session != null)
-            {
-                flurlRequest.SetQueryParam("_sid", session.Sid);
-            }
-
-            return flurlRequest;
-        }
-        
         private IFlurlRequest BuildGetRequest(IApiInfo apiInfo, string apiMethod, object queryParams, ISynologySession session = null)
         {
             var flurlRequest = _flurlClient
@@ -85,7 +61,10 @@ namespace Synology.Api.Client
                     method = apiMethod,
                 });
 
-            flurlRequest.SetQueryParams(queryParams);
+            if (queryParams != null)
+            {
+                flurlRequest.SetQueryParams(queryParams);
+            }
 
             if (!string.IsNullOrWhiteSpace(apiInfo.SessionName))
             {
