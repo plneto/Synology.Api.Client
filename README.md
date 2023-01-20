@@ -45,6 +45,7 @@ await client.LogoutAsync(session);
 | CreateFolder     |            `create`            |
 | Extract          | `start` `status` `stop` `list` |
 
-| SYNO.DownloadStation | Methods |
-| -------------------- | :-----: |
-| Task                 | `list`  |
+| SYNO.DownloadStation |      Methods       |
+|----------------------|:------------------:|
+| Info                 | `info` `getconfig` |
+| Task                 |       `list`       |

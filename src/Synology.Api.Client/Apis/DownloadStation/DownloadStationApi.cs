@@ -1,4 +1,5 @@
 ﻿using Synology.Api.Client.ApiDescription;
+using Synology.Api.Client.Apis.DownloadStation.Info;
 using Synology.Api.Client.Apis.DownloadStation.Task;
 using Synology.Api.Client.Session;
 
@@ -20,6 +21,11 @@ namespace Synology.Api.Client.Apis.DownloadStation
         public IDownloadStationTaskEndpoint TaskEndpoint()
         {
             return new DownloadStationTaskEndpoint(_synologyHttpClient, _apisInfo.DownloadStationTaskApi, _session);
+        }
+
+        public IDownloadStationInfoEndpoint InfoEndpoint()
+        {
+            return new DownloadStationInfoEndpoint(_synologyHttpClient, _apisInfo.DownloadStationInfoApi, _session);
         }
     }
 }
