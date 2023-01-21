@@ -1,12 +1,12 @@
-﻿using Newtonsoft.Json;
+﻿using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace Synology.Api.Client.Apis.DownloadStation.Task.Models
 {
     public class DownloadStationTaskDeleteRequest
     {
-        public string Id { get; set; }
+        public IEnumerable<string> Ids { get; set; }
         
-        [JsonProperty("force_complete")]
         public bool ForceComplete { get; set; }
     }
 }
