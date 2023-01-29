@@ -24,7 +24,7 @@ namespace Synology.Api.Client
         public async Task<T> GetAsync<T>(
             IApiInfo apiInfo,
             string apiMethod,
-            object queryParams,
+            object queryParams = null,
             ISynologySession session = null)
         {
             var flurlRequest = BuildGetRequest(apiInfo, apiMethod, queryParams, session);
@@ -81,8 +81,11 @@ namespace Synology.Api.Client
                     version = apiInfo.Version,
                     method = apiMethod,
                 });
-            
-            flurlRequest.SetQueryParams(queryParams);
+
+            if (queryParams != null)
+            {
+                flurlRequest.SetQueryParams(queryParams);
+            }
 
             if (!string.IsNullOrWhiteSpace(apiInfo.SessionName))
             {
