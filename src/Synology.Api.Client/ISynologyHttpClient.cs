@@ -10,7 +10,5 @@ namespace Synology.Api.Client
         Task<T> GetAsync<T>(IApiInfo apiInfo, string apiMethod, object queryParams = null, ISynologySession session = null);
 
         Task<T> PostAsync<T>(IApiInfo apiInfo, string apiMethod, HttpContent content, ISynologySession session = null);
-        Task<T> PostAsync<T>(IApiInfo apiInfo, string apiMethod, object queryParams = null, HttpContent content = null,
-            ISynologySession session = null);
     }
 }

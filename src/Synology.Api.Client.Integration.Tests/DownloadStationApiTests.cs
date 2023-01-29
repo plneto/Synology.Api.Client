@@ -31,13 +31,12 @@ namespace Synology.Api.Client.Integration.Tests
             // assert
             listResponse.Should().NotBeNull();
         }
-
-        //ToDo добавить существующую ссылку
+        
         [Fact]
         public async Task DownloadStationApi_DownloadStation_CreateTaskWithLogin()
         {
             // arrange && act
-            var request = new DownloadStationTaskCreateRequest("ftps://192.0.0.1:21/test/test.zip");
+            var request = new DownloadStationTaskCreateRequest("");
             
             var createResponse = await _fixture
                 .Client
@@ -55,8 +54,8 @@ namespace Synology.Api.Client.Integration.Tests
         {
             // arrange && act
             var fixture = new SynologyFixture();
-            var request = new DownloadStationTaskCreateRequest("ftps://192.0.0.1:21/test/test.zip", username: "",
-                password: "");
+            var request = new DownloadStationTaskCreateRequest("", 
+                username: "", password: "");
             
             var createResponse = await fixture
                 .Client

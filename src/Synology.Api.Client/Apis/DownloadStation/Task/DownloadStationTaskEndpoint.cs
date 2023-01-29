@@ -42,7 +42,7 @@ namespace Synology.Api.Client.Apis.DownloadStation.Task
             if (request.Uri != null)
                 _apiInfo.Version = 3;
             
-            return _synologyHttpClient.PostAsync<BaseApiResponse>(_apiInfo, "create", queryParams, session: _session);
+            return _synologyHttpClient.GetAsync<BaseApiResponse>(_apiInfo, "create", queryParams, session: _session);
         }
 
         public Task<DownloadStationTaskListResponse> ListAsync()
