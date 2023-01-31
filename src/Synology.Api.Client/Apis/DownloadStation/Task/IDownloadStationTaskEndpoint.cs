@@ -7,6 +7,9 @@ namespace Synology.Api.Client.Apis.DownloadStation.Task
     public interface IDownloadStationTaskEndpoint
     {
         Task<DownloadStationTaskListResponse> ListAsync();
+        
         Task<BaseApiResponse> CreateAsync(DownloadStationTaskCreateRequest request);
+
+        Task<DownloadStationTaskDeleteResponse> DeleteAsync(DownloadStationTaskDeleteRequest data);
     }
 }
