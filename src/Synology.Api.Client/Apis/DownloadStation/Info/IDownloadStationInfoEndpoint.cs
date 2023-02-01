@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using Synology.Api.Client.Apis.DownloadStation.Info.Models;
+using Synology.Api.Client.Shared.Models;
 
 namespace Synology.Api.Client.Apis.DownloadStation.Info
 {
@@ -18,6 +19,6 @@ namespace Synology.Api.Client.Apis.DownloadStation.Info
         /// </summary>
         /// <param name="config">Object with parameters to changed</param>
         /// <returns>Returns on success null</returns>
-        Task<DownloadStationServerConfig> SetServerConfigAsync(DownloadStationServerConfig config);
+        Task<BaseApiResponse> SetServerConfigAsync(DownloadStationServerConfig config);
     }
 }
