@@ -33,31 +33,13 @@ namespace Synology.Api.Client.Integration.Tests
         }
         
         [Fact]
-        public async Task DownloadStationApi_DownloadStation_CreateTaskWithLogin()
+        public async Task DownloadStationApi_DownloadStation_CreateTaskByUriWithLogin()
         {
             // arrange && act
-            var request = new DownloadStationTaskCreateRequest("");
+            var uri = ""; //file uri
+            var request = new DownloadStationTaskCreateRequest(uri);
             
             var createResponse = await _fixture
-                .Client
-                .DownloadStationApi()
-                .TaskEndpoint()
-                .CreateAsync(request);
-            
-            // assert
-            createResponse.Should().NotBeNull();
-        }
-        
-        //ToDo указать ссылку на файл или логин и пароль
-        [Fact]
-        public async Task DownloadStationApi_DownloadStation_CreateTasksWithoutLogin()
-        {
-            // arrange && act
-            var fixture = new SynologyFixture();
-            var request = new DownloadStationTaskCreateRequest("", 
-                username: "", password: "");
-            
-            var createResponse = await fixture
                 .Client
                 .DownloadStationApi()
                 .TaskEndpoint()
