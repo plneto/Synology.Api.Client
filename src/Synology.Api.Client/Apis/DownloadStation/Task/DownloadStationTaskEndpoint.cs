@@ -21,6 +21,8 @@ namespace Synology.Api.Client.Apis.DownloadStation.Task
         
         /// <summary>
         /// No specific response. It returns an empty success response if completed without error.
+        /// Remark: At the moment only the uri variant works (the other parameters are not used).
+        /// This is due to errors in the official synology documentation. 
         /// </summary>
         /// <param name="request">Request parameters</param>
         /// <returns></returns>
