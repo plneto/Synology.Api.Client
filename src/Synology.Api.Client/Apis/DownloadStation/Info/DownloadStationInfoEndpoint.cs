@@ -2,6 +2,7 @@ using System.Threading.Tasks;
 using Synology.Api.Client.ApiDescription;
 using Synology.Api.Client.Apis.DownloadStation.Info.Models;
 using Synology.Api.Client.Session;
+using Synology.Api.Client.Shared.Models;
 
 namespace Synology.Api.Client.Apis.DownloadStation.Info
 {
@@ -34,7 +35,7 @@ namespace Synology.Api.Client.Apis.DownloadStation.Info
                 session: _session);
         }
 
-        public Task<DownloadStationServerConfig> SetServerConfigAsync(DownloadStationServerConfig config)
+        public Task<BaseApiResponse> SetServerConfigAsync(DownloadStationServerConfig config)
         {
             var queryParams = new
             {
@@ -54,7 +55,7 @@ namespace Synology.Api.Client.Apis.DownloadStation.Info
             if (config.DefaultDestination != null || config.EmulDefaultDestination != null)
                 _apiInfo.Version = 2;
 
-            return _synologyHttpClient.GetAsync<DownloadStationServerConfig>(
+            return _synologyHttpClient.GetAsync<BaseApiResponse>(
                 _apiInfo,
                 "setserverconfig",
                 queryParams,
