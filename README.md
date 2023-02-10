@@ -48,3 +48,19 @@ await client.LogoutAsync(session);
 | SYNO.DownloadStation | Methods |
 | -------------------- | :-----: |
 | Task                 | `list`  |
+
+## Example on how to ignore certificate validation for e.g. self signed certificates:
+
+You need to inject your own `HttpClient` with a modified `HttpClientHandler`.
+
+```c#
+const string dsmUrl = "http://192.168.0.1:5001/";
+
+var handler = new HttpClientHandler();
+//This disables all certificate validation. It is not recommended (especially in production)!
+handler.ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true;
+
+var httpClient = new HttpClient(handler);
+
+var client = new SynologyClient(dsmUrl, httpClient);
+```
