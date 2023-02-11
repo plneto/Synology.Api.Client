@@ -20,8 +20,8 @@ namespace Synology.Api.Client.ApiDescription
             return new DefaultApisInfo
             {
                 AuthApi = { Path = infoQueryResponse.AuthApi.Path },
-                DownloadStationTaskApi = { Path = infoQueryResponse.DownloadStationTaskApi.Path },
-                FileStationCopyMoveApi ={ Path = infoQueryResponse.FileStationCopyMoveApi.Path },
+                DownloadStationTaskApi = { Path = infoQueryResponse.DownloadStationTaskApi?.Path },
+                FileStationCopyMoveApi = { Path = infoQueryResponse.FileStationCopyMoveApi.Path },
                 FileStationCreateFolderApi = { Path = infoQueryResponse.FileStationCreateFolderApi.Path },
                 FileStationExtractApi = { Path = infoQueryResponse.FileStationExtractApi.Path },
                 FileStationListApi = { Path = infoQueryResponse.FileStationListApi.Path },
