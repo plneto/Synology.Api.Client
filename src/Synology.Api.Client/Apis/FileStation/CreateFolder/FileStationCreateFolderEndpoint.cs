@@ -1,9 +1,10 @@
-﻿using System.Threading.Tasks;
-using Synology.Api.Client.Apis.FileStation.CreateFolder.Models;
-using Synology.Api.Client.Session;
-using Synology.Api.Client.ApiDescription;
-using Synology.Api.Client.Extensions;
+﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+using Synology.Api.Client.ApiDescription;
+using Synology.Api.Client.Apis.FileStation.CreateFolder.Models;
+using Synology.Api.Client.Extensions;
+using Synology.Api.Client.Session;
 
 namespace Synology.Api.Client.Apis.FileStation.CreateFolder
 {
@@ -27,17 +28,18 @@ namespace Synology.Api.Client.Apis.FileStation.CreateFolder
             return _synologyHttpClient.GetAsync<FileStationCreateFolderCreateResponse>(_apiInfo, "create", queryParams, _session);
         }
 
-        private object GetCreateQueryParams(string[] paths, bool createParentFolders)
+        private Dictionary<string, string> GetCreateQueryParams(string[] paths, bool createParentFolders)
         {
             var additionalParams = new[] { "real_path", "owner", "time" };
             var folderPaths = paths.Select(p => p.Substring(0, p.LastIndexOf('/')));
             var folderNames = paths.Select(p => p.Substring(p.LastIndexOf('/') + 1));
-            return new
+
+            return new Dictionary<string, string>
             {
-                folder_path = folderPaths.ToCommaSeparatedAroundBrackets(),
-                name = folderNames.ToCommaSeparatedAroundBrackets(),
-                force_parent = createParentFolders,
-                additional = additionalParams.ToCommaSeparatedAroundBrackets()
+                { "folder_path",  folderPaths.ToCommaSeparatedAroundBrackets() },
+                { "name",  folderNames.ToCommaSeparatedAroundBrackets() },
+                { "force_parent",  createParentFolders.ToLowerString() },
+                { "additional",  additionalParams.ToCommaSeparatedAroundBrackets() }
             };
         }
     }

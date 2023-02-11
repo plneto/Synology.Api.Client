@@ -1,10 +1,10 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 
 namespace Synology.Api.Client.Apis.FileStation.CopyMove.Models
 {
     public class FileStationCopyMoveStartResponse
     {
-        [JsonProperty("taskid")]
+        [JsonPropertyName("taskid")]
         public string TaskId { get; set; }
     }
 }

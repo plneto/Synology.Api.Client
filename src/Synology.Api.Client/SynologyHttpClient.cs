@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Json;
 using System.Threading.Tasks;
-using Flurl.Http;
+using System.Web;
 using Synology.Api.Client.ApiDescription;
 using Synology.Api.Client.Constants;
 using Synology.Api.Client.Errors;
@@ -14,91 +16,86 @@ namespace Synology.Api.Client
 {
     public class SynologyHttpClient : ISynologyHttpClient
     {
-        private readonly IFlurlClient _flurlClient;
+        private readonly HttpClient _httpClient;
 
-        public SynologyHttpClient(IFlurlClient flurlClient)
+        public SynologyHttpClient(HttpClient httpClient)
         {
-            _flurlClient = flurlClient;
+            _httpClient = httpClient;
         }
 
-        public async Task<T> GetAsync<T>(
-            IApiInfo apiInfo,
-            string apiMethod,
-            object queryParams,
-            ISynologySession session = null)
+        public async Task<T> GetAsync<T>(IApiInfo apiInfo, string apiMethod, Dictionary<string, string> queryParams, ISynologySession session = null)
         {
-            var flurlRequest = BuildGetRequest(apiInfo, apiMethod, queryParams, session);
+            var uriBuilder = new UriBuilder($"{_httpClient.BaseAddress}/{apiInfo.Path}");
+            uriBuilder.Query = BuildQueryString(uriBuilder, apiInfo, apiMethod, queryParams, session);
 
-            using (var httpResponse = await flurlRequest.GetAsync())
-            {
-                return await HandleSynologyResponse<T>(httpResponse, apiInfo, apiMethod);
-            }
+            using var response = await _httpClient.GetAsync(uriBuilder.Uri);
+            return await HandleSynologyResponse<T>(response, apiInfo, apiMethod);
         }
 
         public async Task<T> PostAsync<T>(IApiInfo apiInfo, string apiMethod, HttpContent content, ISynologySession session = null)
         {
-            var flurlRequest = _flurlClient.Request(apiInfo.Path);
+            var uriBuilder = new UriBuilder($"{_httpClient.BaseAddress}/{apiInfo.Path}");
 
             if (session != null)
             {
-                flurlRequest.SetQueryParam("_sid", session.Sid);
+                uriBuilder.Query = $"_sid={session.Sid}";
             }
 
-            using (var httpResponse = await flurlRequest.PostAsync(content))
-            {
-                return await HandleSynologyResponse<T>(httpResponse, apiInfo, apiMethod);
-            }
+            //var headersAsString = content.Headers.ToString();
+            //var contentAsString = await content.ReadAsStringAsync();
+
+            using var response = await _httpClient.PostAsync(uriBuilder.Uri, content);
+            return await HandleSynologyResponse<T>(response, apiInfo, apiMethod);
         }
 
-        private IFlurlRequest BuildGetRequest(IApiInfo apiInfo, string apiMethod, object queryParams, ISynologySession session = null)
+        private string BuildQueryString(UriBuilder uriBuilder, IApiInfo apiInfo, string apiMethod, Dictionary<string, string> queryParams, ISynologySession session = null)
         {
-            var flurlRequest = _flurlClient
-                .Request(apiInfo.Path)
-                .SetQueryParams(new
-                {
-                    api = apiInfo.Name,
-                    version = apiInfo.Version,
-                    method = apiMethod,
-                });
+            var query = HttpUtility.ParseQueryString(uriBuilder.Query);
+            query["api"] = apiInfo.Name;
+            query["version"] = apiInfo.Version.ToString();
+            query["method"] = apiMethod;
 
-            flurlRequest.SetQueryParams(queryParams);
+            foreach (var curPair in queryParams)
+            {
+                query[curPair.Key] = curPair.Value;
+            }
 
             if (!string.IsNullOrWhiteSpace(apiInfo.SessionName))
             {
-                flurlRequest.SetQueryParam("session", apiInfo.SessionName);
+                query["session"] = apiInfo.SessionName;
             }
 
             if (session != null)
             {
-                flurlRequest.SetQueryParam("_sid", session.Sid);
+                query["_sid"] = session.Sid;
             }
 
-            return flurlRequest;
+            return query.ToString();
         }
 
-        private async Task<T> HandleSynologyResponse<T>(IFlurlResponse httpResponse, IApiInfo apiInfo, string apiMethod)
+        private async Task<T> HandleSynologyResponse<T>(HttpResponseMessage httpResponse, IApiInfo apiInfo, string apiMethod)
         {
             switch (httpResponse.StatusCode)
             {
-                case (int)HttpStatusCode.OK:
-                    var response = await httpResponse.GetJsonAsync<ApiResponse<T>>();
-
-                    if (!response.Success)
+                case HttpStatusCode.OK:
                     {
-                        var errorDescription = GetErrorMessage(response?.Error?.Code ?? 0, apiInfo.Name);
+                        var response = await httpResponse.Content.ReadFromJsonAsync<ApiResponse<T>>();
+                        if (!response.Success)
+                        {
+                            var errorDescription = GetErrorMessage(response?.Error?.Code ?? 0, apiInfo.Name);
 
-                        throw new SynologyApiException(apiInfo, apiMethod, response.Error.Code, errorDescription);
+                            throw new SynologyApiException(apiInfo, apiMethod, response.Error.Code, errorDescription);
+                        }
+
+                        if (typeof(T) == typeof(BaseApiResponse))
+                        {
+                            return (T)Activator.CreateInstance(typeof(T), new object[] { response.Success });
+                        }
+
+                        return response.Data;
                     }
-
-                    if (typeof(T) == typeof(BaseApiResponse))
-                    {
-                        return (T)Activator.CreateInstance(typeof(T), new object[] { response.Success });
-                    }
-
-                    return response.Data;
-
                 default:
-                    throw new UnexpectedResponseStatusException((HttpStatusCode)httpResponse.StatusCode); ;
+                    throw new UnexpectedResponseStatusException(httpResponse.StatusCode);
             }
         }
 

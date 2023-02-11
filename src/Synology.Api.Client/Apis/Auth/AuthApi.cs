@@ -1,7 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
-using Synology.Api.Client.Apis.Auth.Models;
 using Synology.Api.Client.ApiDescription;
+using Synology.Api.Client.Apis.Auth.Models;
 using Synology.Api.Client.Shared.Models;
 
 namespace Synology.Api.Client.Apis.Auth
@@ -29,12 +30,12 @@ namespace Synology.Api.Client.Apis.Auth
                 throw new ArgumentNullException(nameof(password));
             }
 
-            var queryParams = new
+            var queryParams = new Dictionary<string, string>
             {
-                account = username,
-                passwd = password,
-                format = "sid",
-                otp_code = otpCode
+                { "account", username },
+                { "passwd", password },
+                { "format", "sid" },
+                { "otp_code", otpCode }
             };
 
             return _synologyHttpClient.GetAsync<LoginResponse>(_apiInfo, "login", queryParams);
@@ -42,7 +43,7 @@ namespace Synology.Api.Client.Apis.Auth
 
         public Task<BaseApiResponse> LogoutAsync(string sid)
         {
-            return _synologyHttpClient.GetAsync<BaseApiResponse>(_apiInfo, "logout", new { _sid = sid });
+            return _synologyHttpClient.GetAsync<BaseApiResponse>(_apiInfo, "logout", new Dictionary<string, string> { { "_sid", sid } });
         }
     }
 }

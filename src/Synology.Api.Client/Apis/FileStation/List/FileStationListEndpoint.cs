@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Synology.Api.Client.ApiDescription;
 using Synology.Api.Client.Apis.FileStation.List.Models;
@@ -24,19 +25,19 @@ namespace Synology.Api.Client.Apis.FileStation.List
         {
             var additionalParams = new[] { "real_path", "owner", "time" };
 
-            var queryParams = new
+            var queryParams = new Dictionary<string, string>
             {
-                folder_path = fileStationListRequest.FolderPath,
-                offset = fileStationListRequest.Offset,
-                limit = fileStationListRequest.Limit,
-                sort_by = fileStationListRequest.SortBy ?? FileStationListSortByEnumeration.Name,
-                sort_direction = fileStationListRequest.SortDirection ?? "asc",
-                pattern = fileStationListRequest.Patterns?.Any() == true
+                { "folder_path",  fileStationListRequest.FolderPath },
+                { "offset", fileStationListRequest.Offset.ToString() },
+                { "limit", fileStationListRequest.Limit.ToString() },
+                { "sort_by", fileStationListRequest.SortBy ?? FileStationListSortByEnumeration.Name },
+                { "sort_direction", fileStationListRequest.SortDirection ?? "asc" },
+                { "pattern", fileStationListRequest.Patterns?.Any() == true
                     ? fileStationListRequest.Patterns.ToArray<string>().ToCommaSeparatedAroundBrackets()
-                    : null,
-                filetype = fileStationListRequest.FileType ?? "all",
-                goto_path = fileStationListRequest.GoToPath,
-                additional = additionalParams.ToCommaSeparatedAroundBrackets()
+                    : null },
+                { "filetype", fileStationListRequest.FileType ?? "all" },
+                { "goto_path", fileStationListRequest.GoToPath },
+                { "additional", additionalParams.ToCommaSeparatedAroundBrackets() }
             };
 
             return _synologyHttpClient.GetAsync<FileStationListResponse>(
@@ -50,9 +51,9 @@ namespace Synology.Api.Client.Apis.FileStation.List
         {
             var additionalParams = new[] { "real_path", "owner", "time" };
 
-            var queryParams = new
+            var queryParams = new Dictionary<string, string>
             {
-                additional = additionalParams.ToCommaSeparatedAroundBrackets()
+                { "additional",  additionalParams.ToCommaSeparatedAroundBrackets() }
             };
 
             return _synologyHttpClient.GetAsync<FileStationListShareResponse>(

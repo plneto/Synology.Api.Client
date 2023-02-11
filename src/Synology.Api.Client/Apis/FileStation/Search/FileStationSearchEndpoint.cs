@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Synology.Api.Client.ApiDescription;
 using Synology.Api.Client.Apis.FileStation.Search.Models;
@@ -23,12 +24,12 @@ namespace Synology.Api.Client.Apis.FileStation.Search
         /// <inheritdoc />
         public Task<FileStationSearchStartResponse> StartAsync(FileStationSearchStartRequest request)
         {
-            var queryParams = new
+            var queryParams = new Dictionary<string, string>
             {
-                folder_path = $"[\"{request.FolderPath}\"]",
-                recursive = request.Recursive.ToLowerString(),
-                pattern = request.Pattern,
-                extension = request.Extension
+                { "folder_path", $"[\"{request.FolderPath}\"]" },
+                { "recursive", request.Recursive.ToLowerString() },
+                { "pattern", request.Pattern },
+                { "extension", request.Extension },
             };
 
             return _synologyHttpClient.GetAsync<FileStationSearchStartResponse>(
@@ -41,11 +42,11 @@ namespace Synology.Api.Client.Apis.FileStation.Search
         /// <inheritdoc />
         public Task<FileStationSearchListResponse> ListAsync(string taskId, int offset = 0, int limit = -1)
         {
-            var queryParams = new
+            var queryParams = new Dictionary<string, string>
             {
-                taskid = taskId,
-                offset,
-                limit
+                { "taskid", taskId },
+                { "offset", offset.ToString() },
+                { "limit", limit.ToString() }
             };
 
             return _synologyHttpClient.GetAsync<FileStationSearchListResponse>(
