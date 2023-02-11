@@ -3,7 +3,6 @@ using Synology.Api.Client.Apis.FileStation.CreateFolder.Models;
 using Synology.Api.Client.Session;
 using Synology.Api.Client.ApiDescription;
 using Synology.Api.Client.Extensions;
-using Synology.Api.Client.Shared.Models;
 using System.Linq;
 
 namespace Synology.Api.Client.Apis.FileStation.CreateFolder

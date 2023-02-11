@@ -1,84 +1,85 @@
-﻿using Synology.Api.Client.ApiDescription;
+﻿using Synology.Api.Client.Apis.Info.Models;
 using Synology.Api.Client.Constants;
 
-namespace Synology.Api.Client.Apis
+namespace Synology.Api.Client.ApiDescription
 {
     public class DefaultApisInfo : IApisInfo
     {
         private const string FileStationSessionName = "FileStation";
         private const string DownloadStationSessionName = "DownloadStation";
 
-        public DefaultApisInfo()
+        /// <summary>
+        /// Updates the ApisInfo object used to determine the path for each API.
+        /// Use the following example to obtain the API descriptions.
+        /// <code>var infoQueryResponse = await InfoApi().QueryAsync()</code>
+        /// </summary>
+        /// <param name="infoQueryResponse">The response from the InfoApi().QueryAsync() method.</param>
+        /// <returns>The updated ApisInfo object.</returns>
+        public static DefaultApisInfo FromInfoQueryResponse(InfoQueryResponse infoQueryResponse)
         {
-            InfoApi = new ApiInfo(
-                ApiNames.InfoApiName,
-                "query.cgi",
-                1);
-
-            AuthApi = new ApiInfo(
-                ApiNames.AuthApiName,
-                "entry.cgi",
-                6);
-
-            DownloadStationTaskApi = new ApiInfo(
-                ApiNames.DownloadStationTaskApiName,
-                "DownloadStation/task.cgi",
-                1,
-                DownloadStationSessionName);
-
-            FileStationCopyMoveApi = new ApiInfo(
-                ApiNames.FileStationCopyMoveApiName,
-                "entry.cgi",
-                3,
-                FileStationSessionName);
-
-            FileStationCreateFolderApi = new ApiInfo(
-                ApiNames.FileStationCreateFolderApiName,
-                "entry.cgi",
-                2,
-                FileStationSessionName);
-
-            FileStationExtractApi = new ApiInfo(
-                ApiNames.FileStationExtractApiName,
-                "entry.cgi",
-                2,
-                FileStationSessionName);
-
-            FileStationListApi = new ApiInfo(
-                ApiNames.FileStationListApiName,
-                "entry.cgi",
-                2,
-                FileStationSessionName);
-
-            FileStationUploadApi = new ApiInfo(
-                ApiNames.FileStationUploadApiName,
-                "entry.cgi",
-                2,
-                FileStationSessionName);
-
-            FileStationSearchApi = new ApiInfo(
-                ApiNames.FileStationSearchApiName,
-                "entry.cgi",
-                2,
-                FileStationSessionName);
+            return new DefaultApisInfo
+            {
+                AuthApi = { Path = infoQueryResponse.AuthApi.Path },
+                DownloadStationTaskApi = { Path = infoQueryResponse.DownloadStationTaskApi.Path },
+                FileStationCopyMoveApi ={ Path = infoQueryResponse.FileStationCopyMoveApi.Path },
+                FileStationCreateFolderApi = { Path = infoQueryResponse.FileStationCreateFolderApi.Path },
+                FileStationExtractApi = { Path = infoQueryResponse.FileStationExtractApi.Path },
+                FileStationListApi = { Path = infoQueryResponse.FileStationListApi.Path },
+                FileStationUploadApi = { Path = infoQueryResponse.FileStationUploadApi.Path },
+                FileStationSearchApi = { Path = infoQueryResponse.FileStationSearchApi.Path },
+            };
         }
 
-        public IApiInfo InfoApi { get; set; }
+        public IApiInfo InfoApi { get; set; } = new ApiInfo(
+            ApiNames.InfoApiName,
+            "query.cgi",
+            1);
 
-        public IApiInfo AuthApi { get; set; }
+        public IApiInfo AuthApi { get; set; } = new ApiInfo(
+            ApiNames.AuthApiName,
+            "entry.cgi",
+            6);
 
-        public IApiInfo DownloadStationTaskApi { get; set; }
+        public IApiInfo DownloadStationTaskApi { get; set; } = new ApiInfo(
+            ApiNames.DownloadStationTaskApiName,
+            "DownloadStation/task.cgi",
+            1,
+            DownloadStationSessionName);
 
-        public IApiInfo FileStationCopyMoveApi { get; set; }
+        public IApiInfo FileStationCopyMoveApi { get; set; } = new ApiInfo(
+            ApiNames.FileStationCopyMoveApiName,
+            "entry.cgi",
+            3,
+            FileStationSessionName);
 
-        public IApiInfo FileStationCreateFolderApi { get; set; }
+        public IApiInfo FileStationCreateFolderApi { get; set; } = new ApiInfo(
+            ApiNames.FileStationCreateFolderApiName,
+            "entry.cgi",
+            2,
+            FileStationSessionName);
 
-        public IApiInfo FileStationExtractApi { get; set; }
+        public IApiInfo FileStationExtractApi { get; set; } = new ApiInfo(
+            ApiNames.FileStationExtractApiName,
+            "entry.cgi",
+            2,
+            FileStationSessionName);
 
-        public IApiInfo FileStationListApi { get; set; }
+        public IApiInfo FileStationListApi { get; set; } = new ApiInfo(
+            ApiNames.FileStationListApiName,
+            "entry.cgi",
+            2,
+            FileStationSessionName);
 
-        public IApiInfo FileStationUploadApi { get; set; }
-        
-        public IApiInfo FileStationSearchApi { get; set; }
+        public IApiInfo FileStationUploadApi { get; set; } = new ApiInfo(
+            ApiNames.FileStationUploadApiName,
+            "entry.cgi",
+            2,
+            FileStationSessionName);
+
+        public IApiInfo FileStationSearchApi { get; set; } = new ApiInfo(
+            ApiNames.FileStationSearchApiName,
+            "entry.cgi",
+            2,
+            FileStationSessionName);
     }
 }
