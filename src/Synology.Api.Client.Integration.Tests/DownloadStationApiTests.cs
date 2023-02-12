@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Synology.Api.Client.Apis.DownloadStation.Task.Models;
@@ -79,16 +80,22 @@ namespace Synology.Api.Client.Integration.Tests
                 .DownloadStationApi()
                 .TaskEndpoint()
                 .ListAsync();
-            
+
             var createResponse = await _fixture
                 .Client
                 .DownloadStationApi()
                 .TaskEndpoint()
                 .CreateAsync(request);
 
+            var listTaskAfterAdd = _fixture
+                .Client
+                .DownloadStationApi()
+                .TaskEndpoint()
+                .ListAsync();
+            
             var delRequest = new DownloadStationTaskDeleteRequest
             {
-                Ids = new List<string> {"123"},
+                Ids = new List<string> {listTaskAfterAdd.Result.Tasks.Last().Id},
                 ForceComplete = false
             };
 
@@ -103,8 +110,8 @@ namespace Synology.Api.Client.Integration.Tests
                 .DownloadStationApi()
                 .TaskEndpoint()
                 .ListAsync();
-            
-            // ToDo: Добавить проверку что количество раздач не поменялось 
+
+            Assert.Equal(listTaskBefore.Result.Total, listTaskAfter.Result.Total);
         }
 
         [Fact]

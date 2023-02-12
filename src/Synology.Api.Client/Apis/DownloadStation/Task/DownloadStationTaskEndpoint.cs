@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Synology.Api.Client.ApiDescription;
@@ -57,7 +58,7 @@ namespace Synology.Api.Client.Apis.DownloadStation.Task
             return _synologyHttpClient.GetAsync<DownloadStationTaskListResponse>(_apiInfo, "list", queryParams, _session);
         }
 
-        public Task<DownloadStationTaskDeleteResponse> DeleteAsync(DownloadStationTaskDeleteRequest data)
+        public Task<IEnumerable<DownloadStationTaskDeleteResponse>> DeleteAsync(DownloadStationTaskDeleteRequest data)
         {
             string idsString = string.Join(",", data.Ids);
             var queryParam = new
@@ -66,7 +67,7 @@ namespace Synology.Api.Client.Apis.DownloadStation.Task
                 force_complete = data.ForceComplete
             };
 
-            return _synologyHttpClient.GetAsync<DownloadStationTaskDeleteResponse>(
+            return _synologyHttpClient.GetAsync<IEnumerable<DownloadStationTaskDeleteResponse>>(
                 _apiInfo,
                 "delete",
                 queryParam,
