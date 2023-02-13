@@ -15,25 +15,19 @@ namespace Synology.Api.Client.ApiDescription
         /// </summary>
         /// <param name="infoQueryResponse">The response from the InfoApi().QueryAsync() method.</param>
         /// <returns>The updated ApisInfo object.</returns>
-        public static DefaultApisInfo FromInfoQueryResponse(InfoQueryResponse infoQueryResponse)
+        public static DefaultApisInfo FromInfoQueryResponse(IApisInfo current, InfoQueryResponse infoQueryResponse)
         {
-            var result = new DefaultApisInfo
+            return new DefaultApisInfo
             {
-                AuthApi = { Path = infoQueryResponse.AuthApi.Path },
-                FileStationCopyMoveApi = { Path = infoQueryResponse.FileStationCopyMoveApi.Path },
-                FileStationCreateFolderApi = { Path = infoQueryResponse.FileStationCreateFolderApi.Path },
-                FileStationExtractApi = { Path = infoQueryResponse.FileStationExtractApi.Path },
-                FileStationListApi = { Path = infoQueryResponse.FileStationListApi.Path },
-                FileStationUploadApi = { Path = infoQueryResponse.FileStationUploadApi.Path },
-                FileStationSearchApi = { Path = infoQueryResponse.FileStationSearchApi.Path },
+                AuthApi = { Path = infoQueryResponse.AuthApi?.Path ?? current.AuthApi.Path },
+                DownloadStationTaskApi = { Path = infoQueryResponse.DownloadStationTaskApi?.Path ?? current.DownloadStationTaskApi.Path },
+                FileStationCopyMoveApi = { Path = infoQueryResponse.FileStationCopyMoveApi?.Path ?? current.FileStationCopyMoveApi.Path },
+                FileStationCreateFolderApi = { Path = infoQueryResponse.FileStationCreateFolderApi?.Path ?? current.FileStationCreateFolderApi.Path },
+                FileStationExtractApi = { Path = infoQueryResponse.FileStationExtractApi?.Path ?? current.FileStationExtractApi.Path },
+                FileStationListApi = { Path = infoQueryResponse.FileStationListApi?.Path ?? current.FileStationListApi.Path },
+                FileStationUploadApi = { Path = infoQueryResponse.FileStationUploadApi?.Path ?? current.FileStationUploadApi.Path },
+                FileStationSearchApi = { Path = infoQueryResponse.FileStationSearchApi?.Path ?? current.FileStationSearchApi.Path },
             };
-
-            if (infoQueryResponse.DownloadStationTaskApi != null)
-            {
-                result.DownloadStationTaskApi.Path = infoQueryResponse.DownloadStationTaskApi.Path;
-            }
-
-            return result;
         }
 
         public IApiInfo InfoApi { get; set; } = new ApiInfo(

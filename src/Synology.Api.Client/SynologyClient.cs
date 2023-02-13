@@ -98,7 +98,7 @@ namespace Synology.Api.Client
 
             Session = null;
         }
-        
+
         /// <summary>
         /// Updates the API descriptions using the response from the InfoApi endpoint.
         /// </summary>
@@ -106,7 +106,7 @@ namespace Synology.Api.Client
         {
             var infoQueryResponse = await InfoApi().QueryAsync();
 
-            ApisInfo = DefaultApisInfo.FromInfoQueryResponse(infoQueryResponse);
+            ApisInfo = DefaultApisInfo.FromInfoQueryResponse(ApisInfo, infoQueryResponse);
         }
     }
 }
