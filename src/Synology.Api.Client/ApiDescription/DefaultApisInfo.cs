@@ -17,17 +17,23 @@ namespace Synology.Api.Client.ApiDescription
         /// <returns>The updated ApisInfo object.</returns>
         public static DefaultApisInfo FromInfoQueryResponse(InfoQueryResponse infoQueryResponse)
         {
-            return new DefaultApisInfo
+            var result = new DefaultApisInfo
             {
                 AuthApi = { Path = infoQueryResponse.AuthApi.Path },
-                DownloadStationTaskApi = { Path = infoQueryResponse.DownloadStationTaskApi.Path },
-                FileStationCopyMoveApi ={ Path = infoQueryResponse.FileStationCopyMoveApi.Path },
+                FileStationCopyMoveApi = { Path = infoQueryResponse.FileStationCopyMoveApi.Path },
                 FileStationCreateFolderApi = { Path = infoQueryResponse.FileStationCreateFolderApi.Path },
                 FileStationExtractApi = { Path = infoQueryResponse.FileStationExtractApi.Path },
                 FileStationListApi = { Path = infoQueryResponse.FileStationListApi.Path },
                 FileStationUploadApi = { Path = infoQueryResponse.FileStationUploadApi.Path },
                 FileStationSearchApi = { Path = infoQueryResponse.FileStationSearchApi.Path },
             };
+
+            if (infoQueryResponse.DownloadStationTaskApi != null)
+            {
+                result.DownloadStationTaskApi.Path = infoQueryResponse.DownloadStationTaskApi.Path;
+            }
+
+            return result;
         }
 
         public IApiInfo InfoApi { get; set; } = new ApiInfo(
