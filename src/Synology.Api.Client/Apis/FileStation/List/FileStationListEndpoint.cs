@@ -24,6 +24,16 @@ namespace Synology.Api.Client.Apis.FileStation.List
         {
             var additionalParams = new[] { "real_path", "owner", "time" };
 
+            string patternValue = null;
+            if (fileStationListRequest.Patterns?.Count() == 1)
+            {
+                patternValue = fileStationListRequest.Patterns.First();
+            }
+            else if (fileStationListRequest.Patterns?.Count() > 1)
+            {
+                patternValue = string.Join(",", fileStationListRequest.Patterns);
+            }
+
             var queryParams = new
             {
                 folder_path = fileStationListRequest.FolderPath,
@@ -31,9 +41,7 @@ namespace Synology.Api.Client.Apis.FileStation.List
                 limit = fileStationListRequest.Limit,
                 sort_by = fileStationListRequest.SortBy ?? FileStationListSortByEnumeration.Name,
                 sort_direction = fileStationListRequest.SortDirection ?? "asc",
-                pattern = fileStationListRequest.Patterns?.Any() == true
-                    ? fileStationListRequest.Patterns.ToArray<string>().ToCommaSeparatedAroundBrackets()
-                    : null,
+                pattern = patternValue,
                 filetype = fileStationListRequest.FileType ?? "all",
                 goto_path = fileStationListRequest.GoToPath,
                 additional = additionalParams.ToCommaSeparatedAroundBrackets()
