@@ -22,7 +22,7 @@ namespace Synology.Api.Client.Apis.FileStation.List
 
         public Task<FileStationListResponse> ListAsync(FileStationListRequest fileStationListRequest)
         {
-            var additionalParams = new[] { "real_path", "owner", "time" };
+            var additionalParams = new[] { "real_path", "owner", "time", "size" };
 
             string patternValue = null;
             if (fileStationListRequest.Patterns?.Count() == 1)
