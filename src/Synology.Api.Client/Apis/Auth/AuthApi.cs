@@ -43,6 +43,11 @@ namespace Synology.Api.Client.Apis.Auth
 
         public Task<BaseApiResponse> LogoutAsync(string sid)
         {
+            if (string.IsNullOrWhiteSpace(sid))
+            {
+                throw new ArgumentNullException(nameof(sid));
+            }
+
             return _synologyHttpClient.GetAsync<BaseApiResponse>(_apiInfo, "logout", new Dictionary<string, string> { { "_sid", sid } });
         }
     }

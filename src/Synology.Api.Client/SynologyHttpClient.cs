@@ -25,7 +25,9 @@ namespace Synology.Api.Client
 
         public async Task<T> GetAsync<T>(IApiInfo apiInfo, string apiMethod, Dictionary<string, string> queryParams, ISynologySession session = null)
         {
-            var uriBuilder = new UriBuilder($"{_httpClient.BaseAddress}/{apiInfo.Path}");
+            var uri = new Uri(_httpClient.BaseAddress, apiInfo.Path);
+            var uriBuilder = new UriBuilder(uri);
+
             uriBuilder.Query = BuildQueryString(uriBuilder, apiInfo, apiMethod, queryParams, session);
 
             using var response = await _httpClient.GetAsync(uriBuilder.Uri);
