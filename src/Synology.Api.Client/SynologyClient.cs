@@ -100,7 +100,7 @@ namespace Synology.Api.Client
         {
             var infoQueryResponse = await InfoApi().QueryAsync();
 
-            ApisInfo = DefaultApisInfo.FromInfoQueryResponse(infoQueryResponse);
+            ApisInfo = DefaultApisInfo.FromInfoQueryResponse(ApisInfo, infoQueryResponse);
         }
     }
 }
