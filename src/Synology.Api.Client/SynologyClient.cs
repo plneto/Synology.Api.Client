@@ -32,7 +32,7 @@ namespace Synology.Api.Client
 
             _synologyHttpClient = new SynologyHttpClient(httpClient);
 
-            UpdateApisInfoAsync().Wait();
+            Task.Run(() => UpdateApisInfoAsync()).Wait();
         }
 
         public IApisInfo ApisInfo { get; set; } = new DefaultApisInfo();
