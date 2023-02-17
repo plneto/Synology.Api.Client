@@ -29,7 +29,8 @@ namespace Synology.Api.Client.Tests
             _fixture = new Fixture();
             _apiInfo = _synologyFixture.ApisInfo.AuthApi;
             _mockHtttp = new MockHttpMessageHandler();
-            _baseUriWithApiPath = new Uri(_synologyFixture.BaseUri, _apiInfo.Path);
+
+            _baseUriWithApiPath = _synologyFixture.GetBaseUriWithPath(_apiInfo.Path);
         }
 
         public void Dispose()

@@ -25,7 +25,7 @@ namespace Synology.Api.Client
 
         public async Task<T> GetAsync<T>(IApiInfo apiInfo, string apiMethod, Dictionary<string, string> queryParams, ISynologySession session = null)
         {
-            var uri = new Uri(_httpClient.BaseAddress, apiInfo.Path);
+            var uri = GetBaseUri(_httpClient.BaseAddress, apiInfo.Path);
             var uriBuilder = new UriBuilder(uri);
 
             uriBuilder.Query = BuildQueryString(uriBuilder, apiInfo, apiMethod, queryParams, session);
@@ -36,7 +36,7 @@ namespace Synology.Api.Client
 
         public async Task<T> PostAsync<T>(IApiInfo apiInfo, string apiMethod, HttpContent content, ISynologySession session = null)
         {
-            var uri = new Uri(_httpClient.BaseAddress, apiInfo.Path);
+            var uri = GetBaseUri(_httpClient.BaseAddress, apiInfo.Path);
             var uriBuilder = new UriBuilder(uri);
 
             if (session != null)
@@ -50,6 +50,14 @@ namespace Synology.Api.Client
 
             using var response = await _httpClient.PostAsync(uriBuilder.Uri, content);
             return await HandleSynologyResponse<T>(response, apiInfo, apiMethod);
+        }
+
+        private static Uri GetBaseUri(Uri baseAddress, string apiPath)
+        {
+            var baseUri = baseAddress.ToString().TrimEnd('/');
+            apiPath = apiPath.TrimStart('/');
+
+            return new Uri(baseUri + "/" + apiPath);
         }
 
         private string BuildQueryString(UriBuilder uriBuilder, IApiInfo apiInfo, string apiMethod, Dictionary<string, string> queryParams, ISynologySession session = null)

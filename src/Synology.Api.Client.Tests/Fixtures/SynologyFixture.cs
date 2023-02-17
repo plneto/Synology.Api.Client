@@ -15,5 +15,10 @@ namespace Synology.Api.Client.Tests.Fixtures
         public string BaseUrl => "http://dsm-url.com/webapi";
 
         public Uri BaseUri => new Uri(BaseUrl);
+
+        public Uri GetBaseUriWithPath(string apiPath)
+        {
+            return new Uri(BaseUrl.TrimEnd('/') + "/" + apiPath.TrimStart('/'));
+        }
     }
 }
