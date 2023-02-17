@@ -57,7 +57,7 @@ namespace Synology.Api.Client.Tests
 
         #region helper methods
 
-        private IFileStationUploadEndpoint GetFileStationUploadEndpoint()
+        private IFileStationUploadEndpoint GetFileStationUploadEndpoint(IApiInfo apiInfoToUse = null)
         {
             var httpClient = _mockHtttp.ToHttpClient();
             httpClient.BaseAddress = _synologyFixture.BaseUri;
@@ -66,7 +66,7 @@ namespace Synology.Api.Client.Tests
 
             var result = new FileStationUploadEndpoint(
                 synologyHttpClient,
-                _apiInfo,
+                apiInfoToUse ?? _apiInfo,
                 _session,
                 _fileSystem);
 
@@ -74,6 +74,8 @@ namespace Synology.Api.Client.Tests
         }
 
         #endregion
+
+        #region FilePath
 
         [Fact]
         public async Task Upload_FilePath_ShouldCallCorrectUrl()
@@ -134,6 +136,10 @@ namespace Synology.Api.Client.Tests
             // Assert
             await Assert.ThrowsAsync<ArgumentNullException>(actDelegate);
         }
+
+        #endregion
+
+        #region Bytes
 
         [Fact]
         public async Task Upload_Bytes_ShouldCallCorrectUrl()
@@ -215,6 +221,8 @@ namespace Synology.Api.Client.Tests
             await Assert.ThrowsAsync<ArgumentNullException>(actDelegate);
         }
 
+        #endregion
+
         [Fact]
         public async Task Upload_DestinationNotFound_ShouldDisplayCorrectError()
         {
@@ -248,6 +256,49 @@ namespace Synology.Api.Client.Tests
             // Assert
             var apiException = await Assert.ThrowsAsync<SynologyApiException>(actDelegate);
             apiException.ErrorDescription.Should().BeEquivalentTo(expectedErrorMessage);
+        }
+
+        [Theory]
+        [InlineData(2, true, "true")]
+        [InlineData(2, false, "false")]
+        [InlineData(3, true, "overwrite")]
+        [InlineData(3, false, "skip")]
+        public async Task Upload_DifferentApiVersion_ShouldSendCorrectValuesForOverwriteAndVersion(int apiVersion, bool overwrite, string overwriteValue)
+        {
+            // Arrange
+            var apiInfo = new ApiInfo(_apiInfo.Name, _apiInfo.Path, apiVersion, _apiInfo.SessionName);
+
+            var expectedRequestContentApiVersion = $"""
+                Content-Disposition: form-data; name="version"
+
+                {apiVersion}
+                """;
+            var expectedRequestContentOverwrite = $"""
+                Content-Disposition: form-data; name="overwrite"
+
+                {overwriteValue}
+                """;
+
+            var expectedResponse = new ApiResponse<FileStationUploadResponse>
+            {
+                Success = true,
+                Data = _fixture.Create<FileStationUploadResponse>()
+            };
+
+            //expect certain request to server
+            var request = _mockHtttp.Expect(System.Net.Http.HttpMethod.Post, _baseUriWithApiPath.ToString())
+                .WithPartialContent(expectedRequestContentApiVersion)
+                .WithPartialContent(expectedRequestContentOverwrite);
+
+            request.Respond(HttpStatusCode.OK, JsonContent.Create(expectedResponse));
+
+            var fileStationUploadEndpoint = GetFileStationUploadEndpoint(apiInfo);
+
+            // Act
+            var result = await fileStationUploadEndpoint.UploadAsync(FILEPATH_TO_UPLOAD, _destination, overwrite);
+
+            // Assert
+            result.Should().BeEquivalentTo(expectedResponse.Data);
         }
     }
 }

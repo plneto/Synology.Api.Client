@@ -44,6 +44,7 @@ namespace Synology.Api.Client
                 uriBuilder.Query = $"_sid={session.Sid}";
             }
 
+            //just for debugging to check values more easily
             //var headersAsString = content.Headers.ToString();
             //var contentAsString = await content.ReadAsStringAsync();
 
