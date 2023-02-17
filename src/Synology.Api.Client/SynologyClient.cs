@@ -38,7 +38,7 @@ namespace Synology.Api.Client
 
             _synologyHttpClient = new SynologyHttpClient(flurlClient);
 
-            UpdateApisInfoAsync().Wait();
+            Task.Run(() => UpdateApisInfoAsync()).Wait();
         }
 
         public IApisInfo ApisInfo { get; set; } = new DefaultApisInfo();
