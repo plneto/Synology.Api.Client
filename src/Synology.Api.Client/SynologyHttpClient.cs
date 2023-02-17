@@ -36,7 +36,8 @@ namespace Synology.Api.Client
 
         public async Task<T> PostAsync<T>(IApiInfo apiInfo, string apiMethod, HttpContent content, ISynologySession session = null)
         {
-            var uriBuilder = new UriBuilder($"{_httpClient.BaseAddress}/{apiInfo.Path}");
+            var uri = new Uri(_httpClient.BaseAddress, apiInfo.Path);
+            var uriBuilder = new UriBuilder(uri);
 
             if (session != null)
             {

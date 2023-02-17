@@ -52,7 +52,7 @@ namespace Synology.Api.Client.Tests
         #endregion
 
         [Fact]
-        public async void Login_CallsCorrectUrl()
+        public async void Login_ShouldCallCorrectUrl()
         {
             // Arrange
             var username = _fixture.Create<string>();

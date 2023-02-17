@@ -36,6 +36,16 @@ namespace Synology.Api.Client.Apis.FileStation.Upload
         /// <inheritdoc />
         public Task<FileStationUploadResponse> UploadAsync(string filePath, string destination, bool overwrite)
         {
+            if (string.IsNullOrWhiteSpace(filePath))
+            {
+                throw new ArgumentNullException(nameof(filePath));
+            }
+
+            if (string.IsNullOrWhiteSpace(destination))
+            {
+                throw new ArgumentNullException(nameof(destination));
+            }
+
             var filename = _fileSystem.Path.GetFileName(filePath);
             var fileStream = _fileSystem.File.OpenRead(filePath);
 
@@ -47,8 +57,22 @@ namespace Synology.Api.Client.Apis.FileStation.Upload
         /// <inheritdoc />
         public Task<FileStationUploadResponse> UploadAsync(byte[] bytes, string filename, string destination, bool overwrite)
         {
-            var memoryStream = new MemoryStream(bytes);
+            if (bytes is null)
+            {
+                throw new ArgumentNullException(nameof(bytes));
+            }
 
+            if (string.IsNullOrWhiteSpace(filename))
+            {
+                throw new ArgumentNullException(nameof(filename));
+            }
+
+            if (string.IsNullOrWhiteSpace(destination))
+            {
+                throw new ArgumentNullException(nameof(destination));
+            }
+
+            var memoryStream = new MemoryStream(bytes);
             var fileContent = GetFileContent(memoryStream, filename);
 
             return SendRequest(fileContent, destination, overwrite);
