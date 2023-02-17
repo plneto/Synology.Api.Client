@@ -23,7 +23,17 @@ namespace Synology.Api.Client.Apis.FileStation.List
 
         public Task<FileStationListResponse> ListAsync(FileStationListRequest fileStationListRequest)
         {
-            var additionalParams = new[] { "real_path", "owner", "time" };
+            var additionalParams = new[] { "real_path", "owner", "time", "size" };
+
+            string patternValue = null;
+            if (fileStationListRequest.Patterns?.Count() == 1)
+            {
+                patternValue = fileStationListRequest.Patterns.First();
+            }
+            else if (fileStationListRequest.Patterns?.Count() > 1)
+            {
+                patternValue = string.Join(",", fileStationListRequest.Patterns);
+            }
 
             var queryParams = new Dictionary<string, string>
             {
@@ -32,9 +42,7 @@ namespace Synology.Api.Client.Apis.FileStation.List
                 { "limit", fileStationListRequest.Limit.ToString() },
                 { "sort_by", fileStationListRequest.SortBy ?? FileStationListSortByEnumeration.Name },
                 { "sort_direction", fileStationListRequest.SortDirection ?? "asc" },
-                { "pattern", fileStationListRequest.Patterns?.Any() == true
-                    ? fileStationListRequest.Patterns.ToArray<string>().ToCommaSeparatedAroundBrackets()
-                    : null },
+                { "pattern", patternValue },
                 { "filetype", fileStationListRequest.FileType ?? "all" },
                 { "goto_path", fileStationListRequest.GoToPath },
                 { "additional", additionalParams.ToCommaSeparatedAroundBrackets() }
