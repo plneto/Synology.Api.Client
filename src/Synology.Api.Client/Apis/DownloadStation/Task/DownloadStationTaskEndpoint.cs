@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.IO.Abstractions;
+using System.Threading.Tasks;
 using Synology.Api.Client.ApiDescription;
 using Synology.Api.Client.Apis.DownloadStation.Task.Models;
 using Synology.Api.Client.Session;
@@ -11,6 +12,7 @@ namespace Synology.Api.Client.Apis.DownloadStation.Task
         private readonly ISynologyHttpClient _synologyHttpClient;
         private readonly IApiInfo _apiInfo;
         private readonly ISynologySession _session;
+        private readonly IFileSystem _fileSystem = new FileSystem();
 
         public DownloadStationTaskEndpoint(ISynologyHttpClient synologyHttpClient, IApiInfo apiInfo, ISynologySession session)
         {
@@ -31,19 +33,10 @@ namespace Synology.Api.Client.Apis.DownloadStation.Task
             var queryParams = new
             {
                 uri = request.Uri,
-                file = request.File,
-                username = request.Username,
-                password = request.Password,
-                unzip_password = request.UnzipPassword,
                 destination = request.Destination
             };
+            _apiInfo.Version = 3;
 
-            if (request.Destination != null)
-                _apiInfo.Version = 2;
-
-            if (request.Uri != null)
-                _apiInfo.Version = 3;
-            
             return _synologyHttpClient.GetAsync<BaseApiResponse>(_apiInfo, "create", queryParams, session: _session);
         }
 
