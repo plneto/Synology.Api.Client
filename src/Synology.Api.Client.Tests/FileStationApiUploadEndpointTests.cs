@@ -268,16 +268,20 @@ namespace Synology.Api.Client.Tests
             // Arrange
             var apiInfo = new ApiInfo(_apiInfo.Name, _apiInfo.Path, apiVersion, _apiInfo.SessionName);
 
-            var expectedRequestContentApiVersion = $"""
-                Content-Disposition: form-data; name="version"
+            var expectedRequestContentApiVersion = $"Content-Disposition: form-data; name=\"version\"{Environment.NewLine}{Environment.NewLine}{apiVersion}";
+            var expectedRequestContentOverwrite = $"Content-Disposition: form-data; name=\"overwrite\"{Environment.NewLine}{Environment.NewLine}{overwriteValue}";
 
-                {apiVersion}
-                """;
-            var expectedRequestContentOverwrite = $"""
-                Content-Disposition: form-data; name="overwrite"
+            //uses raw string literals, but seems to break tests in CI
+            //var expectedRequestContentApiVersion = $"""
+            //    Content-Disposition: form-data; name="version"
 
-                {overwriteValue}
-                """;
+            //    {apiVersion}
+            //    """;
+            //var expectedRequestContentOverwrite = $"""
+            //    Content-Disposition: form-data; name="overwrite"
+
+            //    {overwriteValue}
+            //    """;
 
             var expectedResponse = new ApiResponse<FileStationUploadResponse>
             {
