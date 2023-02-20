@@ -1,6 +1,5 @@
 ﻿using Flurl.Http;
 using Synology.Api.Client.ApiDescription;
-using Synology.Api.Client.Apis;
 
 namespace Synology.Api.Client.Tests.Fixtures
 {

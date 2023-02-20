@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using FluentAssertions;
 using Synology.Api.Client.Apis.FileStation.List.Models;
@@ -39,6 +40,49 @@ namespace Synology.Api.Client.Integration.Tests
             // arrange
             var folderPath = "/shared_folder/dir";
             var request = new FileStationListRequest(folderPath);
+
+            // act
+            var listResponse = await _fixture
+                .Client
+                .FileStationApi()
+                .ListEndpoint()
+                .ListAsync(request);
+
+            // assert
+            listResponse.Should().NotBeNull();
+        }
+
+        [Fact]
+        public async void FileStationApi_List_SingleFile_Success()
+        {
+            // arrange
+            var folderPath = "/shared_folder/dir";
+            var request = new FileStationListRequest(folderPath, patterns: new List<string>
+            {
+                "existingFile.txt"
+            });
+
+            // act
+            var listResponse = await _fixture
+                .Client
+                .FileStationApi()
+                .ListEndpoint()
+                .ListAsync(request);
+
+            // assert
+            listResponse.Should().NotBeNull();
+        }
+
+        [Fact]
+        public async void FileStationApi_List_MultipleFiles_Success()
+        {
+            // arrange
+            var folderPath = "/shared_folder/dir";
+            var request = new FileStationListRequest(folderPath, patterns: new List<string>
+            {
+                "existingFile.txt",
+                "another_existing_file.md"
+            });
 
             // act
             var listResponse = await _fixture
@@ -220,7 +264,7 @@ namespace Synology.Api.Client.Integration.Tests
                 "/shared_folder/dir/new-dir",
                 "/shared_folder/dir2/new-dir"
             };
-            
+
             // act
             var createFolderResponse = await _fixture
                 .Client
@@ -250,13 +294,13 @@ namespace Synology.Api.Client.Integration.Tests
             // assert
             startSearchResponse.TaskId.Should().NotBeNullOrWhiteSpace();
         }
-        
+
         [Fact]
         public async void FileStation_SearchList_Success()
         {
             // arrange
             var taskId = ""; // TODO: set task id
-            
+
             // act
             var listSearchResponse = await _fixture
                 .Client

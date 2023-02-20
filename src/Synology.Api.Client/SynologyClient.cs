@@ -4,7 +4,6 @@ using System.Security;
 using System.Threading.Tasks;
 using Flurl.Http;
 using Synology.Api.Client.ApiDescription;
-using Synology.Api.Client.Apis;
 using Synology.Api.Client.Apis.Auth;
 using Synology.Api.Client.Apis.DownloadStation;
 using Synology.Api.Client.Apis.FileStation;
@@ -16,7 +15,6 @@ namespace Synology.Api.Client
 {
     public class SynologyClient : ISynologyClient
     {
-        private readonly IFlurlClient _flurlClient;
         private readonly ISynologyHttpClient _synologyHttpClient;
 
         public SynologyClient(string dsmUrl)
@@ -31,19 +29,19 @@ namespace Synology.Api.Client
                 throw new ArgumentNullException(nameof(dsmUrl));
             }
 
-            _flurlClient = new FlurlClient(httpClient)
+            var flurlClient = new FlurlClient(httpClient)
             {
                 BaseUrl = $"{dsmUrl.TrimEnd('/')}/webapi"
             };
 
-            _flurlClient.AllowAnyHttpStatus();
+            flurlClient.AllowAnyHttpStatus();
 
-            _synologyHttpClient = new SynologyHttpClient(_flurlClient);
+            _synologyHttpClient = new SynologyHttpClient(flurlClient);
 
-            ApisInfo = new DefaultApisInfo();
+            Task.Run(() => UpdateApisInfoAsync()).Wait();
         }
 
-        public IApisInfo ApisInfo { get; set; }
+        public IApisInfo ApisInfo { get; set; } = new DefaultApisInfo();
 
         public ISynologySession Session { get; set; }
 
@@ -99,6 +97,16 @@ namespace Synology.Api.Client
             await AuthApi().LogoutAsync(Session.Sid);
 
             Session = null;
+        }
+
+        /// <summary>
+        /// Updates the API descriptions using the response from the InfoApi endpoint.
+        /// </summary>
+        private async Task UpdateApisInfoAsync()
+        {
+            var infoQueryResponse = await InfoApi().QueryAsync();
+
+            ApisInfo = DefaultApisInfo.FromInfoQueryResponse(ApisInfo, infoQueryResponse);
         }
     }
 }
