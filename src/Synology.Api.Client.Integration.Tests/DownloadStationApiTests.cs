@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Synology.Api.Client.Apis.DownloadStation.Task.Models;
@@ -47,6 +49,51 @@ namespace Synology.Api.Client.Integration.Tests
             
             // assert
             createResponse.Should().NotBeNull();
+        }
+
+        [Fact]
+        public async Task DownloadStationApi_DownloadStation_DeleteTask()
+        {
+            var request = new DownloadStationTaskCreateRequest(
+                uri: "magnet:?xt=urn:btih:fef84077088ca87ffd8afd644d0ef957d96243c3&dn=archlinux-2023.01.01-x86_64.iso");
+
+            var listTaskBefore = _fixture
+                .Client
+                .DownloadStationApi()
+                .TaskEndpoint()
+                .ListAsync();
+
+            var createResponse = await _fixture
+                .Client
+                .DownloadStationApi()
+                .TaskEndpoint()
+                .CreateAsync(request);
+
+            var listTaskAfterAdd = _fixture
+                .Client
+                .DownloadStationApi()
+                .TaskEndpoint()
+                .ListAsync();
+            
+            var delRequest = new DownloadStationTaskDeleteRequest
+            {
+                Ids = new List<string> {listTaskAfterAdd.Result.Tasks.Last().Id},
+                ForceComplete = false
+            };
+
+            var deleteResponse = await _fixture
+                .Client
+                .DownloadStationApi()
+                .TaskEndpoint()
+                .DeleteAsync(delRequest);
+            
+            var listTaskAfter = _fixture
+                .Client
+                .DownloadStationApi()
+                .TaskEndpoint()
+                .ListAsync();
+
+            Assert.Equal(listTaskBefore.Result.Total, listTaskAfter.Result.Total);
         }
 
         [Fact]

@@ -1,4 +1,7 @@
-﻿using System.IO.Abstractions;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.IO.Abstractions;
 using System.Threading.Tasks;
 using Synology.Api.Client.ApiDescription;
 using Synology.Api.Client.Apis.DownloadStation.Task.Models;
@@ -12,7 +15,6 @@ namespace Synology.Api.Client.Apis.DownloadStation.Task
         private readonly ISynologyHttpClient _synologyHttpClient;
         private readonly IApiInfo _apiInfo;
         private readonly ISynologySession _session;
-        private readonly IFileSystem _fileSystem = new FileSystem();
 
         public DownloadStationTaskEndpoint(ISynologyHttpClient synologyHttpClient, IApiInfo apiInfo, ISynologySession session)
         {
@@ -48,6 +50,22 @@ namespace Synology.Api.Client.Apis.DownloadStation.Task
             };
 
             return _synologyHttpClient.GetAsync<DownloadStationTaskListResponse>(_apiInfo, "list", queryParams, _session);
+        }
+
+        public Task<IEnumerable<DownloadStationTaskDeleteResponse>> DeleteAsync(DownloadStationTaskDeleteRequest data)
+        {
+            string idsString = string.Join(",", data.Ids);
+            var queryParam = new
+            {
+                id = idsString,
+                force_complete = data.ForceComplete
+            };
+
+            return _synologyHttpClient.GetAsync<IEnumerable<DownloadStationTaskDeleteResponse>>(
+                _apiInfo,
+                "delete",
+                queryParam,
+                _session);
         }
     }
 }
