@@ -1,6 +1,4 @@
-﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Synology.Api.Client.ApiDescription;
 using Synology.Api.Client.Apis.DownloadStation.Task.Models;
@@ -24,6 +22,8 @@ namespace Synology.Api.Client.Apis.DownloadStation.Task
         
         /// <summary>
         /// No specific response. It returns an empty success response if completed without error.
+        /// Remark: At the moment only the uri variant works (the other parameters are not used).
+        /// This is due to errors in the official synology documentation. 
         /// </summary>
         /// <param name="request">Request parameters</param>
         /// <returns></returns>
@@ -32,19 +32,10 @@ namespace Synology.Api.Client.Apis.DownloadStation.Task
             var queryParams = new
             {
                 uri = request.Uri,
-                file = request.File,
-                username = request.Username,
-                password = request.Password,
-                unzip_password = request.UnzipPassword,
                 destination = request.Destination
             };
+            _apiInfo.Version = 3;
 
-            if (request.Destination != null)
-                _apiInfo.Version = 2;
-
-            if (request.Uri != null)
-                _apiInfo.Version = 3;
-            
             return _synologyHttpClient.GetAsync<BaseApiResponse>(_apiInfo, "create", queryParams, session: _session);
         }
 
