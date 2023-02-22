@@ -7,6 +7,7 @@ using AutoFixture;
 using FluentAssertions;
 using RichardSzalay.MockHttp;
 using Synology.Api.Client.ApiDescription;
+using Synology.Api.Client.Exceptions;
 using Synology.Api.Client.Shared.Models;
 using Synology.Api.Client.Tests.Fixtures;
 using Xunit;
@@ -87,6 +88,46 @@ namespace Synology.Api.Client.Tests
 
             // Assert
             result.Should().BeEquivalentTo(expectedResponse);
+        }
+
+        [Fact]
+        public async Task GetAsync_HasAdditionalErrors_ShouldReturnAdditionalErrors()
+        {
+            // Arrange
+            var errorPath = _fixture.Create<string>();
+            var expectedPath = _synologyFixture.BaseUrl.TrimEnd('/') + '/' + _apiInfo.Path;
+            var additionalErrorCode = 408;
+
+            var expectedResponse = new BaseApiResponse
+            {
+                Success = false,
+                Error = new Error
+                {
+                    Code = 1002,
+                    Errors = new List<Shared.Models.Errors>
+                    {
+                        new Shared.Models.Errors
+                        {
+                            Code = additionalErrorCode,
+                            Path = errorPath
+                        }
+                    }
+                }
+            };
+
+            var request = _mockHtttp.Expect(System.Net.Http.HttpMethod.Get, expectedPath)
+               .Respond(HttpStatusCode.OK, JsonContent.Create(expectedResponse));
+
+            var httpClient = _mockHtttp.ToHttpClient();
+            httpClient.BaseAddress = _synologyFixture.BaseUri;
+
+            ISynologyHttpClient synologyHttpclient = new SynologyHttpClient(httpClient);
+
+            // Act
+            var synologyApiException = await Assert.ThrowsAsync<SynologyApiException>(() => synologyHttpclient.GetAsync<BaseApiResponse>(_apiInfo, "apiMethod", new Dictionary<string, string>()));
+
+            // Assert
+            synologyApiException.Data.Count.Should().BeGreaterThan(0);
         }
     }
 }
