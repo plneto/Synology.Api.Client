@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Synology.Api.Client.ApiDescription;
@@ -62,6 +63,21 @@ namespace Synology.Api.Client.Apis.DownloadStation.Task
                 _apiInfo,
                 "delete",
                 queryParam,
+                _session);
+        }
+
+        public Task<IEnumerable<DownloadStationPauseResponse>> PauseAsync(DownloadStationPauseRequest data)
+        {
+            string idsString = string.Join(",", data.Ids);
+            var queryParam = new
+            {
+                id = idsString
+            };
+
+            return _synologyHttpClient.GetAsync<IEnumerable<DownloadStationPauseResponse>>(
+                _apiInfo, 
+                "pause", 
+                queryParam, 
                 _session);
         }
     }
