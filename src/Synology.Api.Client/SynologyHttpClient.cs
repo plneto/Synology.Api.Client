@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -90,7 +91,18 @@ namespace Synology.Api.Client
                     {
                         var errorDescription = GetErrorMessage(response?.Error?.Code ?? 0, apiInfo.Name);
 
-                        throw new SynologyApiException(apiInfo, apiMethod, response.Error.Code, errorDescription);
+                        var synologyApiException = new SynologyApiException(apiInfo, apiMethod, response.Error.Code, errorDescription);
+                        //add additional error details if present
+                        if (response?.Error?.Errors?.Any() ?? false)
+                        {
+                            foreach (var curError in response.Error.Errors)
+                            {
+                                var errorMessage = GetErrorMessage(curError.Code, apiInfo.Name);
+                                synologyApiException.Data.Add($"[{curError.Code}] {errorMessage}", curError.Path);
+                            }
+                        }
+
+                        throw synologyApiException;
                     }
 
                     if (typeof(T) == typeof(BaseApiResponse))
@@ -101,7 +113,7 @@ namespace Synology.Api.Client
                     return response.Data;
 
                 default:
-                    throw new UnexpectedResponseStatusException((HttpStatusCode)httpResponse.StatusCode); ;
+                    throw new UnexpectedResponseStatusException((HttpStatusCode)httpResponse.StatusCode);
             }
         }
 
