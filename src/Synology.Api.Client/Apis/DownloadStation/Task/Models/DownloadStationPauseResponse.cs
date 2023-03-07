@@ -1,6 +1,6 @@
 ﻿namespace Synology.Api.Client.Apis.DownloadStation.Task.Models
 {
-    public class DownloadStationTaskDeleteResponse
+    public class DownloadStationPauseResponse
     {
         public int Error { get; set; }
         
