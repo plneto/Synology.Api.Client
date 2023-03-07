@@ -12,5 +12,7 @@ namespace Synology.Api.Client.Apis.DownloadStation.Task
         Task<BaseApiResponse> CreateAsync(DownloadStationTaskCreateRequest request);
 
         Task<IEnumerable<DownloadStationTaskDeleteResponse>> DeleteAsync(DownloadStationTaskDeleteRequest data);
+
+        Task<IEnumerable<DownloadStationTaskResumeResponse>> ResumeAsync(params string[] ids);
     }
 }
