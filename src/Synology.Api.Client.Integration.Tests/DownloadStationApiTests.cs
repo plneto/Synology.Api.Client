@@ -114,16 +114,11 @@ namespace Synology.Api.Client.Integration.Tests
                 .TaskEndpoint()
                 .ListAsync();
 
-            var pauseRequest = new DownloadStationPauseRequest
-            {
-                Ids = new List<string> { listTask.Result.Tasks.Last().Id }
-            };
-
             var pauseResponse = _fixture
                 .Client
                 .DownloadStationApi()
                 .TaskEndpoint()
-                .PauseAsync(pauseRequest);
+                .PauseAsync(listTask.Result.Tasks.Last().Id);
 
             pauseResponse.Should().NotBeNull();
             
@@ -132,13 +127,6 @@ namespace Synology.Api.Client.Integration.Tests
                 Ids = new List<string> {listTask.Result.Tasks.Last().Id},
                 ForceComplete = false
             };
-            
-            // await _fixture
-            //     .Client
-            //     .DownloadStationApi()
-            //     .TaskEndpoint()
-            //     .DeleteAsync(delRequest);
-            
         }
 
         [Fact]

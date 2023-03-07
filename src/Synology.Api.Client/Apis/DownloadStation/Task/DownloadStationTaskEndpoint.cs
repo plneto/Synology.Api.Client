@@ -66,9 +66,9 @@ namespace Synology.Api.Client.Apis.DownloadStation.Task
                 _session);
         }
 
-        public Task<IEnumerable<DownloadStationPauseResponse>> PauseAsync(DownloadStationPauseRequest data)
+        public Task<IEnumerable<DownloadStationPauseResponse>> PauseAsync(params string[] ids)
         {
-            string idsString = string.Join(",", data.Ids);
+            var idsString = string.Join(",", ids);
             var queryParam = new
             {
                 id = idsString
