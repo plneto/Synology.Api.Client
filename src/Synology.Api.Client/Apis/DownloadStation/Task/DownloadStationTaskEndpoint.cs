@@ -80,5 +80,20 @@ namespace Synology.Api.Client.Apis.DownloadStation.Task
                 queryParam, 
                 _session);
         }
+
+        public Task<IEnumerable<DownloadStationTaskResumeResponse>> ResumeAsync(params string[] ids)
+        {
+            var idsString = string.Join(",", ids);
+            var queryParam = new
+            {
+                id = idsString
+            };
+
+            return _synologyHttpClient.GetAsync<IEnumerable<DownloadStationTaskResumeResponse>>(
+                _apiInfo,
+                "resume",
+                queryParam,
+                _session);
+        }
     }
 }
