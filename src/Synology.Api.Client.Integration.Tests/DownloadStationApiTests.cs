@@ -115,7 +115,12 @@ namespace Synology.Api.Client.Integration.Tests
                 .ListAsync();
 
             var id = listTask.Result.Tasks.Last().Id;
-            //Когда будет добавлена логика pause, дописать тест
+
+            await _fixture
+                .Client
+                .DownloadStationApi()
+                .TaskEndpoint()
+                .PauseAsync(id);
 
             var resumeResponse = await _fixture
                 .Client
