@@ -139,6 +139,39 @@ namespace Synology.Api.Client.Integration.Tests
         }
 
         [Fact]
+        public async void DownloadStationApi_DownloadStation_PauseTask()
+        {
+            var request = new DownloadStationTaskCreateRequest(
+                uri: "magnet:?xt=urn:btih:fef84077088ca87ffd8afd644d0ef957d96243c3&dn=archlinux-2023.01.01-x86_64.iso");
+            
+            await _fixture
+                .Client
+                .DownloadStationApi()
+                .TaskEndpoint()
+                .CreateAsync(request);
+            
+            var listTask = _fixture
+                .Client
+                .DownloadStationApi()
+                .TaskEndpoint()
+                .ListAsync();
+
+            var pauseResponse = _fixture
+                .Client
+                .DownloadStationApi()
+                .TaskEndpoint()
+                .PauseAsync(listTask.Result.Tasks.Last().Id);
+
+            pauseResponse.Should().NotBeNull();
+            
+            var delRequest = new DownloadStationTaskDeleteRequest
+            {
+                Ids = new List<string> {listTask.Result.Tasks.Last().Id},
+                ForceComplete = false
+            };
+        }
+
+        [Fact]
         public async void DownloadStationApi_DownloadStation_Info()
         {
             var infoResponse = await _fixture
