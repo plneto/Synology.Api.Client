@@ -268,8 +268,8 @@ namespace Synology.Api.Client.Tests
             // Arrange
             var apiInfo = new ApiInfo(_apiInfo.Name, _apiInfo.Path, apiVersion, _apiInfo.SessionName);
 
-            var expectedRequestContentApiVersion = $"Content-Disposition: form-data; name=\"version\"{Environment.NewLine}{Environment.NewLine}{apiVersion}";
-            var expectedRequestContentOverwrite = $"Content-Disposition: form-data; name=\"overwrite\"{Environment.NewLine}{Environment.NewLine}{overwriteValue}";
+            var expectedRequestContentApiVersion = $"Content-Disposition: form-data; name=\"version\"\r\n\r\n{apiVersion}";//do not use Environment.NewLine because of macOS
+            var expectedRequestContentOverwrite = $"Content-Disposition: form-data; name=\"overwrite\"\r\n\r\n{overwriteValue}";
 
             //uses raw string literals, but seems to break tests in CI
             //var expectedRequestContentApiVersion = $"""
