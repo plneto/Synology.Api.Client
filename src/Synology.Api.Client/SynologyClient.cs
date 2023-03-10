@@ -2,7 +2,6 @@
 using System.Net.Http;
 using System.Security;
 using System.Threading.Tasks;
-using Flurl.Http;
 using Synology.Api.Client.ApiDescription;
 using Synology.Api.Client.Apis.Auth;
 using Synology.Api.Client.Apis.DownloadStation;
@@ -29,14 +28,9 @@ namespace Synology.Api.Client
                 throw new ArgumentNullException(nameof(dsmUrl));
             }
 
-            var flurlClient = new FlurlClient(httpClient)
-            {
-                BaseUrl = $"{dsmUrl.TrimEnd('/')}/webapi"
-            };
+            httpClient.BaseAddress = new Uri($"{dsmUrl.TrimEnd('/')}/webapi");
 
-            flurlClient.AllowAnyHttpStatus();
-
-            _synologyHttpClient = new SynologyHttpClient(flurlClient);
+            _synologyHttpClient = new SynologyHttpClient(httpClient);
 
             Task.Run(() => UpdateApisInfoAsync()).Wait();
         }

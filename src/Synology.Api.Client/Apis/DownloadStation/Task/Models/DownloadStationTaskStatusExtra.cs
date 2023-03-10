@@ -1,10 +1,10 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 
 namespace Synology.Api.Client.Apis.DownloadStation.Task.Models
 {
     public class DownloadStationTaskStatusExtra
     {
-        [JsonProperty("error_detail")]
+        [JsonPropertyName("error_detail")]
         public string ErrorDetail { get; set; }
     }
 }

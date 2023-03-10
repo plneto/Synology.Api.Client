@@ -1,10 +1,10 @@
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace Synology.Api.Client.Apis.FileStation.Search.Models
 {
     public class FileStationSearchStartResponse
     {
-        [JsonProperty("taskid")]
+        [JsonPropertyName("taskid")]
         public string TaskId { get; set; }
     }
 }

@@ -1,8 +1,9 @@
-﻿using System.Threading.Tasks;
-using Synology.Api.Client.Apis.FileStation.CopyMove.Models;
-using Synology.Api.Client.Session;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Synology.Api.Client.ApiDescription;
+using Synology.Api.Client.Apis.FileStation.CopyMove.Models;
 using Synology.Api.Client.Extensions;
+using Synology.Api.Client.Session;
 using Synology.Api.Client.Shared.Models;
 
 namespace Synology.Api.Client.Apis.FileStation.CopyMove
@@ -36,30 +37,40 @@ namespace Synology.Api.Client.Apis.FileStation.CopyMove
 
         public Task<FileStationCopyMoveStatusResponse> GetStatusAsync(string taskId)
         {
+            var queryParams = new Dictionary<string, string>
+            {
+                { "taskid",  taskId }
+            };
+
             return _synologyHttpClient.GetAsync<FileStationCopyMoveStatusResponse>(
                 _apiInfo,
                 "status",
-                new { taskid = taskId },
+                queryParams,
                 _session);
         }
 
         public Task<BaseApiResponse> StopAsync(string taskId)
         {
+            var queryParams = new Dictionary<string, string>
+            {
+                { "taskid",  taskId }
+            };
+
             return _synologyHttpClient.GetAsync<BaseApiResponse>(
                 _apiInfo,
                 "stop",
-                new { taskid = taskId },
+                queryParams,
                 _session);
         }
 
-        private object GetCopyMoveQueryParams(string[] paths, string destination, bool overwrite, bool isMoveAction)
+        private Dictionary<string, string> GetCopyMoveQueryParams(string[] paths, string destination, bool overwrite, bool isMoveAction)
         {
-            return new
+            return new Dictionary<string, string>
             {
-                path = paths.ToCommaSeparatedAroundBrackets(),
-                dest_folder_path = destination,
-                overwrite = overwrite.ToLowerString(),
-                remove_src = isMoveAction.ToLowerString()
+                { "path",  paths.ToCommaSeparatedAroundBrackets() },
+                { "dest_folder_path", destination },
+                { "overwrite", overwrite.ToLowerString() },
+                { "remove_src", isMoveAction.ToLowerString() }
             };
         }
     }

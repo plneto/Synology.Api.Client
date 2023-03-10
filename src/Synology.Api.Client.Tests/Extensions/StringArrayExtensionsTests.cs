@@ -23,7 +23,7 @@ namespace Synology.Api.Client.Tests.Extensions
         public void StringArrayExtensions_EmptyArray_ReturnEmptyBrackets()
         {
             // arrange
-            var words = new string[0];
+            var words = System.Array.Empty<string>();
 
             // act
             var result = words.ToCommaSeparatedAroundBrackets();

@@ -1,10 +1,10 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 
 namespace Synology.Api.Client.Apis.FileStation.Extract.Models
 {
     public class FileStationExtractStatusResponse
     {
-        [JsonProperty("dest_folder_path")]
+        [JsonPropertyName("dest_folder_path")]
         public string DestFolderPath { get; set; }
 
         public bool Finished { get; set; }

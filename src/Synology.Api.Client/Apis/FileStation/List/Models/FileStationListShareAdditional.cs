@@ -1,10 +1,10 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 
 namespace Synology.Api.Client.Apis.FileStation.List.Models
 {
     public class FileStationListShareAdditional
     {
-        [JsonProperty("real_path")]
+        [JsonPropertyName("real_path")]
         public string RealPath { get; set; }
 
         public FileStationListShareOwner Owner { get; set; }

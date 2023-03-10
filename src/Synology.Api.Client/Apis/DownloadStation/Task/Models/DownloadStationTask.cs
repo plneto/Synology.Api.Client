@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 
 namespace Synology.Api.Client.Apis.DownloadStation.Task.Models
 {
@@ -16,7 +16,7 @@ namespace Synology.Api.Client.Apis.DownloadStation.Task.Models
 
         public string Status { get; set; }
 
-        [JsonProperty("status_extra")]
+        [JsonPropertyName("status_extra")]
         public DownloadStationTaskStatusExtra StatusExtra { get; set; }
 
         public DownloadStationTaskAdditional Additional { get; set; }
