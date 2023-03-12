@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 
 namespace Synology.Api.Client.Apis.DownloadStation.Task.Models
 {
@@ -12,7 +12,7 @@ namespace Synology.Api.Client.Apis.DownloadStation.Task.Models
 
         public long Size { get; set; }
 
-        [JsonProperty("size_downloaded")]
+        [JsonPropertyName("size_downloaded")]
         public long SizeDownloaded { get; set; }
 
         public bool Wanted { get; set; }

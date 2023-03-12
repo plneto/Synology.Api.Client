@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Synology.Api.Client.ApiDescription;
 using Synology.Api.Client.Apis.Info.Models;
 
@@ -17,7 +18,7 @@ namespace Synology.Api.Client.Apis.Info
 
         public Task<InfoQueryResponse> QueryAsync()
         {
-            return _httpClient.GetAsync<InfoQueryResponse>(_apiInfo, "query", new { query = "all" });
+            return _httpClient.GetAsync<InfoQueryResponse>(_apiInfo, "query", new Dictionary<string, string> { { "query", "all" } });
         }
     }
 }

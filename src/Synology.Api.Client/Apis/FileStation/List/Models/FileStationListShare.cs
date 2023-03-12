@@ -1,10 +1,10 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 
 namespace Synology.Api.Client.Apis.FileStation.List.Models
 {
     public class FileStationListShare
     {
-        [JsonProperty("isdir")]
+        [JsonPropertyName("isdir")]
         public bool IsDir { get; set; }
 
         public string Name { get; set; }

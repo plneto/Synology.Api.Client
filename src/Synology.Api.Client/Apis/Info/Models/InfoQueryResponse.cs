@@ -1,89 +1,89 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 using Synology.Api.Client.Constants;
 
 namespace Synology.Api.Client.Apis.Info.Models
 {
     public class InfoQueryResponse
     {
-        [JsonProperty(ApiNames.InfoApiName)]
+        [JsonPropertyName(ApiNames.InfoApiName)]
         public ApiDescription InfoApi { get; set; }
 
-        [JsonProperty(ApiNames.AuthApiName)]
+        [JsonPropertyName(ApiNames.AuthApiName)]
         public ApiDescription AuthApi { get; set; }
 
-        [JsonProperty(ApiNames.FileStationInfoApiName)]
+        [JsonPropertyName(ApiNames.FileStationInfoApiName)]
         public ApiDescription FileStationInfoApi { get; set; }
 
-        [JsonProperty(ApiNames.FileStationListApiName)]
+        [JsonPropertyName(ApiNames.FileStationListApiName)]
         public ApiDescription FileStationListApi { get; set; }
 
-        [JsonProperty(ApiNames.FileStationSearchApiName)]
+        [JsonPropertyName(ApiNames.FileStationSearchApiName)]
         public ApiDescription FileStationSearchApi { get; set; }
 
-        [JsonProperty(ApiNames.FileStationVirtualFolderApiName)]
+        [JsonPropertyName(ApiNames.FileStationVirtualFolderApiName)]
         public ApiDescription FileStationVirtualFolderApi { get; set; }
 
-        [JsonProperty(ApiNames.FileStationFavoriteApiName)]
+        [JsonPropertyName(ApiNames.FileStationFavoriteApiName)]
         public ApiDescription FileStationFavoriteApi { get; set; }
 
-        [JsonProperty(ApiNames.FileStationThumbApiName)]
+        [JsonPropertyName(ApiNames.FileStationThumbApiName)]
         public ApiDescription FileStationThumbApi { get; set; }
 
-        [JsonProperty(ApiNames.FileStationDirSizeApiName)]
+        [JsonPropertyName(ApiNames.FileStationDirSizeApiName)]
         public ApiDescription FileStationDirSizeApi { get; set; }
 
-        [JsonProperty(ApiNames.FileStationMd5ApiName)]
+        [JsonPropertyName(ApiNames.FileStationMd5ApiName)]
         public ApiDescription FileStationMd5Api { get; set; }
 
-        [JsonProperty(ApiNames.FileStationCheckPermissionApiName)]
+        [JsonPropertyName(ApiNames.FileStationCheckPermissionApiName)]
         public ApiDescription FileStationCheckPermissionApi { get; set; }
 
-        [JsonProperty(ApiNames.FileStationUploadApiName)]
+        [JsonPropertyName(ApiNames.FileStationUploadApiName)]
         public ApiDescription FileStationUploadApi { get; set; }
 
-        [JsonProperty(ApiNames.FileStationDownloadApiName)]
+        [JsonPropertyName(ApiNames.FileStationDownloadApiName)]
         public ApiDescription FileStationDownloadApi { get; set; }
 
-        [JsonProperty(ApiNames.FileStationSharingApiName)]
+        [JsonPropertyName(ApiNames.FileStationSharingApiName)]
         public ApiDescription FileStationSharingApi { get; set; }
 
-        [JsonProperty(ApiNames.FileStationCreateFolderApiName)]
+        [JsonPropertyName(ApiNames.FileStationCreateFolderApiName)]
         public ApiDescription FileStationCreateFolderApi { get; set; }
 
-        [JsonProperty(ApiNames.FileStationRenameApiName)]
+        [JsonPropertyName(ApiNames.FileStationRenameApiName)]
         public ApiDescription FileStationRenameApi { get; set; }
 
-        [JsonProperty(ApiNames.FileStationCopyMoveApiName)]
+        [JsonPropertyName(ApiNames.FileStationCopyMoveApiName)]
         public ApiDescription FileStationCopyMoveApi { get; set; }
 
-        [JsonProperty(ApiNames.FileStationDeleteApiName)]
+        [JsonPropertyName(ApiNames.FileStationDeleteApiName)]
         public ApiDescription FileStationDeleteApi { get; set; }
 
-        [JsonProperty(ApiNames.FileStationExtractApiName)]
+        [JsonPropertyName(ApiNames.FileStationExtractApiName)]
         public ApiDescription FileStationExtractApi { get; set; }
 
-        [JsonProperty(ApiNames.FileStationCompressApiName)]
+        [JsonPropertyName(ApiNames.FileStationCompressApiName)]
         public ApiDescription FileStationCompressApi { get; set; }
 
-        [JsonProperty(ApiNames.FileStationBackgroundTaskApiName)]
+        [JsonPropertyName(ApiNames.FileStationBackgroundTaskApiName)]
         public ApiDescription FileStationBackGroundApi { get; set; }
 
-        [JsonProperty(ApiNames.DownloadStationInfoApiName)]
+        [JsonPropertyName(ApiNames.DownloadStationInfoApiName)]
         public ApiDescription DownloadStationInfoApi { get; set; }
 
-        [JsonProperty(ApiNames.DownloadStationScheduleApiName)]
+        [JsonPropertyName(ApiNames.DownloadStationScheduleApiName)]
         public ApiDescription DownloadStationScheduleApi { get; set; }
 
-        [JsonProperty(ApiNames.DownloadStationTaskApiName)]
+        [JsonPropertyName(ApiNames.DownloadStationTaskApiName)]
         public ApiDescription DownloadStationTaskApi { get; set; }
 
-        [JsonProperty(ApiNames.DownloadStationStatisticApiName)]
+        [JsonPropertyName(ApiNames.DownloadStationStatisticApiName)]
         public ApiDescription DownloadStationStatisticApi { get; set; }
 
-        [JsonProperty(ApiNames.DownloadStationRssSiteApiName)]
+        [JsonPropertyName(ApiNames.DownloadStationRssSiteApiName)]
         public ApiDescription DownloadStationRssSiteApi { get; set; }
 
-        [JsonProperty(ApiNames.DownloadStationRssFeedApiName)]
+        [JsonPropertyName(ApiNames.DownloadStationRssFeedApiName)]
         public ApiDescription DownloadStationRssFeedApi { get; set; }
     }
 }

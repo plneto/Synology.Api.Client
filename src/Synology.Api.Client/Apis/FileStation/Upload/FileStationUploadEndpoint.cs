@@ -2,6 +2,7 @@
 using System.IO;
 using System.IO.Abstractions;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Synology.Api.Client.ApiDescription;
 using Synology.Api.Client.Apis.FileStation.Upload.Models;
@@ -35,30 +36,61 @@ namespace Synology.Api.Client.Apis.FileStation.Upload
         /// <inheritdoc />
         public Task<FileStationUploadResponse> UploadAsync(string filePath, string destination, bool overwrite)
         {
+            if (string.IsNullOrWhiteSpace(filePath))
+            {
+                throw new ArgumentNullException(nameof(filePath));
+            }
+
+            if (string.IsNullOrWhiteSpace(destination))
+            {
+                throw new ArgumentNullException(nameof(destination));
+            }
+
             var filename = _fileSystem.Path.GetFileName(filePath);
             var fileStream = _fileSystem.File.OpenRead(filePath);
 
-            return SendRequest(GetFileContent(fileStream, filename), destination, overwrite);
+            var fileContent = GetFileContent(fileStream, filename);
+
+            return SendRequest(fileContent, destination, overwrite);
         }
 
         /// <inheritdoc />
         public Task<FileStationUploadResponse> UploadAsync(byte[] bytes, string filename, string destination, bool overwrite)
         {
-            var memoryStream = new MemoryStream(bytes);
+            if (bytes is null)
+            {
+                throw new ArgumentNullException(nameof(bytes));
+            }
 
-            return SendRequest(GetFileContent(memoryStream, filename), destination, overwrite);
+            if (string.IsNullOrWhiteSpace(filename))
+            {
+                throw new ArgumentNullException(nameof(filename));
+            }
+
+            if (string.IsNullOrWhiteSpace(destination))
+            {
+                throw new ArgumentNullException(nameof(destination));
+            }
+
+            var memoryStream = new MemoryStream(bytes);
+            var fileContent = GetFileContent(memoryStream, filename);
+
+            return SendRequest(fileContent, destination, overwrite);
         }
 
         private Task<FileStationUploadResponse> SendRequest(StreamContent fileContent, string destination, bool overwrite)
         {
-            string boundaryDelimiter = $"----------{DateTime.Now.Ticks:x}";
+            var boundary = Guid.NewGuid().ToString();
 
-            using (var formData = new MultipartFormDataContent(boundaryDelimiter))
+            using (var formData = new MultipartFormDataContent(boundary))
             {
-                var overwriteValue = overwrite ? "true" : "false";
+                // The request will fail if there are quotes around the boundary value
+                formData.Headers.ContentType = new MediaTypeHeaderValue("multipart/form-data");
+                formData.Headers.ContentType.Parameters.Add(new NameValueHeaderValue("boundary", boundary));
 
+                var overwriteValue = overwrite ? "true" : "false";
                 if (_apiInfo.Version >= 3)
-                { 
+                {
                     overwriteValue = overwrite ? "overwrite" : "skip";
                 }
 
@@ -67,12 +99,11 @@ namespace Synology.Api.Client.Apis.FileStation.Upload
                 formData.Add(GetStringContent("method", "upload"));
                 formData.Add(GetStringContent("path", destination));
                 formData.Add(GetStringContent("overwrite", overwriteValue));
-                formData.Add(fileContent);
+                //formData.Add(GetStringContent("create_parents", "true/false"));
 
-                // Remove quotes from ContentType Header
-                // The request will fail if there are quotes around the boundary value 
-                formData.Headers.Remove("Content-Type");
-                formData.Headers.TryAddWithoutValidation("Content-Type", $"multipart/form-data; boundary={boundaryDelimiter}");
+                //prevent ObjectDisposedException
+                //await fileContent.LoadIntoBufferAsync();
+                formData.Add(fileContent);
 
                 return _synologyHttpClient.PostAsync<FileStationUploadResponse>(_apiInfo, "upload", formData, _session);
             };
@@ -81,15 +112,25 @@ namespace Synology.Api.Client.Apis.FileStation.Upload
         private StringContent GetStringContent(string name, string value)
         {
             var sc = new StringContent(value);
-            sc.Headers.Add("Content-Disposition", $"form-data; name=\"{name}\"");
+            sc.Headers.ContentDisposition = new ContentDispositionHeaderValue("form-data")
+            {
+                Name = $"\"{name}\""
+            };
+
+            //the API does not like the "Content-Type" header
             sc.Headers.ContentType = null;
+
             return sc;
         }
 
         private StreamContent GetFileContent(Stream stream, string filename)
         {
             var fileContent = new StreamContent(stream);
-            fileContent.Headers.Add("Content-Disposition", $"form-data; name=\"filename\"; filename=\"{filename}\"");
+            fileContent.Headers.ContentDisposition = new ContentDispositionHeaderValue("form-data")
+            {
+                Name = "\"filename\"",//"\"file\"" seems also to work
+                FileName = $"\"{filename}\""
+            };
 
             return fileContent;
         }

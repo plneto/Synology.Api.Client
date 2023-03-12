@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -42,9 +43,9 @@ namespace Synology.Api.Client.Apis.DownloadStation.Task
 
         public Task<DownloadStationTaskListResponse> ListAsync()
         {
-            var queryParams = new
+            var queryParams = new Dictionary<string, string>
             {
-                additional = "detail,file"
+                { "additional",  "detail,file" }
             };
 
             return _synologyHttpClient.GetAsync<DownloadStationTaskListResponse>(_apiInfo, "list", queryParams, _session);
