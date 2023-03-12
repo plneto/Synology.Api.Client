@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Synology.Api.Client.ApiDescription;
 using Synology.Api.Client.Apis.DownloadStation.Info.Models;
@@ -24,7 +25,8 @@ namespace Synology.Api.Client.Apis.DownloadStation.Info
             return _synologyHttpClient.GetAsync<DownloadStationInfoResponse>(
                 _apiInfo,
                 "getinfo",
-                session: _session);
+                new Dictionary<string, string?>(),
+                _session);
         }
 
         public Task<DownloadStationServerConfig> GetConfigAsync()
@@ -32,24 +34,25 @@ namespace Synology.Api.Client.Apis.DownloadStation.Info
             return _synologyHttpClient.GetAsync<DownloadStationServerConfig>(
                 _apiInfo,
                 "getconfig",
-                session: _session);
+                new Dictionary<string, string?>(),
+                _session);
         }
 
         public Task<BaseApiResponse> SetServerConfigAsync(DownloadStationServerConfig config)
         {
-            var queryParams = new
+            var queryParams = new Dictionary<string, string?>
             {
-                bt_max_download = config.BtMaxDownloadSpeed,
-                bt_max_upload = config.BtMaxUploadSpeed,
-                emule_enabled = config.EmulEnable,
-                emul_max_download = config.EmulMaxDownloadSpeed,
-                emul_max_upload = config.EmulMaxUploadSpeed,
-                ftp_max_download = config.FtpMaxDownloadSpeed,
-                http_max_download = config.HttpMaxDownloadSpeed,
-                nzb_max_download = config.NzbMaxDownloadSpeed,
-                unzip_service_enabled = config.UnzipServiceEnable,
-                default_destination = config.DefaultDestination,
-                emul_default_destination = config.EmulDefaultDestination
+                { "bt_max_download", config.BtMaxDownloadSpeed?.ToString() },
+                { "bt_max_upload", config.BtMaxUploadSpeed?.ToString() },
+                { "emule_enabled", config.EmulEnable?.ToString() },
+                { "emul_max_download", config.EmulMaxDownloadSpeed?.ToString() },
+                { "emul_max_upload", config.EmulMaxUploadSpeed?.ToString() },
+                { "ftp_max_download", config.FtpMaxDownloadSpeed?.ToString() },
+                { "http_max_download", config.HttpMaxDownloadSpeed?.ToString() },
+                { "nzb_max_download", config.NzbMaxDownloadSpeed?.ToString() },
+                { "unzip_service_enabled", config.UnzipServiceEnable?.ToString() },
+                { "default_destination", config.DefaultDestination },
+                { "emul_default_destination", config.EmulDefaultDestination }
             };
 
             if (config.DefaultDestination != null || config.EmulDefaultDestination != null)

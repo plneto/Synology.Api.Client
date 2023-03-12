@@ -1,16 +1,16 @@
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace Synology.Api.Client.Apis.DownloadStation.Info.Models
 {
     public class DownloadStationInfoResponse
     {
-        [JsonProperty("is_manager")] 
+        [JsonPropertyName("is_manager")] 
         public bool IsManager;
         
-        [JsonProperty("version")] 
+        [JsonPropertyName("version")] 
         public int Version;
 
-        [JsonProperty("version_string")] 
+        [JsonPropertyName("version_string")] 
         public string VersionString;
     }
 }

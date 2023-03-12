@@ -1,6 +1,4 @@
 using System.Collections.Generic;
-using System.Collections;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Synology.Api.Client.ApiDescription;
 using Synology.Api.Client.Apis.DownloadStation.Task.Models;
@@ -31,10 +29,10 @@ namespace Synology.Api.Client.Apis.DownloadStation.Task
         /// <returns></returns>
         public Task<BaseApiResponse> CreateAsync(DownloadStationTaskCreateRequest request)
         {
-            var queryParams = new
+            var queryParams = new Dictionary<string, string?>
             {
-                uri = request.Uri,
-                destination = request.Destination
+                { "uri", request.Uri },
+                { "destination", request.Destination }
             };
             _apiInfo.Version = 3;
 
@@ -43,7 +41,7 @@ namespace Synology.Api.Client.Apis.DownloadStation.Task
 
         public Task<DownloadStationTaskListResponse> ListAsync()
         {
-            var queryParams = new Dictionary<string, string>
+            var queryParams = new Dictionary<string, string?>
             {
                 { "additional",  "detail,file" }
             };
@@ -53,11 +51,11 @@ namespace Synology.Api.Client.Apis.DownloadStation.Task
 
         public Task<IEnumerable<DownloadStationTaskDeleteResponse>> DeleteAsync(DownloadStationTaskDeleteRequest data)
         {
-            string idsString = string.Join(",", data.Ids);
-            var queryParam = new
+            var idsString = string.Join(",", data.Ids);
+            var queryParam = new Dictionary<string, string?>
             {
-                id = idsString,
-                force_complete = data.ForceComplete
+                { "id", idsString },
+                { "force_complete", data.ForceComplete.ToString() }
             };
 
             return _synologyHttpClient.GetAsync<IEnumerable<DownloadStationTaskDeleteResponse>>(
@@ -70,9 +68,9 @@ namespace Synology.Api.Client.Apis.DownloadStation.Task
         public Task<IEnumerable<DownloadStationPauseResponse>> PauseAsync(params string[] ids)
         {
             var idsString = string.Join(",", ids);
-            var queryParam = new
+            var queryParam = new Dictionary<string, string?>
             {
-                id = idsString
+                { "id", idsString }
             };
 
             return _synologyHttpClient.GetAsync<IEnumerable<DownloadStationPauseResponse>>(
@@ -85,9 +83,9 @@ namespace Synology.Api.Client.Apis.DownloadStation.Task
         public Task<IEnumerable<DownloadStationTaskResumeResponse>> ResumeAsync(params string[] ids)
         {
             var idsString = string.Join(",", ids);
-            var queryParam = new
+            var queryParam = new Dictionary<string, string?>
             {
-                id = idsString
+                { "id", idsString }
             };
 
             return _synologyHttpClient.GetAsync<IEnumerable<DownloadStationTaskResumeResponse>>(
