@@ -24,7 +24,7 @@ namespace Synology.Api.Client
             _httpClient = httpClient;
         }
 
-        public async Task<T> GetAsync<T>(IApiInfo apiInfo, string apiMethod, Dictionary<string, string> queryParams, ISynologySession session = null)
+        public async Task<T> GetAsync<T>(IApiInfo apiInfo, string apiMethod, Dictionary<string, string?> queryParams, ISynologySession? session = null)
         {
             var uri = GetBaseUri(_httpClient.BaseAddress, apiInfo.Path);
             var uriBuilder = new UriBuilder(uri);
@@ -35,7 +35,7 @@ namespace Synology.Api.Client
             return await HandleSynologyResponse<T>(response, apiInfo, apiMethod);
         }
 
-        public async Task<T> PostAsync<T>(IApiInfo apiInfo, string apiMethod, HttpContent content, ISynologySession session = null)
+        public async Task<T> PostAsync<T>(IApiInfo apiInfo, string apiMethod, HttpContent content, ISynologySession? session = null)
         {
             var uri = GetBaseUri(_httpClient.BaseAddress, apiInfo.Path);
             var uriBuilder = new UriBuilder(uri);
@@ -61,13 +61,13 @@ namespace Synology.Api.Client
             return new Uri(baseUri + "/" + apiPath);
         }
 
-        private string BuildQueryString(UriBuilder uriBuilder, IApiInfo apiInfo, string apiMethod, Dictionary<string, string> queryParams, ISynologySession session = null)
+        private string BuildQueryString(UriBuilder uriBuilder, IApiInfo apiInfo, string apiMethod, Dictionary<string, string?> queryParams, ISynologySession? session = null)
         {
             var query = HttpUtility.ParseQueryString(uriBuilder.Query);
             query["api"] = apiInfo.Name;
             query["version"] = apiInfo.Version.ToString();
             query["method"] = apiMethod;
-
+            
             foreach (var curPair in queryParams)
             {
                 query[curPair.Key] = curPair.Value;
@@ -93,19 +93,19 @@ namespace Synology.Api.Client
                 case HttpStatusCode.OK:
                     {
                         var response = await httpResponse.Content.ReadFromJsonAsync<ApiResponse<T>>();
-                        if (!response.Success)
+                        if (!response?.Success ?? true)
                         {
                             var errorDescription = GetErrorMessage(response?.Error?.Code ?? 0, apiInfo.Name);
 
-                            var synologyApiException = new SynologyApiException(apiInfo, apiMethod, response.Error.Code, errorDescription);
+                            var synologyApiException = new SynologyApiException(apiInfo, apiMethod, response?.Error?.Code ?? 0, errorDescription);
                             //add additional error details if present
-                            if (response?.Error?.Errors?.Any() ?? false)
+                            if (!(response?.Error?.Errors?.Any() ?? false)) 
+                                throw synologyApiException;
+                            
+                            foreach (var curError in response.Error.Errors)
                             {
-                                foreach (var curError in response.Error.Errors)
-                                {
-                                    var errorMessage = GetErrorMessage(curError.Code, apiInfo.Name);
-                                    synologyApiException.Data.Add($"[{curError.Code}] {errorMessage}", curError.Path);
-                                }
+                                var errorMessage = GetErrorMessage(curError.Code, apiInfo.Name);
+                                synologyApiException.Data.Add($"[{curError.Code}] {errorMessage}", curError.Path);
                             }
 
                             throw synologyApiException;
@@ -148,7 +148,7 @@ namespace Synology.Api.Client
                 ErrorMessages.DownloadStationBtSearchApiErrors.TryGetValue(errorCode, out errorDescription);
             }
 
-            return errorDescription;
+            return errorDescription ?? string.Empty;
         }
     }
 }

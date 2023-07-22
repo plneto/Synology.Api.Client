@@ -7,6 +7,8 @@
         IApiInfo AuthApi { get; set; }
 
         IApiInfo DownloadStationTaskApi { get; set; }
+        
+        IApiInfo DownloadStationInfoApi { get; set; }
 
         IApiInfo FileStationCopyMoveApi { get; set; }
 

@@ -45,9 +45,10 @@ await client.LogoutAsync(session);
 | CreateFolder     |            `create`            |
 | Extract          | `start` `status` `stop` `list` |
 
-| SYNO.DownloadStation | Methods |
-| -------------------- | :-----: |
-| Task                 | `list`  |
+| SYNO.DownloadStation |      Methods                              |
+|----------------------|:-----------------------------------------:|
+| Info                 | `Info` `GetConfig` `SetServerConfig`      |
+| Task                 | `List` `Create` `Delete` `Pause` `Resume` |
 
 ## Example on how to ignore certificate validation for e.g. self signed certificates:
 
