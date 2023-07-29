@@ -1,8 +1,10 @@
 ﻿using System;
 using System.IO;
 using System.IO.Abstractions;
+using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Text;
 using System.Threading.Tasks;
 using Synology.Api.Client.ApiDescription;
 using Synology.Api.Client.Apis.FileStation.Upload.Models;
@@ -106,7 +108,7 @@ namespace Synology.Api.Client.Apis.FileStation.Upload
                 formData.Add(fileContent);
 
                 return _synologyHttpClient.PostAsync<FileStationUploadResponse>(_apiInfo, "upload", formData, _session);
-            };
+            }
         }
 
         private StringContent GetStringContent(string name, string value)
@@ -126,12 +128,15 @@ namespace Synology.Api.Client.Apis.FileStation.Upload
         private StreamContent GetFileContent(Stream stream, string filename)
         {
             var fileContent = new StreamContent(stream);
-            fileContent.Headers.ContentDisposition = new ContentDispositionHeaderValue("form-data")
-            {
-                Name = "\"filename\"",//"\"file\"" seems also to work
-                FileName = $"\"{filename}\""
-            };
+            
+            // this is required to send non ascii characters in the filename
+            var urlEncodedFilename = Uri.EscapeDataString(filename);
+            var headerValue = $@"form-data; name=""file""; filename=""{filename}""; filename*=UTF-8''{urlEncodedFilename}";
+            var bytes = Encoding.UTF8.GetBytes(headerValue);
+            headerValue = bytes.Aggregate("", (current, b) => current + (char) b);
 
+            fileContent.Headers.Add("Content-Disposition", headerValue);
+            
             return fileContent;
         }
     }

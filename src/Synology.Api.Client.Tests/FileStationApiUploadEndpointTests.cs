@@ -1,15 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO.Abstractions;
+﻿using System.IO.Abstractions;
 using System.IO.Abstractions.TestingHelpers;
 using System.Net.Http.Json;
 using System.Net;
-using System.Threading.Tasks;
+using System.Text;
 using AutoFixture;
 using FluentAssertions;
 using RichardSzalay.MockHttp;
 using Synology.Api.Client.ApiDescription;
-using Synology.Api.Client.Apis.Auth;
 using Synology.Api.Client.Apis.FileStation.Upload;
 using Synology.Api.Client.Apis.FileStation.Upload.Models;
 using Synology.Api.Client.Errors;
@@ -26,40 +23,42 @@ namespace Synology.Api.Client.Tests
         private readonly SynologyFixture _synologyFixture;
         private readonly Fixture _fixture;
         private readonly IApiInfo _apiInfo;
-        private readonly MockHttpMessageHandler _mockHtttp;
+        private readonly MockHttpMessageHandler _mockHttp;
         private readonly Uri _baseUriWithApiPath;
         private readonly IFileSystem _fileSystem;
         private readonly ISynologySession _session;
         private readonly string _destination;
 
-        private const string FILEPATH_TO_UPLOAD = @"c:\myfile.txt";
+        private const string FilepathToUpload = @"c:\myfile.txt";
+        private const string NonAsciiFileName = "文件.txt";
 
         public FileStationApiUploadEndpointTests(SynologyFixture synologyFixture)
         {
             _synologyFixture = synologyFixture;
             _fixture = new Fixture();
             _apiInfo = _synologyFixture.ApisInfo.FileStationUploadApi;
-            _mockHtttp = new MockHttpMessageHandler();
+            _mockHttp = new MockHttpMessageHandler();
             _baseUriWithApiPath = _synologyFixture.GetBaseUriWithPath(_apiInfo.Path);
             _session = new SynologySession(_fixture.Create<string>());
             _destination = _fixture.Create<string>();
 
             _fileSystem = new MockFileSystem(new Dictionary<string, MockFileData>
             {
-                { FILEPATH_TO_UPLOAD, new MockFileData("Test file") }
+                {FilepathToUpload, new MockFileData("Test file")},
+                {NonAsciiFileName, new MockFileData("Test file")},
             });
         }
 
         public void Dispose()
         {
-            _mockHtttp.Dispose();
+            _mockHttp.Dispose();
         }
 
         #region helper methods
 
-        private IFileStationUploadEndpoint GetFileStationUploadEndpoint(IApiInfo apiInfoToUse = null)
+        private IFileStationUploadEndpoint GetFileStationUploadEndpoint(IApiInfo? apiInfoToUse = null)
         {
-            var httpClient = _mockHtttp.ToHttpClient();
+            var httpClient = _mockHttp.ToHttpClient();
             httpClient.BaseAddress = _synologyFixture.BaseUri;
 
             var synologyHttpClient = new SynologyHttpClient(httpClient);
@@ -88,18 +87,66 @@ namespace Synology.Api.Client.Tests
             };
 
             //expect certain request to server
-            var request = _mockHtttp.Expect(System.Net.Http.HttpMethod.Post, _baseUriWithApiPath.ToString())
-                 .WithQueryString(new Dictionary<string, string>
-                 {
-                    { "_sid" , _session.Sid }
-                 });
+            var request = _mockHttp.Expect(HttpMethod.Post, _baseUriWithApiPath.ToString())
+                .WithQueryString(new Dictionary<string, string>
+                {
+                    {"_sid", _session.Sid}
+                });
 
             request.Respond(HttpStatusCode.OK, JsonContent.Create(expectedResponse));
 
             var fileStationUploadEndpoint = GetFileStationUploadEndpoint();
 
             // Act
-            var result = await fileStationUploadEndpoint.UploadAsync(FILEPATH_TO_UPLOAD, _destination, overwrite: true);
+            var result = await fileStationUploadEndpoint.UploadAsync(FilepathToUpload, _destination, overwrite: true);
+
+            // Assert
+            result.Should().BeEquivalentTo(expectedResponse.Data);
+        }
+
+        [Fact]
+        public async Task Upload_WhenTheFilenameHasNonAsciiCharacters_ThenTheRequestIsFormattedCorrectly()
+        {
+            // Arrange
+            var expectedResponse = new ApiResponse<FileStationUploadResponse>
+            {
+                Success = true,
+                Data = _fixture.Create<FileStationUploadResponse>()
+            };
+
+            var expectedFilename = Encoding.UTF8.GetBytes(NonAsciiFileName)
+                .Aggregate("", (current, b) => current + (char) b);
+
+            var urlEncodedFilename = $"UTF-8''{Uri.EscapeDataString(NonAsciiFileName)}";
+
+            //expect certain request to server
+            var request = _mockHttp.Expect(HttpMethod.Post, _baseUriWithApiPath.ToString())
+                .WithQueryString(new Dictionary<string, string>
+                {
+                    {"_sid", _session.Sid}
+                })
+                .With(x =>
+                {
+                    var content = x.Content as MultipartFormDataContent;
+                    var header = content?
+                        .Where(y =>
+                        {
+                            var contentDisposition = y.Headers.ContentDisposition?.ToString();
+                            
+                            return contentDisposition != null
+                                   && contentDisposition.Contains(expectedFilename)
+                                   && contentDisposition.Contains(urlEncodedFilename);
+                        });
+
+                    return header?.Any() ?? false;
+                });
+
+            request.Respond(HttpStatusCode.OK, JsonContent.Create(expectedResponse));
+
+            var fileStationUploadEndpoint = GetFileStationUploadEndpoint();
+
+            // Act
+            var result = await fileStationUploadEndpoint.UploadAsync(NonAsciiFileName, _destination, overwrite: true);
 
             // Assert
             result.Should().BeEquivalentTo(expectedResponse.Data);
@@ -131,7 +178,7 @@ namespace Synology.Api.Client.Tests
             var fileStationUploadEndpoint = GetFileStationUploadEndpoint();
 
             // Act
-            var actDelegate = () => fileStationUploadEndpoint.UploadAsync(FILEPATH_TO_UPLOAD, destination, overwrite: true);
+            var actDelegate = () => fileStationUploadEndpoint.UploadAsync(FilepathToUpload, destination, overwrite: true);
 
             // Assert
             await Assert.ThrowsAsync<ArgumentNullException>(actDelegate);
@@ -145,8 +192,8 @@ namespace Synology.Api.Client.Tests
         public async Task Upload_Bytes_ShouldCallCorrectUrl()
         {
             // Arrange
-            var bytes = _fileSystem.File.ReadAllBytes(FILEPATH_TO_UPLOAD);
-            var fileName = _fileSystem.Path.GetFileName(FILEPATH_TO_UPLOAD);
+            var bytes = _fileSystem.File.ReadAllBytes(FilepathToUpload);
+            var fileName = _fileSystem.Path.GetFileName(FilepathToUpload);
 
             var expectedResponse = new ApiResponse<FileStationUploadResponse>
             {
@@ -155,11 +202,11 @@ namespace Synology.Api.Client.Tests
             };
 
             //expect certain request to server
-            var request = _mockHtttp.Expect(System.Net.Http.HttpMethod.Post, _baseUriWithApiPath.ToString())
-                 .WithQueryString(new Dictionary<string, string>
-                 {
-                    { "_sid" , _session.Sid }
-                 });
+            var request = _mockHttp.Expect(System.Net.Http.HttpMethod.Post, _baseUriWithApiPath.ToString())
+                .WithQueryString(new Dictionary<string, string>
+                {
+                    {"_sid", _session.Sid}
+                });
 
             request.Respond(HttpStatusCode.OK, JsonContent.Create(expectedResponse));
 
@@ -179,7 +226,7 @@ namespace Synology.Api.Client.Tests
         public async Task Upload_Bytes_FileNameIsNullOrWhitespace_ShouldThrow(string fileName)
         {
             // Arrange
-            var bytes = _fileSystem.File.ReadAllBytes(FILEPATH_TO_UPLOAD);
+            var bytes = _fileSystem.File.ReadAllBytes(FilepathToUpload);
             var fileStationUploadEndpoint = GetFileStationUploadEndpoint();
 
             // Act
@@ -196,8 +243,8 @@ namespace Synology.Api.Client.Tests
         public async Task Upload_Bytes_DestinationIsNullOrWhitespace_ShouldThrow(string destination)
         {
             // Arrange
-            var bytes = _fileSystem.File.ReadAllBytes(FILEPATH_TO_UPLOAD);
-            var fileName = _fileSystem.Path.GetFileName(FILEPATH_TO_UPLOAD);
+            var bytes = _fileSystem.File.ReadAllBytes(FilepathToUpload);
+            var fileName = _fileSystem.Path.GetFileName(FilepathToUpload);
             var fileStationUploadEndpoint = GetFileStationUploadEndpoint();
 
             // Act
@@ -211,7 +258,7 @@ namespace Synology.Api.Client.Tests
         public async Task Upload_Bytes_BytesAreNull_ShouldThrow()
         {
             // Arrange
-            var fileName = _fileSystem.Path.GetFileName(FILEPATH_TO_UPLOAD);
+            var fileName = _fileSystem.Path.GetFileName(FilepathToUpload);
             var fileStationUploadEndpoint = GetFileStationUploadEndpoint();
 
             // Act
@@ -240,18 +287,18 @@ namespace Synology.Api.Client.Tests
             };
 
             //expect certain request to server
-            var request = _mockHtttp.Expect(System.Net.Http.HttpMethod.Post, _baseUriWithApiPath.ToString())
-                 .WithQueryString(new Dictionary<string, string>
-                 {
-                    { "_sid" , _session.Sid }
-                 });
+            var request = _mockHttp.Expect(System.Net.Http.HttpMethod.Post, _baseUriWithApiPath.ToString())
+                .WithQueryString(new Dictionary<string, string>
+                {
+                    {"_sid", _session.Sid}
+                });
 
             request.Respond(HttpStatusCode.OK, JsonContent.Create(expectedResponse));
 
             var fileStationUploadEndpoint = GetFileStationUploadEndpoint();
 
             // Act
-            var actDelegate = () => fileStationUploadEndpoint.UploadAsync(FILEPATH_TO_UPLOAD, _destination, overwrite: true);
+            var actDelegate = () => fileStationUploadEndpoint.UploadAsync(FilepathToUpload, _destination, overwrite: true);
 
             // Assert
             var apiException = await Assert.ThrowsAsync<SynologyApiException>(actDelegate);
@@ -268,7 +315,7 @@ namespace Synology.Api.Client.Tests
             // Arrange
             var apiInfo = new ApiInfo(_apiInfo.Name, _apiInfo.Path, apiVersion, _apiInfo.SessionName);
 
-            var expectedRequestContentApiVersion = $"Content-Disposition: form-data; name=\"version\"\r\n\r\n{apiVersion}";//do not use Environment.NewLine because of macOS
+            var expectedRequestContentApiVersion = $"Content-Disposition: form-data; name=\"version\"\r\n\r\n{apiVersion}"; //do not use Environment.NewLine because of macOS
             var expectedRequestContentOverwrite = $"Content-Disposition: form-data; name=\"overwrite\"\r\n\r\n{overwriteValue}";
 
             //uses raw string literals, but seems to break tests in CI
@@ -290,7 +337,7 @@ namespace Synology.Api.Client.Tests
             };
 
             //expect certain request to server
-            var request = _mockHtttp.Expect(System.Net.Http.HttpMethod.Post, _baseUriWithApiPath.ToString())
+            var request = _mockHttp.Expect(System.Net.Http.HttpMethod.Post, _baseUriWithApiPath.ToString())
                 .WithPartialContent(expectedRequestContentApiVersion)
                 .WithPartialContent(expectedRequestContentOverwrite);
 
@@ -299,7 +346,7 @@ namespace Synology.Api.Client.Tests
             var fileStationUploadEndpoint = GetFileStationUploadEndpoint(apiInfo);
 
             // Act
-            var result = await fileStationUploadEndpoint.UploadAsync(FILEPATH_TO_UPLOAD, _destination, overwrite);
+            var result = await fileStationUploadEndpoint.UploadAsync(FilepathToUpload, _destination, overwrite);
 
             // Assert
             result.Should().BeEquivalentTo(expectedResponse.Data);
