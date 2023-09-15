@@ -50,7 +50,7 @@ namespace Synology.Api.Client.Apis.FileStation.Upload
 
             var filename = _fileSystem.Path.GetFileName(filePath);
 
-            var bytes = File.ReadAllBytes(filePath);
+            var bytes = _fileSystem.File.ReadAllBytes(filePath);
             var memoryStream = new MemoryStream(bytes);
 
             using var fileContent = GetFileContent(memoryStream, filename);
