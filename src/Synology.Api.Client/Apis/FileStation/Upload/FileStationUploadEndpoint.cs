@@ -49,9 +49,11 @@ namespace Synology.Api.Client.Apis.FileStation.Upload
             }
 
             var filename = _fileSystem.Path.GetFileName(filePath);
-            var fileStream = _fileSystem.File.OpenRead(filePath);
 
-            var fileContent = GetFileContent(fileStream, filename);
+            var bytes = File.ReadAllBytes(filePath);
+            var memoryStream = new MemoryStream(bytes);
+
+            using var fileContent = GetFileContent(memoryStream, filename);
 
             return SendRequest(fileContent, destination, overwrite);
         }
