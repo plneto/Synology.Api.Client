@@ -18,7 +18,9 @@ namespace Synology.Api.Client.Apis.Info
 
         public Task<InfoQueryResponse> QueryAsync()
         {
-            return _httpClient.GetAsync<InfoQueryResponse>(_apiInfo, "query", new Dictionary<string, string> { { "query", "all" } });
+            return _httpClient.GetAsync<InfoQueryResponse>(
+                _apiInfo, "query", 
+                new Dictionary<string, string?> { { "query", "all" } });
         }
     }
 }

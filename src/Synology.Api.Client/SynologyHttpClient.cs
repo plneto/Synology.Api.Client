@@ -24,7 +24,7 @@ namespace Synology.Api.Client
             _httpClient = httpClient;
         }
 
-        public async Task<T> GetAsync<T>(IApiInfo apiInfo, string apiMethod, Dictionary<string, string?> queryParams, ISynologySession? session = null)
+        public async Task<T?> GetAsync<T>(IApiInfo apiInfo, string apiMethod, Dictionary<string, string?> queryParams, ISynologySession? session = null)
         {
             var uri = GetBaseUri(_httpClient.BaseAddress, apiInfo.Path);
             var uriBuilder = new UriBuilder(uri);
@@ -35,7 +35,7 @@ namespace Synology.Api.Client
             return await HandleSynologyResponse<T>(response, apiInfo, apiMethod);
         }
 
-        public async Task<T> PostAsync<T>(IApiInfo apiInfo, string apiMethod, HttpContent content, ISynologySession? session = null)
+        public async Task<T?> PostAsync<T>(IApiInfo apiInfo, string apiMethod, HttpContent content, ISynologySession? session = null)
         {
             var uri = GetBaseUri(_httpClient.BaseAddress, apiInfo.Path);
             var uriBuilder = new UriBuilder(uri);
@@ -86,7 +86,7 @@ namespace Synology.Api.Client
             return query.ToString();
         }
 
-        private async Task<T> HandleSynologyResponse<T>(HttpResponseMessage httpResponse, IApiInfo apiInfo, string apiMethod)
+        private async Task<T?> HandleSynologyResponse<T>(HttpResponseMessage httpResponse, IApiInfo apiInfo, string apiMethod)
         {
             switch (httpResponse.StatusCode)
             {

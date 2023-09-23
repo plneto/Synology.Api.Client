@@ -11,7 +11,7 @@
             Success = success;
         }
 
-        public Error Error { get; set; }
+        public Error? Error { get; set; }
 
         public bool Success { get; set; }
     }

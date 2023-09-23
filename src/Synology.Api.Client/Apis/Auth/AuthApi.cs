@@ -18,7 +18,7 @@ namespace Synology.Api.Client.Apis.Auth
             _apiInfo = apiInfo;
         }
 
-        public Task<LoginResponse> LoginAsync(string username, string password, string otpCode = null)
+        public Task<LoginResponse> LoginAsync(string username, string password, string? otpCode = null)
         {
             if (string.IsNullOrWhiteSpace(username))
             {
@@ -30,13 +30,17 @@ namespace Synology.Api.Client.Apis.Auth
                 throw new ArgumentNullException(nameof(password));
             }
 
-            var queryParams = new Dictionary<string, string>
+            var queryParams = new Dictionary<string, string?>
             {
                 { "account", username },
                 { "passwd", password },
-                { "format", "sid" },
-                { "otp_code", otpCode }
+                { "format", "sid" }
             };
+
+            if (!string.IsNullOrWhiteSpace(otpCode))
+            {
+                queryParams.Add("otp_code", otpCode);
+            }
 
             return _synologyHttpClient.GetAsync<LoginResponse>(_apiInfo, "login", queryParams);
         }
@@ -48,7 +52,9 @@ namespace Synology.Api.Client.Apis.Auth
                 throw new ArgumentNullException(nameof(sid));
             }
 
-            return _synologyHttpClient.GetAsync<BaseApiResponse>(_apiInfo, "logout", new Dictionary<string, string> { { "_sid", sid } });
+            return _synologyHttpClient.GetAsync<BaseApiResponse>(
+                _apiInfo, "logout", 
+                new Dictionary<string, string?> { { "_sid", sid } });
         }
     }
 }
