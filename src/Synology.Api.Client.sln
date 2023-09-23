@@ -16,6 +16,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		..\appveyor.yml = ..\appveyor.yml
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{BF1B3A31-561E-4445-8BE1-519DA850805E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dotnet7Sample", "..\samples\Dotnet7Sample\Dotnet7Sample.csproj", "{5627EB5C-8AF3-4B79-B046-94ECBBCD35A5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -34,6 +38,10 @@ Global
 		{B036174F-FDC2-45CB-A49B-733A6201FB46}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B036174F-FDC2-45CB-A49B-733A6201FB46}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B036174F-FDC2-45CB-A49B-733A6201FB46}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5627EB5C-8AF3-4B79-B046-94ECBBCD35A5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5627EB5C-8AF3-4B79-B046-94ECBBCD35A5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5627EB5C-8AF3-4B79-B046-94ECBBCD35A5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5627EB5C-8AF3-4B79-B046-94ECBBCD35A5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -44,5 +52,6 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{D1DDFBA2-4D33-414C-8C8E-24BFE207B959} = {03CD058F-0B38-4EEB-A4C1-3B48095967BE}
 		{B036174F-FDC2-45CB-A49B-733A6201FB46} = {03CD058F-0B38-4EEB-A4C1-3B48095967BE}
+		{5627EB5C-8AF3-4B79-B046-94ECBBCD35A5} = {BF1B3A31-561E-4445-8BE1-519DA850805E}
 	EndGlobalSection
 EndGlobal
