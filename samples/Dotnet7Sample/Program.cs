@@ -1,9 +1,14 @@
 ﻿using Synology.Api.Client;
+using Synology.Api.Client.Apis.FileStation.List.Models;
 
 // Update these values with your own
 const string dsmUrl = "http://192.168.0.1:5001/";
 const string username = "username";
 const string password = "password";
+
+//The path to the shared directory
+//Example: "/DataVault/Departments/IT"
+const string sharedFolderPath = "/DataVault/Departments/IT";
 
 /*
  * This is a simple example of how to use the Synology API Client .NET library.
@@ -40,6 +45,18 @@ var shares = await client.FileStationApi().ListEndpoint().ListSharesAsync();
 foreach (var share in shares.Shares)
 {
     Console.WriteLine("- Share: {0}", share.Name);
+}
+
+//List all files in the shares
+var files = await client.FileStationApi().ListEndpoint().ListAsync(new FileStationListRequest(sharedFolderPath));
+foreach (var item in files.Files)
+{
+    Console.WriteLine($"Name: {item.Name}");
+    Console.WriteLine($"Path: {item.Path}");
+    Console.WriteLine($"Additional:");
+    Console.WriteLine($"    RealPath: {item.Additional.RealPath}");
+    Console.WriteLine($"    Owner: {item.Additional.Owner.User}");
+    Console.WriteLine($"    Size: {item.Additional.Size}");
 }
 
 Console.WriteLine("Logging out...");
