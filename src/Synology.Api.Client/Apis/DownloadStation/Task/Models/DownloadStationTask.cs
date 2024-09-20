@@ -12,7 +12,7 @@ namespace Synology.Api.Client.Apis.DownloadStation.Task.Models
 
         public string Title { get; set; }
 
-        public decimal Size { get; set; }
+        public long Size { get; set; }
 
         public string Status { get; set; }
 
