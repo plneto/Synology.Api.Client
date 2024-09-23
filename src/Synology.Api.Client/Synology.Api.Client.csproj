@@ -1,7 +1,7 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFrameworks>netstandard2.0;net6.0</TargetFrameworks>
+		<TargetFrameworks>netstandard2.0;net6.0;net8.0</TargetFrameworks>
 		<Nullable>enable</Nullable>
 		<LangVersion>latest</LangVersion>
 		<Authors>Paulo Lemos Neto</Authors>
@@ -21,6 +21,11 @@
 
 	<ItemGroup Condition=" '$(TargetFramework)' == 'net6.0' ">
 		<PackageReference Include="System.Net.Http.Json" Version="7.0.0" />
+		<PackageReference Include="System.IO.Abstractions" Version="19.1.18" />
+	</ItemGroup>
+
+	<ItemGroup Condition=" '$(TargetFramework)' == 'net8.0' ">
+		<PackageReference Include="System.Net.Http.Json" Version="8.0.0" />
 		<PackageReference Include="System.IO.Abstractions" Version="19.1.18" />
 	</ItemGroup>
 
