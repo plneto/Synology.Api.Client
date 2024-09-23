@@ -1,9 +1,10 @@
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using Synology.Api.Client.ApiDescription;
 using Synology.Api.Client.Apis.DownloadStation.Task.Models;
 using Synology.Api.Client.Session;
 using Synology.Api.Client.Shared.Models;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Synology.Api.Client.Apis.DownloadStation.Task
 {
@@ -19,7 +20,7 @@ namespace Synology.Api.Client.Apis.DownloadStation.Task
             _apiInfo = apiInfo;
             _session = session;
         }
-        
+
         /// <summary>
         /// No specific response. It returns an empty success response if completed without error.
         /// Remark: At the moment only the uri variant works (the other parameters are not used).
@@ -43,10 +44,22 @@ namespace Synology.Api.Client.Apis.DownloadStation.Task
         {
             var queryParams = new Dictionary<string, string?>
             {
-                { "additional",  "detail,file" }
+                { "additional",  "detail,file,transfer" }
             };
 
             return _synologyHttpClient.GetAsync<DownloadStationTaskListResponse>(_apiInfo, "list", queryParams, _session);
+        }
+
+        public async Task<DownloadStationTask> GetInfoAsync(string id)
+        {
+            var queryParams = new Dictionary<string, string?>
+            {
+                { "id",  id },
+                {"additional", "detail,file,transfer" }
+            };
+
+            var result = await _synologyHttpClient.GetAsync<DownloadStationTaskListResponse>(_apiInfo, "getinfo", queryParams, _session);
+            return result.Tasks.First();
         }
 
         public Task<IEnumerable<DownloadStationTaskDeleteResponse>> DeleteAsync(DownloadStationTaskDeleteRequest data)
@@ -74,9 +87,9 @@ namespace Synology.Api.Client.Apis.DownloadStation.Task
             };
 
             return _synologyHttpClient.GetAsync<IEnumerable<DownloadStationPauseResponse>>(
-                _apiInfo, 
-                "pause", 
-                queryParam, 
+                _apiInfo,
+                "pause",
+                queryParam,
                 _session);
         }
 
