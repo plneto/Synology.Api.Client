@@ -3,6 +3,7 @@ using Synology.Api.Client.Apis.FileStation.Upload.Models;
 using Synology.Api.Client.Session;
 using System;
 using System.IO;
+using System.IO.Abstractions;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -16,14 +17,22 @@ namespace Synology.Api.Client.Apis.FileStation.Upload
         private readonly ISynologyHttpClient _synologyHttpClient;
         private readonly IApiInfo _apiInfo;
         private readonly ISynologySession _session;
+        private readonly IFileSystem _fileSystem;
+
+        public FileStationUploadEndpoint(ISynologyHttpClient synologyHttpClient, IApiInfo apiInfo, ISynologySession session)
+            : this(synologyHttpClient, apiInfo, session, new FileSystem())
+        {
+        }
 
         public FileStationUploadEndpoint(ISynologyHttpClient synologyHttpClient,
                                          IApiInfo apiInfo,
-                                         ISynologySession session)
+                                         ISynologySession session,
+                                         IFileSystem fileSystem)
         {
             _synologyHttpClient = synologyHttpClient;
             _apiInfo = apiInfo;
             _session = session;
+            _fileSystem = fileSystem;
         }
 
         /// <inheritdoc />
@@ -39,9 +48,9 @@ namespace Synology.Api.Client.Apis.FileStation.Upload
                 throw new ArgumentNullException(nameof(destination));
             }
 
-            var filename = Path.GetFileName(filePath);
+            var filename = _fileSystem.Path.GetFileName(filePath);
 
-            var bytes = File.ReadAllBytes(filePath);
+            var bytes = _fileSystem.File.ReadAllBytes(filePath);
             var memoryStream = new MemoryStream(bytes);
 
             using var fileContent = GetFileContent(memoryStream, filename);
@@ -121,15 +130,15 @@ namespace Synology.Api.Client.Apis.FileStation.Upload
         private StreamContent GetFileContent(Stream stream, string filename)
         {
             var fileContent = new StreamContent(stream);
-            
+
             // this is required to send non ascii characters in the filename
             var urlEncodedFilename = Uri.EscapeDataString(filename);
             var headerValue = $@"form-data; name=""file""; filename=""{filename}""; filename*=UTF-8''{urlEncodedFilename}";
             var bytes = Encoding.UTF8.GetBytes(headerValue);
-            headerValue = bytes.Aggregate("", (current, b) => current + (char) b);
+            headerValue = bytes.Aggregate("", (current, b) => current + (char)b);
 
             fileContent.Headers.Add("Content-Disposition", headerValue);
-            
+
             return fileContent;
         }
     }
