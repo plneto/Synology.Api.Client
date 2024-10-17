@@ -1,10 +1,10 @@
-﻿using System.Threading.Tasks;
-using Synology.Api.Client.ApiDescription;
+﻿using Synology.Api.Client.ApiDescription;
 using Synology.Api.Client.Apis.Auth;
 using Synology.Api.Client.Apis.DownloadStation;
 using Synology.Api.Client.Apis.FileStation;
 using Synology.Api.Client.Apis.Info;
 using Synology.Api.Client.Session;
+using System.Threading.Tasks;
 
 namespace Synology.Api.Client
 {

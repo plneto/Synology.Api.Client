@@ -1,4 +1,10 @@
-﻿using System;
+﻿using Synology.Api.Client.ApiDescription;
+using Synology.Api.Client.Constants;
+using Synology.Api.Client.Errors;
+using Synology.Api.Client.Exceptions;
+using Synology.Api.Client.Session;
+using Synology.Api.Client.Shared.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -6,12 +12,6 @@ using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 using System.Web;
-using Synology.Api.Client.ApiDescription;
-using Synology.Api.Client.Constants;
-using Synology.Api.Client.Errors;
-using Synology.Api.Client.Exceptions;
-using Synology.Api.Client.Session;
-using Synology.Api.Client.Shared.Models;
 
 namespace Synology.Api.Client
 {
@@ -67,7 +67,7 @@ namespace Synology.Api.Client
             query["api"] = apiInfo.Name;
             query["version"] = apiInfo.Version.ToString();
             query["method"] = apiMethod;
-            
+
             foreach (var curPair in queryParams)
             {
                 query[curPair.Key] = curPair.Value;
@@ -99,9 +99,9 @@ namespace Synology.Api.Client
 
                             var synologyApiException = new SynologyApiException(apiInfo, apiMethod, response?.Error?.Code ?? 0, errorDescription);
                             //add additional error details if present
-                            if (!(response?.Error?.Errors?.Any() ?? false)) 
+                            if (!(response?.Error?.Errors?.Any() ?? false))
                                 throw synologyApiException;
-                            
+
                             foreach (var curError in response.Error.Errors)
                             {
                                 var errorMessage = GetErrorMessage(curError.Code, apiInfo.Name);

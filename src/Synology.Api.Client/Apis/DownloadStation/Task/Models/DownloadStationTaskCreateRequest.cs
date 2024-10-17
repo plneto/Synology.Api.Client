@@ -10,16 +10,16 @@ namespace Synology.Api.Client.Apis.DownloadStation.Task.Models
         /// <param name="destination">Optional. Download destination path starting with a shared folder</param>
         public DownloadStationTaskCreateRequest(string uri, string destination = null)
         {
-            Uri = uri;
+            Uri = new string[] { uri };
             Destination = destination;
         }
-        
+
         /// <summary>
         /// Optional. Accepts HTTP/FTP/magnet/ED2K links or the file
         /// path starting with a shared folder, separated by ","
         /// </summary>
         /// <returns></returns>
-        public string Uri { get; }
+        public string[] Uri { get; }
 
         /// <summary>
         /// Optional. Download destination path starting with a shared folder

@@ -4,6 +4,7 @@ using Synology.Api.Client.Session;
 using Synology.Api.Client.Shared.Models;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace Synology.Api.Client.Apis.DownloadStation.Task
@@ -13,12 +14,14 @@ namespace Synology.Api.Client.Apis.DownloadStation.Task
         private readonly ISynologyHttpClient _synologyHttpClient;
         private readonly IApiInfo _apiInfo;
         private readonly ISynologySession _session;
+        private readonly string[] _additional;
 
         public DownloadStationTaskEndpoint(ISynologyHttpClient synologyHttpClient, IApiInfo apiInfo, ISynologySession session)
         {
             _synologyHttpClient = synologyHttpClient;
             _apiInfo = apiInfo;
             _session = session;
+            _additional = ["detail", "file", "transfer"];
         }
 
         /// <summary>
@@ -28,23 +31,24 @@ namespace Synology.Api.Client.Apis.DownloadStation.Task
         /// </summary>
         /// <param name="request">Request parameters</param>
         /// <returns></returns>
-        public Task<BaseApiResponse> CreateAsync(DownloadStationTaskCreateRequest request)
+        public Task<DownloadStationTaskCreateResponse> CreateAsync(DownloadStationTaskCreateRequest request)
         {
             var queryParams = new Dictionary<string, string?>
             {
-                { "uri", request.Uri },
-                { "destination", request.Destination }
+                { "url", JsonSerializer.Serialize(request.Uri) },
+                { "destination", JsonSerializer.Serialize(request.Destination) },
+                { "type", JsonSerializer.Serialize("url") },
+                { "create_list", JsonSerializer.Serialize(true) }
             };
-            _apiInfo.Version = 3;
 
-            return _synologyHttpClient.GetAsync<BaseApiResponse>(_apiInfo, "create", queryParams, session: _session);
+            return _synologyHttpClient.GetAsync<DownloadStationTaskCreateResponse>(_apiInfo, "create", queryParams, session: _session);
         }
 
         public Task<DownloadStationTaskListResponse> ListAsync()
         {
             var queryParams = new Dictionary<string, string?>
             {
-                { "additional",  "detail,file,transfer" }
+                { "additional",  JsonSerializer.Serialize(_additional) }
             };
 
             return _synologyHttpClient.GetAsync<DownloadStationTaskListResponse>(_apiInfo, "list", queryParams, _session);
@@ -54,58 +58,43 @@ namespace Synology.Api.Client.Apis.DownloadStation.Task
         {
             var queryParams = new Dictionary<string, string?>
             {
-                { "id",  id },
-                {"additional", "detail,file,transfer" }
+                { "id",  JsonSerializer.Serialize(new []{id }) },
+                {"additional", JsonSerializer.Serialize(_additional) }
             };
 
-            var result = await _synologyHttpClient.GetAsync<DownloadStationTaskListResponse>(_apiInfo, "getinfo", queryParams, _session);
-            return result.Tasks.First();
+            var result = await _synologyHttpClient.GetAsync<DownloadStationTaskListResponse>(_apiInfo, "get", queryParams, _session);
+            return result.Task.First();
         }
 
-        public Task<IEnumerable<DownloadStationTaskDeleteResponse>> DeleteAsync(DownloadStationTaskDeleteRequest data)
+        public Task<DownloadStationTaskDeleteResponse> DeleteAsync(DownloadStationTaskDeleteRequest data)
         {
-            var idsString = string.Join(",", data.Ids);
             var queryParam = new Dictionary<string, string?>
             {
-                { "id", idsString },
-                { "force_complete", data.ForceComplete.ToString() }
+                { "id", JsonSerializer.Serialize(data.Ids) },
+                { "force_complete",JsonSerializer.Serialize(data.ForceComplete) }
             };
 
-            return _synologyHttpClient.GetAsync<IEnumerable<DownloadStationTaskDeleteResponse>>(
-                _apiInfo,
-                "delete",
-                queryParam,
-                _session);
+            return _synologyHttpClient.GetAsync<DownloadStationTaskDeleteResponse>(_apiInfo, "delete", queryParam, _session);
         }
 
-        public Task<IEnumerable<DownloadStationPauseResponse>> PauseAsync(params string[] ids)
+        public Task<BaseApiResponse> PauseAsync(params string[] ids)
         {
-            var idsString = string.Join(",", ids);
             var queryParam = new Dictionary<string, string?>
             {
-                { "id", idsString }
+                { "id", JsonSerializer.Serialize(ids) }
             };
 
-            return _synologyHttpClient.GetAsync<IEnumerable<DownloadStationPauseResponse>>(
-                _apiInfo,
-                "pause",
-                queryParam,
-                _session);
+            return _synologyHttpClient.GetAsync<BaseApiResponse>(_apiInfo, "pause", queryParam, _session);
         }
 
-        public Task<IEnumerable<DownloadStationTaskResumeResponse>> ResumeAsync(params string[] ids)
+        public Task<DownloadStationTaskResumeResponse> ResumeAsync(params string[] ids)
         {
-            var idsString = string.Join(",", ids);
             var queryParam = new Dictionary<string, string?>
             {
-                { "id", idsString }
+                { "id", JsonSerializer.Serialize(ids) }
             };
 
-            return _synologyHttpClient.GetAsync<IEnumerable<DownloadStationTaskResumeResponse>>(
-                _apiInfo,
-                "resume",
-                queryParam,
-                _session);
+            return _synologyHttpClient.GetAsync<DownloadStationTaskResumeResponse>(_apiInfo, "resume", queryParam, _session);
         }
     }
 }

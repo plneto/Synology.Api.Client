@@ -30,7 +30,7 @@
         public const string DownloadStationRssSiteApiName =     "SYNO.DownloadStation.RSS.Site";
         public const string DownloadStationScheduleApiName =    "SYNO.DownloadStation.Schedule";
         public const string DownloadStationStatisticApiName =   "SYNO.DownloadStation.Statistic";
-        public const string DownloadStationTaskApiName =        "SYNO.DownloadStation.Task";
+        public const string DownloadStationTaskApiName =        "SYNO.DownloadStation2.Task";
         public const string DownloadStationBtSearchApiName =    "SYNO.DownloadStation.BTSearch";
     }
 }

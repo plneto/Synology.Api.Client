@@ -14,7 +14,7 @@ namespace Synology.Api.Client.Apis.DownloadStation.Task.Models
 
         public long Size { get; set; }
 
-        public string Status { get; set; }
+        public DownloadStationTaskStatus Status { get; set; }
 
         [JsonPropertyName("status_extra")]
         public DownloadStationTaskStatusExtra StatusExtra { get; set; }

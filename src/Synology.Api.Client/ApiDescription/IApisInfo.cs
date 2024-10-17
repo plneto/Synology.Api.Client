@@ -7,7 +7,7 @@
         IApiInfo AuthApi { get; set; }
 
         IApiInfo DownloadStationTaskApi { get; set; }
-        
+
         IApiInfo DownloadStationInfoApi { get; set; }
 
         IApiInfo FileStationCopyMoveApi { get; set; }
@@ -19,7 +19,7 @@
         IApiInfo FileStationListApi { get; set; }
 
         IApiInfo FileStationUploadApi { get; set; }
-        
+
         IApiInfo FileStationSearchApi { get; set; }
     }
 }
