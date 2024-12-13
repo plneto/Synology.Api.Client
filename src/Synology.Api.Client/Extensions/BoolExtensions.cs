@@ -1,10 +1,9 @@
-﻿namespace Synology.Api.Client.Extensions
+﻿namespace Synology.Api.Client.Extensions;
+
+public static class BoolExtensions
 {
-    public static class BoolExtensions
+    public static string ToLowerString(this bool @bool)
     {
-        public static string ToLowerString(this bool @bool)
-        {
-            return @bool.ToString().ToLower();
-        }
+        return @bool.ToString().ToLower();
     }
 }

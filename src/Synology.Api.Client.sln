@@ -14,11 +14,13 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{BEC58125-FE06-4D39-A703-1D9095166A1F}"
 	ProjectSection(SolutionItems) = preProject
 		..\appveyor.yml = ..\appveyor.yml
+		..\.editorconfig = ..\.editorconfig
+		..\Directory.Build.props = ..\Directory.Build.props
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{BF1B3A31-561E-4445-8BE1-519DA850805E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dotnet7Sample", "..\samples\Dotnet7Sample\Dotnet7Sample.csproj", "{5627EB5C-8AF3-4B79-B046-94ECBBCD35A5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dotnet8Sample", "..\samples\Dotnet8Sample\Dotnet8Sample.csproj", "{5627EB5C-8AF3-4B79-B046-94ECBBCD35A5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

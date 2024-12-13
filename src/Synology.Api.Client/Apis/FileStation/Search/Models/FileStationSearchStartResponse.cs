@@ -1,10 +1,9 @@
 using System.Text.Json.Serialization;
 
-namespace Synology.Api.Client.Apis.FileStation.Search.Models
+namespace Synology.Api.Client.Apis.FileStation.Search.Models;
+
+public class FileStationSearchStartResponse
 {
-    public class FileStationSearchStartResponse
-    {
-        [JsonPropertyName("taskid")]
-        public string TaskId { get; set; }
-    }
+    [JsonPropertyName("taskid")]
+    public string? TaskId { get; set; }
 }

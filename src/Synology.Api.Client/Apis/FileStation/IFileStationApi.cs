@@ -5,20 +5,19 @@ using Synology.Api.Client.Apis.FileStation.List;
 using Synology.Api.Client.Apis.FileStation.Search;
 using Synology.Api.Client.Apis.FileStation.Upload;
 
-namespace Synology.Api.Client.Apis.FileStation
+namespace Synology.Api.Client.Apis.FileStation;
+
+public interface IFileStationApi
 {
-    public interface IFileStationApi
-    {
-        IFileStationCopyMoveEndpoint CopyMoveEndpoint();
+    IFileStationCopyMoveEndpoint CopyMoveEndpoint();
 
-        IFileStationCreateFolderEndpoint CreateFolderEndpoint();
+    IFileStationCreateFolderEndpoint CreateFolderEndpoint();
 
-        IFileStationListEndpoint ListEndpoint();
+    IFileStationListEndpoint ListEndpoint();
 
-        IFileStationUploadEndpoint UploadEndpoint();
+    IFileStationUploadEndpoint UploadEndpoint();
 
-        IFileStationExtractEndpoint ExtractEndpoint();
-        
-        IFileStationSearchEndpoint SearchEndpoint();
-    }
+    IFileStationExtractEndpoint ExtractEndpoint();
+
+    IFileStationSearchEndpoint SearchEndpoint();
 }

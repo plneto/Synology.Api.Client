@@ -1,35 +1,34 @@
-﻿using Xunit;
+﻿using FluentAssertions;
 using Synology.Api.Client.Extensions;
-using FluentAssertions;
+using Xunit;
 
-namespace Synology.Api.Client.Tests.Extensions
+namespace Synology.Api.Client.Tests.Extensions;
+
+public class StringArrayExtensionsTests
 {
-    public class StringArrayExtensionsTests
+    [Fact]
+    public void StringArrayExtensions_ValidArray_Success()
     {
-        [Fact]
-        public void StringArrayExtensions_ValidArray_Success()
-        {
-            // arrange
-            var words = new[] { "Hello", "World" };
+        // arrange
+        var words = new[] { "Hello", "World" };
 
-            // act
-            var result = words.ToCommaSeparatedAroundBrackets();
+        // act
+        var result = words.ToCommaSeparatedAroundBrackets();
 
-            // assert
-            result.Should().BeEquivalentTo(@"[""Hello"",""World""]");
-        }
+        // assert
+        result.Should().BeEquivalentTo(@"[""Hello"",""World""]");
+    }
 
-        [Fact]
-        public void StringArrayExtensions_EmptyArray_ReturnEmptyBrackets()
-        {
-            // arrange
-            var words = System.Array.Empty<string>();
+    [Fact]
+    public void StringArrayExtensions_EmptyArray_ReturnEmptyBrackets()
+    {
+        // arrange
+        var words = Array.Empty<string>();
 
-            // act
-            var result = words.ToCommaSeparatedAroundBrackets();
+        // act
+        var result = words.ToCommaSeparatedAroundBrackets();
 
-            // assert
-            result.Should().BeEquivalentTo("[]");
-        }
+        // assert
+        result.Should().BeEquivalentTo("[]");
     }
 }

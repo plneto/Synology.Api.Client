@@ -10,97 +10,96 @@ using Synology.Api.Client.Apis.Info;
 using Synology.Api.Client.Constants;
 using Synology.Api.Client.Session;
 
-namespace Synology.Api.Client
+namespace Synology.Api.Client;
+
+public class SynologyClient : ISynologyClient
 {
-    public class SynologyClient : ISynologyClient
+    private readonly ISynologyHttpClient _synologyHttpClient;
+
+    public SynologyClient(string dsmUrl)
+        : this(dsmUrl, new HttpClient())
     {
-        private readonly ISynologyHttpClient _synologyHttpClient;
+    }
 
-        public SynologyClient(string dsmUrl)
-            : this(dsmUrl, new HttpClient())
+    public SynologyClient(string dsmUrl, HttpClient httpClient)
+    {
+        if (string.IsNullOrWhiteSpace(dsmUrl))
         {
+            throw new ArgumentNullException(nameof(dsmUrl));
         }
 
-        public SynologyClient(string dsmUrl, HttpClient httpClient)
+        httpClient.BaseAddress = new Uri($"{dsmUrl.TrimEnd('/')}/webapi");
+
+        _synologyHttpClient = new SynologyHttpClient(httpClient);
+
+        Task.Run(() => UpdateApisInfoAsync()).Wait();
+    }
+
+    public IApisInfo ApisInfo { get; set; } = new DefaultApisInfo();
+
+    public ISynologySession? Session { get; set; }
+
+    public bool IsLoggedIn => Session != null && !string.IsNullOrWhiteSpace(Session.Sid);
+
+    public IInfoEndpoint InfoApi()
+    {
+        return new InfoEndpoint(_synologyHttpClient, ApisInfo.InfoApi);
+    }
+
+    public IAuthApi AuthApi()
+    {
+        return new AuthApi(_synologyHttpClient, ApisInfo.AuthApi);
+    }
+
+    public IDownloadStationApi DownloadStationApi()
+    {
+        if (!IsLoggedIn)
         {
-            if (string.IsNullOrWhiteSpace(dsmUrl))
-            {
-                throw new ArgumentNullException(nameof(dsmUrl));
-            }
-
-            httpClient.BaseAddress = new Uri($"{dsmUrl.TrimEnd('/')}/webapi");
-
-            _synologyHttpClient = new SynologyHttpClient(httpClient);
-
-            Task.Run(() => UpdateApisInfoAsync()).Wait();
+            throw new SecurityException(CustomErrorMessages.SessionNotAuthenticated);
         }
 
-        public IApisInfo ApisInfo { get; set; } = new DefaultApisInfo();
+        return new DownloadStationApi(_synologyHttpClient, ApisInfo, Session!);
+    }
 
-        public ISynologySession Session { get; set; }
-
-        public bool IsLoggedIn => Session != null && !string.IsNullOrWhiteSpace(Session.Sid);
-
-        public IInfoEndpoint InfoApi()
+    public IFileStationApi FileStationApi()
+    {
+        if (!IsLoggedIn)
         {
-            return new InfoEndpoint(_synologyHttpClient, ApisInfo.InfoApi);
+            throw new SecurityException(CustomErrorMessages.SessionNotAuthenticated);
         }
 
-        public IAuthApi AuthApi()
+        return new FileStationApi(_synologyHttpClient, ApisInfo, Session!);
+    }
+
+    public async Task LoginAsync(
+        string username,
+        string password,
+        string otpCode = "")
+    {
+        var loginResult = await AuthApi().LoginAsync(username, password, otpCode);
+
+        Session = new SynologySession(loginResult.Sid);
+    }
+
+    public async Task LogoutAsync()
+    {
+        if (!IsLoggedIn)
         {
-            return new AuthApi(_synologyHttpClient, ApisInfo.AuthApi);
+            return;
         }
 
-        public IDownloadStationApi DownloadStationApi()
-        {
-            if (!IsLoggedIn)
-            {
-                throw new SecurityException(CustomErrorMessages.SessionNotAuthenticated);
-            }
+        await AuthApi().LogoutAsync(Session!.Sid);
 
-            return new DownloadStationApi(_synologyHttpClient, ApisInfo, Session);
-        }
+        Session = null;
+    }
 
-        public IFileStationApi FileStationApi()
-        {
-            if (!IsLoggedIn)
-            {
-                throw new SecurityException(CustomErrorMessages.SessionNotAuthenticated);
-            }
+    /// <summary>
+    /// Updates the API descriptions using the response from the InfoApi endpoint.
+    /// </summary>
+    private async Task UpdateApisInfoAsync()
+    {
+        var infoQueryResponse = await InfoApi().QueryAsync();
 
-            return new FileStationApi(_synologyHttpClient, ApisInfo, Session);
-        }
-
-        public async Task LoginAsync(
-            string username,
-            string password,
-            string otpCode = "")
-        {
-            var loginResult = await AuthApi().LoginAsync(username, password, otpCode);
-
-            Session = new SynologySession(loginResult.Sid);
-        }
-
-        public async Task LogoutAsync()
-        {
-            if (!IsLoggedIn)
-            {
-                return;
-            }
-
-            await AuthApi().LogoutAsync(Session.Sid);
-
-            Session = null;
-        }
-
-        /// <summary>
-        /// Updates the API descriptions using the response from the InfoApi endpoint.
-        /// </summary>
-        private async Task UpdateApisInfoAsync()
-        {
-            var infoQueryResponse = await InfoApi().QueryAsync();
-
-            ApisInfo = DefaultApisInfo.FromInfoQueryResponse(ApisInfo, infoQueryResponse);
-        }
+        ApisInfo = DefaultApisInfo.FromInfoQueryResponse(ApisInfo, infoQueryResponse);
     }
 }

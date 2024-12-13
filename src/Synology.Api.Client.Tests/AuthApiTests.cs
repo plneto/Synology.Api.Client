@@ -1,8 +1,5 @@
-using System;
-using System.Collections.Generic;
 using System.Net;
 using System.Net.Http.Json;
-using System.Threading.Tasks;
 using AutoFixture;
 using FluentAssertions;
 using RichardSzalay.MockHttp;
@@ -13,182 +10,181 @@ using Synology.Api.Client.Shared.Models;
 using Synology.Api.Client.Tests.Fixtures;
 using Xunit;
 
-namespace Synology.Api.Client.Tests
+namespace Synology.Api.Client.Tests;
+
+public class AuthApiTests : IClassFixture<SynologyFixture>, IDisposable
 {
-    public class AuthApiTests : IClassFixture<SynologyFixture>, IDisposable
+    private readonly SynologyFixture _synologyFixture;
+    private readonly Fixture _fixture;
+    private readonly IApiInfo _apiInfo;
+    private readonly MockHttpMessageHandler _mockHtttp;
+    private readonly Uri _baseUriWithApiPath;
+
+    public AuthApiTests(SynologyFixture synologyFixture)
     {
-        private readonly SynologyFixture _synologyFixture;
-        private readonly Fixture _fixture;
-        private readonly IApiInfo _apiInfo;
-        private readonly MockHttpMessageHandler _mockHtttp;
-        private readonly Uri _baseUriWithApiPath;
+        _synologyFixture = synologyFixture;
+        _fixture = new Fixture();
+        _apiInfo = _synologyFixture.ApisInfo.AuthApi;
+        _mockHtttp = new MockHttpMessageHandler();
 
-        public AuthApiTests(SynologyFixture synologyFixture)
+        _baseUriWithApiPath = _synologyFixture.GetBaseUriWithPath(_apiInfo.Path);
+    }
+
+    public void Dispose()
+    {
+        _mockHtttp.Dispose();
+    }
+
+    #region helper methods
+
+    private IAuthApi GetAuthApi()
+    {
+        var httpClient = _mockHtttp.ToHttpClient();
+        httpClient.BaseAddress = _synologyFixture.BaseUri;
+
+        var synologyHttpClient = new SynologyHttpClient(httpClient);
+        var authApi = new AuthApi(synologyHttpClient, _apiInfo);
+        return authApi;
+    }
+
+    #endregion
+
+    [Fact]
+    public async Task Login_ShouldCallCorrectUrl()
+    {
+        // Arrange
+        var username = _fixture.Create<string>();
+        var password = _fixture.Create<string>();
+        var otpCode = _fixture.Create<string>();
+
+        var expectedResponse = new ApiResponse<LoginResponse>
         {
-            _synologyFixture = synologyFixture;
-            _fixture = new Fixture();
-            _apiInfo = _synologyFixture.ApisInfo.AuthApi;
-            _mockHtttp = new MockHttpMessageHandler();
+            Success = true,
+            Data = _fixture.Create<LoginResponse>()
+        };
 
-            _baseUriWithApiPath = _synologyFixture.GetBaseUriWithPath(_apiInfo.Path);
-        }
-
-        public void Dispose()
-        {
-            _mockHtttp.Dispose();
-        }
-
-        #region helper methods
-
-        private IAuthApi GetAuthApi()
-        {
-            var httpClient = _mockHtttp.ToHttpClient();
-            httpClient.BaseAddress = _synologyFixture.BaseUri;
-
-            var synologyHttpClient = new SynologyHttpClient(httpClient);
-            var authApi = new AuthApi(synologyHttpClient, _apiInfo);
-            return authApi;
-        }
-
-        #endregion
-
-        [Fact]
-        public async void Login_ShouldCallCorrectUrl()
-        {
-            // Arrange
-            var username = _fixture.Create<string>();
-            var password = _fixture.Create<string>();
-            var otpCode = _fixture.Create<string>();
-
-            var expectedResponse = new ApiResponse<LoginResponse>
+        //expect certain request to server
+        var request = _mockHtttp.Expect(HttpMethod.Get, _baseUriWithApiPath.ToString())
+            .WithQueryString(new Dictionary<string, string>
             {
-                Success = true,
-                Data = _fixture.Create<LoginResponse>()
-            };
+                { "api" , _apiInfo.Name },
+                { "version" , _apiInfo.Version.ToString() },
+                { "method" , "login" },
+                { "account" , username },
+                { "passwd" , password },
+                { "format" , "sid" },
+                { "otp_code" , otpCode }
+            });
 
-            //expect certain request to server
-            var request = _mockHtttp.Expect(System.Net.Http.HttpMethod.Get, _baseUriWithApiPath.ToString())
-                 .WithQueryString(new Dictionary<string, string>
-                 {
-                    { "api" , _apiInfo.Name },
-                    { "version" , _apiInfo.Version.ToString() },
-                    { "method" , "login" },
-                    { "account" , username },
-                    { "passwd" , password },
-                    { "format" , "sid" },
-                    { "otp_code" , otpCode }
-                 });
+        if (!string.IsNullOrWhiteSpace(_apiInfo.SessionName))
+        {
+            request = request.WithQueryString("session", _apiInfo.SessionName);
+        }
 
-            if (!string.IsNullOrWhiteSpace(_apiInfo.SessionName))
+        request.Respond(HttpStatusCode.OK, JsonContent.Create(expectedResponse));
+
+        //expect certain response from server
+        //_mockHtttp.When(System.Net.Http.HttpMethod.Get, _baseUriWithApiPath.ToString())
+        //    .Respond(HttpStatusCode.OK, JsonContent.Create(expectedResponse));
+
+        var authApi = GetAuthApi();
+
+        // Act
+        var result = await authApi.LoginAsync(username, password, otpCode);
+
+        // Assert
+        result.Should().BeEquivalentTo(expectedResponse.Data);
+    }
+
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData(" ")]
+    public async Task Login_UsernameIsNullOrWhitespace_ShouldThrow(string? username)
+    {
+        // Arrange
+        var password = _fixture.Create<string>();
+        var otpCode = _fixture.Create<string>();
+
+        var authApi = GetAuthApi();
+
+        // Act
+        var actDelegate = () => authApi.LoginAsync(username!, password, otpCode);
+
+        // Assert
+        await Assert.ThrowsAsync<ArgumentNullException>(actDelegate);
+    }
+
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData(" ")]
+    public async Task Login_PasswordIsNullOrWhitespace_ShouldThrow(string? password)
+    {
+        // Arrange
+        var username = _fixture.Create<string>();
+        var otpCode = _fixture.Create<string>();
+
+        var authApi = GetAuthApi();
+
+        // Act
+        var actDelegate = () => authApi.LoginAsync(username, password!, otpCode);
+
+        // Assert
+        await Assert.ThrowsAsync<ArgumentNullException>(actDelegate);
+    }
+
+    [Fact]
+    public async Task Logout_CallsCorrectUrl()
+    {
+        // Arrange
+        var sid = _fixture.Create<string>();
+
+        var expectedResponse = new BaseApiResponse
+        {
+            Success = true,
+            Error = null
+        };
+
+        //expect certain request to server
+        var request = _mockHtttp.Expect(HttpMethod.Get, _baseUriWithApiPath.ToString())
+            .WithQueryString(new Dictionary<string, string>
             {
-                request = request.WithQueryString("session", _apiInfo.SessionName);
-            }
+                { "api" , _apiInfo.Name },
+                { "version" , _apiInfo.Version.ToString() },
+                { "method" , "logout" },
+                { "_sid" , sid }
+            });
 
-            request.Respond(HttpStatusCode.OK, JsonContent.Create(expectedResponse));
-
-            //expect certain response from server
-            //_mockHtttp.When(System.Net.Http.HttpMethod.Get, _baseUriWithApiPath.ToString())
-            //    .Respond(HttpStatusCode.OK, JsonContent.Create(expectedResponse));
-
-            var authApi = GetAuthApi();
-
-            // Act
-            var result = await authApi.LoginAsync(username, password, otpCode);
-
-            // Assert
-            result.Should().BeEquivalentTo(expectedResponse.Data);
-        }
-
-        [Theory]
-        [InlineData(null)]
-        [InlineData("")]
-        [InlineData(" ")]
-        public async Task Login_UsernameIsNullOrWhitespace_ShouldThrow(string username)
+        if (!string.IsNullOrWhiteSpace(_apiInfo.SessionName))
         {
-            // Arrange
-            var password = _fixture.Create<string>();
-            var otpCode = _fixture.Create<string>();
-
-            var authApi = GetAuthApi();
-
-            // Act
-            var actDelegate = () => authApi.LoginAsync(username, password, otpCode);
-
-            // Assert
-            await Assert.ThrowsAsync<ArgumentNullException>(actDelegate);
+            request = request.WithQueryString("session", _apiInfo.SessionName);
         }
 
-        [Theory]
-        [InlineData(null)]
-        [InlineData("")]
-        [InlineData(" ")]
-        public async Task Login_PasswordIsNullOrWhitespace_ShouldThrow(string password)
-        {
-            // Arrange
-            var username = _fixture.Create<string>();
-            var otpCode = _fixture.Create<string>();
+        request.Respond(HttpStatusCode.OK, JsonContent.Create(expectedResponse));
 
-            var authApi = GetAuthApi();
+        var authApi = GetAuthApi();
 
-            // Act
-            var actDelegate = () => authApi.LoginAsync(username, password, otpCode);
+        // Act
+        var result = await authApi.LogoutAsync(sid);
 
-            // Assert
-            await Assert.ThrowsAsync<ArgumentNullException>(actDelegate);
-        }
+        // Assert
+        result.Should().BeEquivalentTo(expectedResponse);
+    }
 
-        [Fact]
-        public async void Logout_CallsCorrectUrl()
-        {
-            // Arrange
-            var sid = _fixture.Create<string>();
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData(" ")]
+    public async Task Logout_SidIsNullOrWhitespace_ShouldThrow(string? sid)
+    {
+        // Arrange
+        var authApi = GetAuthApi();
 
-            var expectedResponse = new BaseApiResponse
-            {
-                Success = true,
-                Error = null
-            };
+        // Act
+        var actDelegate = () => authApi.LogoutAsync(sid!);
 
-            //expect certain request to server
-            var request = _mockHtttp.Expect(System.Net.Http.HttpMethod.Get, _baseUriWithApiPath.ToString())
-                 .WithQueryString(new Dictionary<string, string>
-                 {
-                    { "api" , _apiInfo.Name },
-                    { "version" , _apiInfo.Version.ToString() },
-                    { "method" , "logout" },
-                    { "_sid" , sid }
-                 });
-
-            if (!string.IsNullOrWhiteSpace(_apiInfo.SessionName))
-            {
-                request = request.WithQueryString("session", _apiInfo.SessionName);
-            }
-
-            request.Respond(HttpStatusCode.OK, JsonContent.Create(expectedResponse));
-
-            var authApi = GetAuthApi();
-
-            // Act
-            var result = await authApi.LogoutAsync(sid);
-
-            // Assert
-            result.Should().BeEquivalentTo(expectedResponse);
-        }
-
-        [Theory]
-        [InlineData(null)]
-        [InlineData("")]
-        [InlineData(" ")]
-        public async Task Logout_SidIsNullOrWhitespace_ShouldThrow(string sid)
-        {
-            // Arrange
-            var authApi = GetAuthApi();
-
-            // Act
-            var actDelegate = () => authApi.LogoutAsync(sid);
-
-            // Assert
-            await Assert.ThrowsAsync<ArgumentNullException>(actDelegate);
-        }
+        // Assert
+        await Assert.ThrowsAsync<ArgumentNullException>(actDelegate);
     }
 }
