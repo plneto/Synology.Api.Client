@@ -1,13 +1,12 @@
-﻿namespace Synology.Api.Client.ApiDescription
+﻿namespace Synology.Api.Client.ApiDescription;
+
+public interface IApiInfo
 {
-    public interface IApiInfo
-    {
-        string Name { get; set; }
+    string Name { get; set; }
 
-        string Path { get; set; }
+    string Path { get; set; }
 
-        int Version { get; set; }
+    int Version { get; set; }
 
-        string SessionName { get; set; }
-    }
+    string SessionName { get; set; }
 }

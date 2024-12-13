@@ -1,7 +1,6 @@
-﻿namespace Synology.Api.Client.Shared.Models
+﻿namespace Synology.Api.Client.Shared.Models;
+
+public class ApiResponse<T> : BaseApiResponse
 {
-    public class ApiResponse<T> : BaseApiResponse
-    {
-        public T Data { get; set; } = default!;
-    }
+    public T Data { get; set; } = default!;
 }

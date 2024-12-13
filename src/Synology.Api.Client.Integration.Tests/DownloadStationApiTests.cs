@@ -4,248 +4,247 @@ using Synology.Api.Client.Apis.DownloadStation.Info.Models;
 using Synology.Api.Client.Integration.Tests.Fixtures;
 using Xunit;
 
-namespace Synology.Api.Client.Integration.Tests
+namespace Synology.Api.Client.Integration.Tests;
+
+public class DownloadStationApiTests : IClassFixture<SynologyFixture>
 {
-    public class DownloadStationApiTests : IClassFixture<SynologyFixture>
+    private readonly SynologyFixture _fixture;
+
+    public DownloadStationApiTests(SynologyFixture fixture)
     {
-        private readonly SynologyFixture _fixture;
+        _fixture = fixture;
 
-        public DownloadStationApiTests(SynologyFixture fixture)
-        {
-            _fixture = fixture;
+        _fixture.LoginAsync().Wait();
+    }
 
-            _fixture.LoginAsync().Wait();
-        }
+    [Fact]
+    public async Task DownloadStationApi_DownloadStation_ListTasks()
+    {
+        // arrange && act
+        var listResponse = await _fixture
+            .Client
+            .DownloadStationApi()
+            .TaskEndpoint()
+            .ListAsync();
 
-        [Fact]
-        public async Task DownloadStationApi_DownloadStation_ListTasks()
-        {
-            // arrange && act
-            var listResponse = await _fixture
-                .Client
-                .DownloadStationApi()
-                .TaskEndpoint()
-                .ListAsync();
-
-            // assert
-            listResponse.Should().NotBeNull();
-        }
+        // assert
+        listResponse.Should().NotBeNull();
+    }
         
-        [Fact]
-        public async Task DownloadStationApi_DownloadStation_CreateTaskByUriWithLogin()
+    [Fact]
+    public async Task DownloadStationApi_DownloadStation_CreateTaskByUriWithLogin()
+    {
+        // arrange && act
+        var uri = ""; //file uri
+        var request = new DownloadStationTaskCreateRequest(uri);
+            
+        var createResponse = await _fixture
+            .Client
+            .DownloadStationApi()
+            .TaskEndpoint()
+            .CreateAsync(request);
+            
+        // assert
+        createResponse.Should().NotBeNull();
+    }
+
+    [Fact]
+    public async Task DownloadStationApi_DownloadStation_DeleteTask()
+    {
+        var request = new DownloadStationTaskCreateRequest(
+            uri: "magnet:?xt=urn:btih:fef84077088ca87ffd8afd644d0ef957d96243c3&dn=archlinux-2023.01.01-x86_64.iso");
+
+        var listTaskBefore = await _fixture
+            .Client
+            .DownloadStationApi()
+            .TaskEndpoint()
+            .ListAsync();
+
+        await _fixture
+            .Client
+            .DownloadStationApi()
+            .TaskEndpoint()
+            .CreateAsync(request);
+
+        var listTaskAfterAdd = await _fixture
+            .Client
+            .DownloadStationApi()
+            .TaskEndpoint()
+            .ListAsync();
+            
+        var delRequest = new DownloadStationTaskDeleteRequest
         {
-            // arrange && act
-            var uri = ""; //file uri
-            var request = new DownloadStationTaskCreateRequest(uri);
-            
-            var createResponse = await _fixture
-                .Client
-                .DownloadStationApi()
-                .TaskEndpoint()
-                .CreateAsync(request);
-            
-            // assert
-            createResponse.Should().NotBeNull();
-        }
+            Ids = new List<string> {listTaskAfterAdd.Tasks.Last().Id},
+            ForceComplete = false
+        };
 
-        [Fact]
-        public async Task DownloadStationApi_DownloadStation_DeleteTask()
+        await _fixture
+            .Client
+            .DownloadStationApi()
+            .TaskEndpoint()
+            .DeleteAsync(delRequest);
+            
+        var listTaskAfter = await _fixture
+            .Client
+            .DownloadStationApi()
+            .TaskEndpoint()
+            .ListAsync();
+
+        Assert.Equal(listTaskBefore.Total, listTaskAfter.Total);
+    }
+
+    [Fact]
+    public async Task DownloadStationApi_DownloadStation_ResumeTasks()
+    {
+        var request = new DownloadStationTaskCreateRequest(
+            uri: "magnet:?xt=urn:btih:fef84077088ca87ffd8afd644d0ef957d96243c3&dn=archlinux-2023.01.01-x86_64.iso");
+
+        await _fixture
+            .Client
+            .DownloadStationApi()
+            .TaskEndpoint()
+            .CreateAsync(request);
+
+        var listTask = await _fixture
+            .Client
+            .DownloadStationApi()
+            .TaskEndpoint()
+            .ListAsync();
+
+        var id = listTask.Tasks.Last().Id;
+
+        await _fixture
+            .Client
+            .DownloadStationApi()
+            .TaskEndpoint()
+            .PauseAsync(id);
+
+        var resumeResponse = await _fixture
+            .Client
+            .DownloadStationApi()
+            .TaskEndpoint()
+            .ResumeAsync(id);
+
+        resumeResponse.Should().NotBeNull();
+            
+        var delRequest = new DownloadStationTaskDeleteRequest
         {
-            var request = new DownloadStationTaskCreateRequest(
-                uri: "magnet:?xt=urn:btih:fef84077088ca87ffd8afd644d0ef957d96243c3&dn=archlinux-2023.01.01-x86_64.iso");
+            Ids = new List<string> {id},
+            ForceComplete = false
+        };
 
-            var listTaskBefore = await _fixture
-                .Client
-                .DownloadStationApi()
-                .TaskEndpoint()
-                .ListAsync();
+        await _fixture
+            .Client
+            .DownloadStationApi()
+            .TaskEndpoint()
+            .DeleteAsync(delRequest);
+    }
 
-            await _fixture
-                .Client
-                .DownloadStationApi()
-                .TaskEndpoint()
-                .CreateAsync(request);
-
-            var listTaskAfterAdd = await _fixture
-                .Client
-                .DownloadStationApi()
-                .TaskEndpoint()
-                .ListAsync();
+    [Fact]
+    public async Task DownloadStationApi_DownloadStation_PauseTask()
+    {
+        var request = new DownloadStationTaskCreateRequest(
+            uri: "magnet:?xt=urn:btih:fef84077088ca87ffd8afd644d0ef957d96243c3&dn=archlinux-2023.01.01-x86_64.iso");
             
-            var delRequest = new DownloadStationTaskDeleteRequest
-            {
-                Ids = new List<string> {listTaskAfterAdd.Tasks.Last().Id},
-                ForceComplete = false
-            };
-
-            await _fixture
-                .Client
-                .DownloadStationApi()
-                .TaskEndpoint()
-                .DeleteAsync(delRequest);
+        await _fixture
+            .Client
+            .DownloadStationApi()
+            .TaskEndpoint()
+            .CreateAsync(request);
             
-            var listTaskAfter = await _fixture
-                .Client
-                .DownloadStationApi()
-                .TaskEndpoint()
-                .ListAsync();
+        var listTask = await _fixture
+            .Client
+            .DownloadStationApi()
+            .TaskEndpoint()
+            .ListAsync();
 
-            Assert.Equal(listTaskBefore.Total, listTaskAfter.Total);
-        }
+        var pauseResponse = _fixture
+            .Client
+            .DownloadStationApi()
+            .TaskEndpoint()
+            .PauseAsync(listTask.Tasks.Last().Id);
 
-        [Fact]
-        public async Task DownloadStationApi_DownloadStation_ResumeTasks()
-        {
-            var request = new DownloadStationTaskCreateRequest(
-                uri: "magnet:?xt=urn:btih:fef84077088ca87ffd8afd644d0ef957d96243c3&dn=archlinux-2023.01.01-x86_64.iso");
+        pauseResponse.Should().NotBeNull();
+    }
 
-            await _fixture
-                .Client
-                .DownloadStationApi()
-                .TaskEndpoint()
-                .CreateAsync(request);
+    [Fact]
+    public async Task DownloadStationApi_DownloadStation_Info()
+    {
+        var infoResponse = await _fixture
+            .Client
+            .DownloadStationApi()
+            .InfoEndpoint()
+            .InfoAsync();
 
-            var listTask = await _fixture
-                .Client
-                .DownloadStationApi()
-                .TaskEndpoint()
-                .ListAsync();
+        infoResponse.Should().NotBeNull();
+    }
 
-            var id = listTask.Tasks.Last().Id;
+    [Fact]
+    public async Task DownloadStationApi_DownloadStation_GetConfig()
+    {
+        var getConfigResponse = await _fixture
+            .Client
+            .DownloadStationApi()
+            .InfoEndpoint()
+            .GetConfigAsync();
 
-            await _fixture
-                .Client
-                .DownloadStationApi()
-                .TaskEndpoint()
-                .PauseAsync(id);
+        getConfigResponse.Should().NotBeNull();
+    }
 
-            var resumeResponse = await _fixture
-                .Client
-                .DownloadStationApi()
-                .TaskEndpoint()
-                .ResumeAsync(id);
-
-            resumeResponse.Should().NotBeNull();
+    [Fact]
+    public async Task DownloadStationApi_DownloadStation_SetServerConfig()
+    {
+        var getConfigResponse = await _fixture
+            .Client
+            .DownloadStationApi()
+            .InfoEndpoint()
+            .GetConfigAsync();
             
-            var delRequest = new DownloadStationTaskDeleteRequest
-            {
-                Ids = new List<string> {id},
-                ForceComplete = false
-            };
+        // Changing current config DownloadStation
+        var config = new DownloadStationServerConfig(
+            btMaxDownloadSpeed: getConfigResponse.BtMaxDownloadSpeed + 100,
+            btMaxUploadSpeed: getConfigResponse.BtMaxUploadSpeed + 100,
+            emulEnable: !getConfigResponse.EmulEnable,
+            emulMaxDownloadSpeed: getConfigResponse.EmulMaxDownloadSpeed + 100,
+            emulMaxUploadSpeed: getConfigResponse.EmulMaxUploadSpeed + 100,
+            ftpMaxDownloadSpeed: getConfigResponse.FtpMaxDownloadSpeed + 100,
+            httpMaxDownloadSpeed: getConfigResponse.HttpMaxDownloadSpeed + 100,
+            nzbMaxDownloadSpeed: getConfigResponse.NzbMaxDownloadSpeed + 100,
+            unzipServiceEnable: !getConfigResponse.UnzipServiceEnable,
+            defaultDestination: getConfigResponse.DefaultDestination + "/tmp"
+        );
 
-            await _fixture
-                .Client
-                .DownloadStationApi()
-                .TaskEndpoint()
-                .DeleteAsync(delRequest);
-        }
-
-        [Fact]
-        public async Task DownloadStationApi_DownloadStation_PauseTask()
-        {
-            var request = new DownloadStationTaskCreateRequest(
-                uri: "magnet:?xt=urn:btih:fef84077088ca87ffd8afd644d0ef957d96243c3&dn=archlinux-2023.01.01-x86_64.iso");
+        await _fixture
+            .Client
+            .DownloadStationApi()
+            .InfoEndpoint()
+            .SetServerConfigAsync(config);
             
-            await _fixture
-                .Client
-                .DownloadStationApi()
-                .TaskEndpoint()
-                .CreateAsync(request);
-            
-            var listTask = await _fixture
-                .Client
-                .DownloadStationApi()
-                .TaskEndpoint()
-                .ListAsync();
-
-            var pauseResponse = _fixture
-                .Client
-                .DownloadStationApi()
-                .TaskEndpoint()
-                .PauseAsync(listTask.Tasks.Last().Id);
-
-            pauseResponse.Should().NotBeNull();
-        }
-
-        [Fact]
-        public async Task DownloadStationApi_DownloadStation_Info()
-        {
-            var infoResponse = await _fixture
-                .Client
-                .DownloadStationApi()
-                .InfoEndpoint()
-                .InfoAsync();
-
-            infoResponse.Should().NotBeNull();
-        }
-
-        [Fact]
-        public async Task DownloadStationApi_DownloadStation_GetConfig()
-        {
-            var getConfigResponse = await _fixture
-                .Client
-                .DownloadStationApi()
-                .InfoEndpoint()
-                .GetConfigAsync();
-
-            getConfigResponse.Should().NotBeNull();
-        }
-
-        [Fact]
-        public async Task DownloadStationApi_DownloadStation_SetServerConfig()
-        {
-            var getConfigResponse = await _fixture
-                .Client
-                .DownloadStationApi()
-                .InfoEndpoint()
-                .GetConfigAsync();
-            
-            // Changing current config DownloadStation
-            var config = new DownloadStationServerConfig(
-                btMaxDownloadSpeed: getConfigResponse.BtMaxDownloadSpeed + 100,
-                btMaxUploadSpeed: getConfigResponse.BtMaxUploadSpeed + 100,
-                emulEnable: !getConfigResponse.EmulEnable,
-                emulMaxDownloadSpeed: getConfigResponse.EmulMaxDownloadSpeed + 100,
-                emulMaxUploadSpeed: getConfigResponse.EmulMaxUploadSpeed + 100,
-                ftpMaxDownloadSpeed: getConfigResponse.FtpMaxDownloadSpeed + 100,
-                httpMaxDownloadSpeed: getConfigResponse.HttpMaxDownloadSpeed + 100,
-                nzbMaxDownloadSpeed: getConfigResponse.NzbMaxDownloadSpeed + 100,
-                unzipServiceEnable: !getConfigResponse.UnzipServiceEnable,
-                defaultDestination: getConfigResponse.DefaultDestination + "/tmp"
+        // Edit emulDefaultDestination
+        await _fixture
+            .Client
+            .DownloadStationApi()
+            .InfoEndpoint()
+            .SetServerConfigAsync(
+                new DownloadStationServerConfig(
+                    emulDefaultDestination: config.DefaultDestination
+                )
             );
 
-            await _fixture
-                .Client
-                .DownloadStationApi()
-                .InfoEndpoint()
-                .SetServerConfigAsync(config);
+        // Check that the config has changed 
+        var getConfigResponseNew = await _fixture
+            .Client
+            .DownloadStationApi()
+            .InfoEndpoint()
+            .GetConfigAsync();
             
-            // Edit emulDefaultDestination
-            await _fixture
-                .Client
-                .DownloadStationApi()
-                .InfoEndpoint()
-                .SetServerConfigAsync(
-                    new DownloadStationServerConfig(
-                        emulDefaultDestination: config.DefaultDestination
-                        )
-                    );
-
-            // Check that the config has changed 
-            var getConfigResponseNew = await _fixture
-                .Client
-                .DownloadStationApi()
-                .InfoEndpoint()
-                .GetConfigAsync();
+        // Changing config to original state
+        await _fixture
+            .Client
+            .DownloadStationApi()
+            .InfoEndpoint()
+            .SetServerConfigAsync(getConfigResponse);
             
-            // Changing config to original state
-            await _fixture
-                .Client
-                .DownloadStationApi()
-                .InfoEndpoint()
-                .SetServerConfigAsync(getConfigResponse);
-            
-            getConfigResponseNew.Should().BeEquivalentTo(config);
-        }
+        getConfigResponseNew.Should().BeEquivalentTo(config);
     }
 }

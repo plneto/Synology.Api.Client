@@ -1,9 +1,8 @@
-﻿namespace Synology.Api.Client.Shared.Models
-{
-    public class Errors
-    {
-        public int Code { get; set; }
+﻿namespace Synology.Api.Client.Shared.Models;
 
-        public string? Path { get; set; }
-    }
+public class Errors
+{
+    public int Code { get; set; }
+
+    public string? Path { get; set; }
 }
