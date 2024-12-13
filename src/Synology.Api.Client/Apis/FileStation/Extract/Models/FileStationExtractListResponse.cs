@@ -1,11 +1,10 @@
 ﻿using System.Collections.Generic;
 
-namespace Synology.Api.Client.Apis.FileStation.Extract.Models
-{
-    public class FileStationExtractListResponse
-    {
-        public IEnumerable<FileStationExtractListItem> Items { get; set; } = [];
+namespace Synology.Api.Client.Apis.FileStation.Extract.Models;
 
-        public int Total { get; set; }
-    }
+public class FileStationExtractListResponse
+{
+    public IEnumerable<FileStationExtractListItem> Items { get; set; } = [];
+
+    public int Total { get; set; }
 }

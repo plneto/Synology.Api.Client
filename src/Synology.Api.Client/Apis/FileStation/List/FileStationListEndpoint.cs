@@ -6,69 +6,68 @@ using Synology.Api.Client.Apis.FileStation.List.Models;
 using Synology.Api.Client.Extensions;
 using Synology.Api.Client.Session;
 
-namespace Synology.Api.Client.Apis.FileStation.List
+namespace Synology.Api.Client.Apis.FileStation.List;
+
+public class FileStationListEndpoint : IFileStationListEndpoint
 {
-    public class FileStationListEndpoint : IFileStationListEndpoint
+    private readonly ISynologyHttpClient _synologyHttpClient;
+    private readonly IApiInfo _apiInfo;
+    private readonly ISynologySession _session;
+
+    public FileStationListEndpoint(ISynologyHttpClient synologyHttpClient, IApiInfo apiInfo, ISynologySession session)
     {
-        private readonly ISynologyHttpClient _synologyHttpClient;
-        private readonly IApiInfo _apiInfo;
-        private readonly ISynologySession _session;
+        _synologyHttpClient = synologyHttpClient;
+        _apiInfo = apiInfo;
+        _session = session;
+    }
 
-        public FileStationListEndpoint(ISynologyHttpClient synologyHttpClient, IApiInfo apiInfo, ISynologySession session)
+    public Task<FileStationListResponse> ListAsync(FileStationListRequest fileStationListRequest)
+    {
+        var additionalParams = new[] { "real_path", "owner", "time", "size" };
+
+        string? patternValue = null;
+        if (fileStationListRequest.Patterns?.Count() == 1)
         {
-            _synologyHttpClient = synologyHttpClient;
-            _apiInfo = apiInfo;
-            _session = session;
+            patternValue = fileStationListRequest.Patterns.First();
+        }
+        else if (fileStationListRequest.Patterns?.Count() > 1)
+        {
+            patternValue = string.Join(",", fileStationListRequest.Patterns);
         }
 
-        public Task<FileStationListResponse> ListAsync(FileStationListRequest fileStationListRequest)
+        var queryParams = new Dictionary<string, string?>
         {
-            var additionalParams = new[] { "real_path", "owner", "time", "size" };
+            { "folder_path",  fileStationListRequest.FolderPath },
+            { "offset", fileStationListRequest.Offset.ToString() },
+            { "limit", fileStationListRequest.Limit.ToString() },
+            { "sort_by", fileStationListRequest.SortBy ?? FileStationListSortByEnumeration.Name },
+            { "sort_direction", fileStationListRequest.SortDirection ?? "asc" },
+            { "pattern", patternValue },
+            { "filetype", fileStationListRequest.FileType ?? "all" },
+            { "goto_path", fileStationListRequest.GoToPath },
+            { "additional", additionalParams.ToCommaSeparatedAroundBrackets() }
+        };
 
-            string? patternValue = null;
-            if (fileStationListRequest.Patterns?.Count() == 1)
-            {
-                patternValue = fileStationListRequest.Patterns.First();
-            }
-            else if (fileStationListRequest.Patterns?.Count() > 1)
-            {
-                patternValue = string.Join(",", fileStationListRequest.Patterns);
-            }
+        return _synologyHttpClient.GetAsync<FileStationListResponse>(
+            _apiInfo,
+            "list",
+            queryParams,
+            _session);
+    }
 
-            var queryParams = new Dictionary<string, string?>
-            {
-                { "folder_path",  fileStationListRequest.FolderPath },
-                { "offset", fileStationListRequest.Offset.ToString() },
-                { "limit", fileStationListRequest.Limit.ToString() },
-                { "sort_by", fileStationListRequest.SortBy ?? FileStationListSortByEnumeration.Name },
-                { "sort_direction", fileStationListRequest.SortDirection ?? "asc" },
-                { "pattern", patternValue },
-                { "filetype", fileStationListRequest.FileType ?? "all" },
-                { "goto_path", fileStationListRequest.GoToPath },
-                { "additional", additionalParams.ToCommaSeparatedAroundBrackets() }
-            };
+    public Task<FileStationListShareResponse> ListSharesAsync()
+    {
+        var additionalParams = new[] { "real_path", "owner", "time" };
 
-            return _synologyHttpClient.GetAsync<FileStationListResponse>(
-                _apiInfo,
-                "list",
-                queryParams,
-                _session);
-        }
-
-        public Task<FileStationListShareResponse> ListSharesAsync()
+        var queryParams = new Dictionary<string, string?>
         {
-            var additionalParams = new[] { "real_path", "owner", "time" };
+            { "additional",  additionalParams.ToCommaSeparatedAroundBrackets() }
+        };
 
-            var queryParams = new Dictionary<string, string?>
-            {
-                { "additional",  additionalParams.ToCommaSeparatedAroundBrackets() }
-            };
-
-            return _synologyHttpClient.GetAsync<FileStationListShareResponse>(
-                _apiInfo,
-                "list_share",
-                queryParams,
-                _session);
-        }
+        return _synologyHttpClient.GetAsync<FileStationListShareResponse>(
+            _apiInfo,
+            "list_share",
+            queryParams,
+            _session);
     }
 }

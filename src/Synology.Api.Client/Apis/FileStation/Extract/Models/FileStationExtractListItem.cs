@@ -1,24 +1,23 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace Synology.Api.Client.Apis.FileStation.Extract.Models
+namespace Synology.Api.Client.Apis.FileStation.Extract.Models;
+
+public class FileStationExtractListItem
 {
-    public class FileStationExtractListItem
-    {
-        [JsonPropertyName("item_id")]
-        public int ItemId { get; set; }
+    [JsonPropertyName("item_id")]
+    public int ItemId { get; set; }
 
-        public string? Name { get; set; }
+    public string? Name { get; set; }
 
-        public decimal Size { get; set; }
+    public decimal Size { get; set; }
 
-        [JsonPropertyName("pack_size")]
-        public decimal PackSize { get; set; }
+    [JsonPropertyName("pack_size")]
+    public decimal PackSize { get; set; }
 
-        public string? Mtime { get; set; }
+    public string? Mtime { get; set; }
 
-        public string? Path { get; set; }
+    public string? Path { get; set; }
 
-        [JsonPropertyName("is_dir")]
-        public bool IsDir { get; set; }
-    }
+    [JsonPropertyName("is_dir")]
+    public bool IsDir { get; set; }
 }

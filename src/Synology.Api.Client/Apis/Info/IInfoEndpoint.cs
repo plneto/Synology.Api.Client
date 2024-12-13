@@ -1,10 +1,9 @@
 ﻿using System.Threading.Tasks;
 using Synology.Api.Client.Apis.Info.Models;
 
-namespace Synology.Api.Client.Apis.Info
+namespace Synology.Api.Client.Apis.Info;
+
+public interface IInfoEndpoint
 {
-    public interface IInfoEndpoint
-    {
-        Task<InfoQueryResponse> QueryAsync();
-    }
+    Task<InfoQueryResponse> QueryAsync();
 }
