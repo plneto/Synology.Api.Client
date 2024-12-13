@@ -7,10 +7,10 @@ namespace Synology.Api.Client.Apis.FileStation.List.Models
         [JsonPropertyName("isdir")]
         public bool IsDir { get; set; }
 
-        public string Name { get; set; }
+        public string? Name { get; set; }
 
-        public string Path { get; set; }
+        public string? Path { get; set; }
 
-        public FileStationListShareAdditional Additional { get; set; }
+        public FileStationListShareAdditional? Additional { get; set; }
     }
 }

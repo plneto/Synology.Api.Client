@@ -28,13 +28,13 @@ namespace Synology.Api.Client.Apis.FileStation.CreateFolder
             return _synologyHttpClient.GetAsync<FileStationCreateFolderCreateResponse>(_apiInfo, "create", queryParams, _session);
         }
 
-        private Dictionary<string, string> GetCreateQueryParams(string[] paths, bool createParentFolders)
+        private Dictionary<string, string?> GetCreateQueryParams(string[] paths, bool createParentFolders)
         {
             var additionalParams = new[] { "real_path", "owner", "time" };
             var folderPaths = paths.Select(p => p.Substring(0, p.LastIndexOf('/')));
             var folderNames = paths.Select(p => p.Substring(p.LastIndexOf('/') + 1));
 
-            return new Dictionary<string, string>
+            return new Dictionary<string, string?>
             {
                 { "folder_path",  folderPaths.ToCommaSeparatedAroundBrackets() },
                 { "name",  folderNames.ToCommaSeparatedAroundBrackets() },

@@ -29,9 +29,9 @@ Console.WriteLine("Querying API info...");
 // Retrieve all API description objects
 var apiInfo = await client.InfoApi().QueryAsync();
 
-Console.WriteLine("Auth API Path: {0}", apiInfo.AuthApi.Path);
-Console.WriteLine("Auth API Min Version: {0}", apiInfo.AuthApi.MinVersion);
-Console.WriteLine("Auth API Max Version: {0}", apiInfo.AuthApi.MaxVersion);
+Console.WriteLine("Auth API Path: {0}", apiInfo.AuthApi?.Path);
+Console.WriteLine("Auth API Min Version: {0}", apiInfo.AuthApi?.MinVersion);
+Console.WriteLine("Auth API Max Version: {0}", apiInfo.AuthApi?.MaxVersion);
 
 // Authenticate
 Console.WriteLine("Authenticating user {0}...", username);
@@ -54,9 +54,9 @@ foreach (var item in files.Files)
     Console.WriteLine($"Name: {item.Name}");
     Console.WriteLine($"Path: {item.Path}");
     Console.WriteLine($"Additional:");
-    Console.WriteLine($"    RealPath: {item.Additional.RealPath}");
-    Console.WriteLine($"    Owner: {item.Additional.Owner.User}");
-    Console.WriteLine($"    Size: {item.Additional.Size}");
+    Console.WriteLine($"    RealPath: {item.Additional?.RealPath}");
+    Console.WriteLine($"    Owner: {item.Additional?.Owner?.User}");
+    Console.WriteLine($"    Size: {item.Additional?.Size}");
 }
 
 Console.WriteLine("Logging out...");

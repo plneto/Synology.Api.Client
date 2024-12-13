@@ -4,7 +4,7 @@
     {
         public bool BlSkip { get; set; }
 
-        public string File { get; set; }
+        public string? File { get; set; }
 
         public int Pid { get; set; }
 

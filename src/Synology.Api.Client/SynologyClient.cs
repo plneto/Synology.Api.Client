@@ -37,7 +37,7 @@ namespace Synology.Api.Client
 
         public IApisInfo ApisInfo { get; set; } = new DefaultApisInfo();
 
-        public ISynologySession Session { get; set; }
+        public ISynologySession? Session { get; set; }
 
         public bool IsLoggedIn => Session != null && !string.IsNullOrWhiteSpace(Session.Sid);
 
@@ -58,7 +58,7 @@ namespace Synology.Api.Client
                 throw new SecurityException(CustomErrorMessages.SessionNotAuthenticated);
             }
 
-            return new DownloadStationApi(_synologyHttpClient, ApisInfo, Session);
+            return new DownloadStationApi(_synologyHttpClient, ApisInfo, Session!);
         }
 
         public IFileStationApi FileStationApi()
@@ -68,7 +68,7 @@ namespace Synology.Api.Client
                 throw new SecurityException(CustomErrorMessages.SessionNotAuthenticated);
             }
 
-            return new FileStationApi(_synologyHttpClient, ApisInfo, Session);
+            return new FileStationApi(_synologyHttpClient, ApisInfo, Session!);
         }
 
         public async Task LoginAsync(
@@ -88,7 +88,7 @@ namespace Synology.Api.Client
                 return;
             }
 
-            await AuthApi().LogoutAsync(Session.Sid);
+            await AuthApi().LogoutAsync(Session!.Sid);
 
             Session = null;
         }

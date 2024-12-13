@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.IO;
-using System.Text;
+﻿using System.Text;
 using FluentAssertions;
 using Synology.Api.Client.Apis.FileStation.List.Models;
 using Synology.Api.Client.Apis.FileStation.Search.Models;
@@ -21,7 +19,7 @@ namespace Synology.Api.Client.Integration.Tests
         }
 
         [Fact]
-        public async void FileStationApi_ListShare_Success()
+        public async Task FileStationApi_ListShare_Success()
         {
             // arrange && act
             var listShareResponse = await _fixture
@@ -35,7 +33,7 @@ namespace Synology.Api.Client.Integration.Tests
         }
 
         [Fact]
-        public async void FileStationApi_List_Success()
+        public async Task FileStationApi_List_Success()
         {
             // arrange
             var folderPath = "/shared_folder/dir";
@@ -53,7 +51,7 @@ namespace Synology.Api.Client.Integration.Tests
         }
 
         [Fact]
-        public async void FileStationApi_List_SingleFile_Success()
+        public async Task FileStationApi_List_SingleFile_Success()
         {
             // arrange
             var folderPath = "/shared_folder/dir";
@@ -74,7 +72,7 @@ namespace Synology.Api.Client.Integration.Tests
         }
 
         [Fact]
-        public async void FileStationApi_List_MultipleFiles_Success()
+        public async Task FileStationApi_List_MultipleFiles_Success()
         {
             // arrange
             var folderPath = "/shared_folder/dir";
@@ -96,7 +94,7 @@ namespace Synology.Api.Client.Integration.Tests
         }
 
         [Fact]
-        public async void FileStationApi_UploadFileFromPath_Success()
+        public async Task FileStationApi_UploadFileFromPath_Success()
         {
             // arrange
             var filePath = ""; // TODO: set file path value
@@ -115,7 +113,7 @@ namespace Synology.Api.Client.Integration.Tests
 
 
         [Fact]
-        public async void FileStation_UploadFromByteArray_Success()
+        public async Task FileStation_UploadFromByteArray_Success()
         {
             // arrange
             var destination = ""; // TODO: set destination value
@@ -133,7 +131,7 @@ namespace Synology.Api.Client.Integration.Tests
         }
 
         [Fact]
-        public async void FileStation_UploadFromByteArrayUsingFileReadAllBytes_Success()
+        public async Task FileStation_UploadFromByteArrayUsingFileReadAllBytes_Success()
         {
             // arrange
             var source = File.ReadAllBytes(""); // TODO: set file path
@@ -151,7 +149,7 @@ namespace Synology.Api.Client.Integration.Tests
         }
 
         [Fact]
-        public async void FileStation_StartExtraction_Success()
+        public async Task FileStation_StartExtraction_Success()
         {
             // arrange
             var filePath = ""; // TODO: set file path value
@@ -169,7 +167,7 @@ namespace Synology.Api.Client.Integration.Tests
         }
 
         [Fact]
-        public async void FileStation_ExtractListFiles_Success()
+        public async Task FileStation_ExtractListFiles_Success()
         {
             // arrange
             var filePath = ""; // TODO: set file path value
@@ -186,7 +184,7 @@ namespace Synology.Api.Client.Integration.Tests
         }
 
         [Fact]
-        public async void FileStation_StartCopy_Success()
+        public async Task FileStation_StartCopy_Success()
         {
             // arrange
             var filePath = ""; // TODO: set file path value
@@ -197,14 +195,14 @@ namespace Synology.Api.Client.Integration.Tests
                 .Client
                 .FileStationApi()
                 .CopyMoveEndpoint()
-                .StartCopyAsync(new[] { filePath }, destination, true);
+                .StartCopyAsync([filePath], destination, true);
 
             // assert
             startCopyResponse.Should().NotBeNull();
         }
 
         [Fact]
-        public async void FileStation_StartMove_Success()
+        public async Task FileStation_StartMove_Success()
         {
             // arrange
             var filePath = ""; // TODO: set file path value
@@ -215,14 +213,14 @@ namespace Synology.Api.Client.Integration.Tests
                 .Client
                 .FileStationApi()
                 .CopyMoveEndpoint()
-                .StartMoveAsync(new[] { filePath }, destination, true);
+                .StartMoveAsync([filePath], destination, true);
 
             // assert
             startCopyResponse.Should().NotBeNull();
         }
 
         [Fact]
-        public async void FileStation_CopyMoveStatus_Success()
+        public async Task FileStation_CopyMoveStatus_Success()
         {
             // arrange
             var taskId = ""; // TODO: set task id
@@ -239,7 +237,7 @@ namespace Synology.Api.Client.Integration.Tests
         }
 
         [Fact]
-        public async void FileStation_StopCopyMove_Success()
+        public async Task FileStation_StopCopyMove_Success()
         {
             // arrange
             var taskId = ""; // TODO: set task id
@@ -256,7 +254,7 @@ namespace Synology.Api.Client.Integration.Tests
         }
 
         [Fact]
-        public async void FileStation_CreateFolder_Success()
+        public async Task FileStation_CreateFolder_Success()
         {
             // arrange
             var paths = new[]
@@ -277,7 +275,7 @@ namespace Synology.Api.Client.Integration.Tests
         }
 
         [Fact]
-        public async void FileStation_SearchStart_Success()
+        public async Task FileStation_SearchStart_Success()
         {
             // arrange
             var request = new FileStationSearchStartRequest(
@@ -296,7 +294,7 @@ namespace Synology.Api.Client.Integration.Tests
         }
 
         [Fact]
-        public async void FileStation_SearchList_Success()
+        public async Task FileStation_SearchList_Success()
         {
             // arrange
             var taskId = ""; // TODO: set task id

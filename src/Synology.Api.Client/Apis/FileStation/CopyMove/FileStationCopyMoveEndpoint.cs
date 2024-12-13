@@ -37,7 +37,7 @@ namespace Synology.Api.Client.Apis.FileStation.CopyMove
 
         public Task<FileStationCopyMoveStatusResponse> GetStatusAsync(string taskId)
         {
-            var queryParams = new Dictionary<string, string>
+            var queryParams = new Dictionary<string, string?>
             {
                 { "taskid",  taskId }
             };
@@ -51,7 +51,7 @@ namespace Synology.Api.Client.Apis.FileStation.CopyMove
 
         public Task<BaseApiResponse> StopAsync(string taskId)
         {
-            var queryParams = new Dictionary<string, string>
+            var queryParams = new Dictionary<string, string?>
             {
                 { "taskid",  taskId }
             };
@@ -63,9 +63,9 @@ namespace Synology.Api.Client.Apis.FileStation.CopyMove
                 _session);
         }
 
-        private Dictionary<string, string> GetCopyMoveQueryParams(string[] paths, string destination, bool overwrite, bool isMoveAction)
+        private Dictionary<string, string?> GetCopyMoveQueryParams(string[] paths, string destination, bool overwrite, bool isMoveAction)
         {
-            return new Dictionary<string, string>
+            return new Dictionary<string, string?>
             {
                 { "path",  paths.ToCommaSeparatedAroundBrackets() },
                 { "dest_folder_path", destination },

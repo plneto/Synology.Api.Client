@@ -1,6 +1,3 @@
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using FluentAssertions;
 using Synology.Api.Client.Apis.DownloadStation.Task.Models;
 using Synology.Api.Client.Apis.DownloadStation.Info.Models;
@@ -57,19 +54,19 @@ namespace Synology.Api.Client.Integration.Tests
             var request = new DownloadStationTaskCreateRequest(
                 uri: "magnet:?xt=urn:btih:fef84077088ca87ffd8afd644d0ef957d96243c3&dn=archlinux-2023.01.01-x86_64.iso");
 
-            var listTaskBefore = _fixture
+            var listTaskBefore = await _fixture
                 .Client
                 .DownloadStationApi()
                 .TaskEndpoint()
                 .ListAsync();
 
-            var createResponse = await _fixture
+            await _fixture
                 .Client
                 .DownloadStationApi()
                 .TaskEndpoint()
                 .CreateAsync(request);
 
-            var listTaskAfterAdd = _fixture
+            var listTaskAfterAdd = await _fixture
                 .Client
                 .DownloadStationApi()
                 .TaskEndpoint()
@@ -77,27 +74,27 @@ namespace Synology.Api.Client.Integration.Tests
             
             var delRequest = new DownloadStationTaskDeleteRequest
             {
-                Ids = new List<string> {listTaskAfterAdd.Result.Tasks.Last().Id},
+                Ids = new List<string> {listTaskAfterAdd.Tasks.Last().Id},
                 ForceComplete = false
             };
 
-            var deleteResponse = await _fixture
+            await _fixture
                 .Client
                 .DownloadStationApi()
                 .TaskEndpoint()
                 .DeleteAsync(delRequest);
             
-            var listTaskAfter = _fixture
+            var listTaskAfter = await _fixture
                 .Client
                 .DownloadStationApi()
                 .TaskEndpoint()
                 .ListAsync();
 
-            Assert.Equal(listTaskBefore.Result.Total, listTaskAfter.Result.Total);
+            Assert.Equal(listTaskBefore.Total, listTaskAfter.Total);
         }
 
         [Fact]
-        public async void DownloadStationApi_DownloadStation_ResumeTasks()
+        public async Task DownloadStationApi_DownloadStation_ResumeTasks()
         {
             var request = new DownloadStationTaskCreateRequest(
                 uri: "magnet:?xt=urn:btih:fef84077088ca87ffd8afd644d0ef957d96243c3&dn=archlinux-2023.01.01-x86_64.iso");
@@ -108,13 +105,13 @@ namespace Synology.Api.Client.Integration.Tests
                 .TaskEndpoint()
                 .CreateAsync(request);
 
-            var listTask = _fixture
+            var listTask = await _fixture
                 .Client
                 .DownloadStationApi()
                 .TaskEndpoint()
                 .ListAsync();
 
-            var id = listTask.Result.Tasks.Last().Id;
+            var id = listTask.Tasks.Last().Id;
 
             await _fixture
                 .Client
@@ -144,7 +141,7 @@ namespace Synology.Api.Client.Integration.Tests
         }
 
         [Fact]
-        public async void DownloadStationApi_DownloadStation_PauseTask()
+        public async Task DownloadStationApi_DownloadStation_PauseTask()
         {
             var request = new DownloadStationTaskCreateRequest(
                 uri: "magnet:?xt=urn:btih:fef84077088ca87ffd8afd644d0ef957d96243c3&dn=archlinux-2023.01.01-x86_64.iso");
@@ -155,7 +152,7 @@ namespace Synology.Api.Client.Integration.Tests
                 .TaskEndpoint()
                 .CreateAsync(request);
             
-            var listTask = _fixture
+            var listTask = await _fixture
                 .Client
                 .DownloadStationApi()
                 .TaskEndpoint()
@@ -165,19 +162,13 @@ namespace Synology.Api.Client.Integration.Tests
                 .Client
                 .DownloadStationApi()
                 .TaskEndpoint()
-                .PauseAsync(listTask.Result.Tasks.Last().Id);
+                .PauseAsync(listTask.Tasks.Last().Id);
 
             pauseResponse.Should().NotBeNull();
-            
-            var delRequest = new DownloadStationTaskDeleteRequest
-            {
-                Ids = new List<string> {listTask.Result.Tasks.Last().Id},
-                ForceComplete = false
-            };
         }
 
         [Fact]
-        public async void DownloadStationApi_DownloadStation_Info()
+        public async Task DownloadStationApi_DownloadStation_Info()
         {
             var infoResponse = await _fixture
                 .Client
@@ -189,7 +180,7 @@ namespace Synology.Api.Client.Integration.Tests
         }
 
         [Fact]
-        public async void DownloadStationApi_DownloadStation_GetConfig()
+        public async Task DownloadStationApi_DownloadStation_GetConfig()
         {
             var getConfigResponse = await _fixture
                 .Client
@@ -201,7 +192,7 @@ namespace Synology.Api.Client.Integration.Tests
         }
 
         [Fact]
-        public async void DownloadStationApi_DownloadStation_SetServerConfig()
+        public async Task DownloadStationApi_DownloadStation_SetServerConfig()
         {
             var getConfigResponse = await _fixture
                 .Client
@@ -223,14 +214,14 @@ namespace Synology.Api.Client.Integration.Tests
                 defaultDestination: getConfigResponse.DefaultDestination + "/tmp"
             );
 
-            var setConfigResponse = await _fixture
+            await _fixture
                 .Client
                 .DownloadStationApi()
                 .InfoEndpoint()
                 .SetServerConfigAsync(config);
             
             // Edit emulDefaultDestination
-            setConfigResponse = await _fixture
+            await _fixture
                 .Client
                 .DownloadStationApi()
                 .InfoEndpoint()
@@ -248,7 +239,7 @@ namespace Synology.Api.Client.Integration.Tests
                 .GetConfigAsync();
             
             // Changing config to original state
-            setConfigResponse = await _fixture
+            await _fixture
                 .Client
                 .DownloadStationApi()
                 .InfoEndpoint()

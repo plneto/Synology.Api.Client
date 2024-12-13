@@ -12,7 +12,7 @@ namespace Synology.Api.Client
     {
         IApisInfo ApisInfo { get; set; }
 
-        ISynologySession Session { get; set; }
+        ISynologySession? Session { get; set; }
 
         bool IsLoggedIn { get; }
 

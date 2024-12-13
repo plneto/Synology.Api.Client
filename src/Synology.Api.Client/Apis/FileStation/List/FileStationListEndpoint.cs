@@ -25,7 +25,7 @@ namespace Synology.Api.Client.Apis.FileStation.List
         {
             var additionalParams = new[] { "real_path", "owner", "time", "size" };
 
-            string patternValue = null;
+            string? patternValue = null;
             if (fileStationListRequest.Patterns?.Count() == 1)
             {
                 patternValue = fileStationListRequest.Patterns.First();
@@ -35,7 +35,7 @@ namespace Synology.Api.Client.Apis.FileStation.List
                 patternValue = string.Join(",", fileStationListRequest.Patterns);
             }
 
-            var queryParams = new Dictionary<string, string>
+            var queryParams = new Dictionary<string, string?>
             {
                 { "folder_path",  fileStationListRequest.FolderPath },
                 { "offset", fileStationListRequest.Offset.ToString() },
@@ -59,7 +59,7 @@ namespace Synology.Api.Client.Apis.FileStation.List
         {
             var additionalParams = new[] { "real_path", "owner", "time" };
 
-            var queryParams = new Dictionary<string, string>
+            var queryParams = new Dictionary<string, string?>
             {
                 { "additional",  additionalParams.ToCommaSeparatedAroundBrackets() }
             };

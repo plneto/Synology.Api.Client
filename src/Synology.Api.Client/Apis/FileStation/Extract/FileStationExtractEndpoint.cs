@@ -23,7 +23,7 @@ namespace Synology.Api.Client.Apis.FileStation.Extract
 
         public Task<FileStationExtractStartResponse> StartAsync(string filePath, string destination, bool overwrite)
         {
-            var queryParams = new Dictionary<string, string>
+            var queryParams = new Dictionary<string, string?>
             {
                 { "file_path",  filePath },
                 { "dest_folder_path",  destination },
@@ -39,7 +39,7 @@ namespace Synology.Api.Client.Apis.FileStation.Extract
 
         public Task<FileStationExtractStatusResponse> GetStatusAsync(string taskId)
         {
-            var queryParams = new Dictionary<string, string>
+            var queryParams = new Dictionary<string, string?>
             {
                 { "taskid",  taskId }
             };
@@ -53,7 +53,7 @@ namespace Synology.Api.Client.Apis.FileStation.Extract
 
         public Task<BaseApiResponse> StopAsync(string taskId)
         {
-            var queryParams = new Dictionary<string, string>
+            var queryParams = new Dictionary<string, string?>
             {
                 { "taskid",  taskId }
             };
@@ -63,7 +63,7 @@ namespace Synology.Api.Client.Apis.FileStation.Extract
 
         public Task<FileStationExtractListResponse> ListFilesAsync(string filePath)
         {
-            var queryParams = new Dictionary<string, string>
+            var queryParams = new Dictionary<string, string?>
             {
                 { "file_path",  filePath }
             };

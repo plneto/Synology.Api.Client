@@ -29,7 +29,7 @@ namespace Synology.Api.Client.Exceptions
             string apiMethod,
             int errorCode,
             string errorDescription,
-            Exception innerException = null)
+            Exception? innerException = null)
             : base(message, innerException)
         {
             ApiInfo = apiInfo;

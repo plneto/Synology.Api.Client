@@ -59,7 +59,7 @@ namespace Synology.Api.Client.Apis.DownloadStation.Task
             };
 
             var result = await _synologyHttpClient.GetAsync<DownloadStationTaskListResponse>(_apiInfo, "getinfo", queryParams, _session);
-            return result.Tasks.First();
+            return result.Tasks!.First();
         }
 
         public Task<IEnumerable<DownloadStationTaskDeleteResponse>> DeleteAsync(DownloadStationTaskDeleteRequest data)

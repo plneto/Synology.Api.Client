@@ -24,7 +24,7 @@ namespace Synology.Api.Client.Apis.FileStation.Search
         /// <inheritdoc />
         public Task<FileStationSearchStartResponse> StartAsync(FileStationSearchStartRequest request)
         {
-            var queryParams = new Dictionary<string, string>
+            var queryParams = new Dictionary<string, string?>
             {
                 { "folder_path", $"[\"{request.FolderPath}\"]" },
                 { "recursive", request.Recursive.ToLowerString() },
@@ -42,7 +42,7 @@ namespace Synology.Api.Client.Apis.FileStation.Search
         /// <inheritdoc />
         public Task<FileStationSearchListResponse> ListAsync(string taskId, int offset = 0, int limit = -1)
         {
-            var queryParams = new Dictionary<string, string>
+            var queryParams = new Dictionary<string, string?>
             {
                 { "taskid", taskId },
                 { "offset", offset.ToString() },

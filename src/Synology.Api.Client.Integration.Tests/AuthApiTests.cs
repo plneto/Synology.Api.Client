@@ -14,7 +14,7 @@ namespace Synology.Api.Client.Integration.Tests
         }
 
         [Fact]
-        public async void AuthApi_Login_Success()
+        public async Task AuthApi_Login_Success()
         {
             // arrange && act
             var loginResult = await _fixture.Client.AuthApi().LoginAsync(
@@ -28,7 +28,7 @@ namespace Synology.Api.Client.Integration.Tests
         }
 
         [Fact]
-        public async void AuthApi_LoginAndLogout_Success()
+        public async Task AuthApi_LoginAndLogout_Success()
         {
             // arrange && act
             var loginResult = await _fixture.Client.AuthApi().LoginAsync(

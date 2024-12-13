@@ -156,13 +156,13 @@ namespace Synology.Api.Client.Tests
         [InlineData(null)]
         [InlineData("")]
         [InlineData(" ")]
-        public async Task Upload_FilePath_PathIsNullOrWhitespace_ShouldThrow(string filePath)
+        public async Task Upload_FilePath_PathIsNullOrWhitespace_ShouldThrow(string? filePath)
         {
             // Arrange
             var fileStationUploadEndpoint = GetFileStationUploadEndpoint();
 
             // Act
-            var actDelegate = () => fileStationUploadEndpoint.UploadAsync(filePath, _destination, overwrite: true);
+            var actDelegate = () => fileStationUploadEndpoint.UploadAsync(filePath!, _destination, overwrite: true);
 
             // Assert
             await Assert.ThrowsAsync<ArgumentNullException>(actDelegate);
@@ -172,13 +172,13 @@ namespace Synology.Api.Client.Tests
         [InlineData(null)]
         [InlineData("")]
         [InlineData(" ")]
-        public async Task Upload_FilePath_DestinationIsNullOrWhitespace_ShouldThrow(string destination)
+        public async Task Upload_FilePath_DestinationIsNullOrWhitespace_ShouldThrow(string? destination)
         {
             // Arrange
             var fileStationUploadEndpoint = GetFileStationUploadEndpoint();
 
             // Act
-            var actDelegate = () => fileStationUploadEndpoint.UploadAsync(FilepathToUpload, destination, overwrite: true);
+            var actDelegate = () => fileStationUploadEndpoint.UploadAsync(FilepathToUpload, destination!, overwrite: true);
 
             // Assert
             await Assert.ThrowsAsync<ArgumentNullException>(actDelegate);
@@ -202,7 +202,7 @@ namespace Synology.Api.Client.Tests
             };
 
             //expect certain request to server
-            var request = _mockHttp.Expect(System.Net.Http.HttpMethod.Post, _baseUriWithApiPath.ToString())
+            var request = _mockHttp.Expect(HttpMethod.Post, _baseUriWithApiPath.ToString())
                 .WithQueryString(new Dictionary<string, string>
                 {
                     {"_sid", _session.Sid}
@@ -223,14 +223,14 @@ namespace Synology.Api.Client.Tests
         [InlineData(null)]
         [InlineData("")]
         [InlineData(" ")]
-        public async Task Upload_Bytes_FileNameIsNullOrWhitespace_ShouldThrow(string fileName)
+        public async Task Upload_Bytes_FileNameIsNullOrWhitespace_ShouldThrow(string? fileName)
         {
             // Arrange
-            var bytes = _fileSystem.File.ReadAllBytes(FilepathToUpload);
+            var bytes = await _fileSystem.File.ReadAllBytesAsync(FilepathToUpload);
             var fileStationUploadEndpoint = GetFileStationUploadEndpoint();
 
             // Act
-            var actDelegate = () => fileStationUploadEndpoint.UploadAsync(bytes, fileName, _destination, overwrite: true);
+            var actDelegate = () => fileStationUploadEndpoint.UploadAsync(bytes, fileName!, _destination, overwrite: true);
 
             // Assert
             await Assert.ThrowsAsync<ArgumentNullException>(actDelegate);
@@ -240,7 +240,7 @@ namespace Synology.Api.Client.Tests
         [InlineData(null)]
         [InlineData("")]
         [InlineData(" ")]
-        public async Task Upload_Bytes_DestinationIsNullOrWhitespace_ShouldThrow(string destination)
+        public async Task Upload_Bytes_DestinationIsNullOrWhitespace_ShouldThrow(string? destination)
         {
             // Arrange
             var bytes = _fileSystem.File.ReadAllBytes(FilepathToUpload);
@@ -248,7 +248,7 @@ namespace Synology.Api.Client.Tests
             var fileStationUploadEndpoint = GetFileStationUploadEndpoint();
 
             // Act
-            var actDelegate = () => fileStationUploadEndpoint.UploadAsync(bytes, fileName, destination, overwrite: true);
+            var actDelegate = () => fileStationUploadEndpoint.UploadAsync(bytes, fileName, destination!, overwrite: true);
 
             // Assert
             await Assert.ThrowsAsync<ArgumentNullException>(actDelegate);
@@ -262,7 +262,7 @@ namespace Synology.Api.Client.Tests
             var fileStationUploadEndpoint = GetFileStationUploadEndpoint();
 
             // Act
-            var actDelegate = () => fileStationUploadEndpoint.UploadAsync(null, fileName, _destination, overwrite: true);
+            var actDelegate = () => fileStationUploadEndpoint.UploadAsync(null!, fileName, _destination, overwrite: true);
 
             // Assert
             await Assert.ThrowsAsync<ArgumentNullException>(actDelegate);
@@ -287,7 +287,7 @@ namespace Synology.Api.Client.Tests
             };
 
             //expect certain request to server
-            var request = _mockHttp.Expect(System.Net.Http.HttpMethod.Post, _baseUriWithApiPath.ToString())
+            var request = _mockHttp.Expect(HttpMethod.Post, _baseUriWithApiPath.ToString())
                 .WithQueryString(new Dictionary<string, string>
                 {
                     {"_sid", _session.Sid}
@@ -337,7 +337,7 @@ namespace Synology.Api.Client.Tests
             };
 
             //expect certain request to server
-            var request = _mockHttp.Expect(System.Net.Http.HttpMethod.Post, _baseUriWithApiPath.ToString())
+            var request = _mockHttp.Expect(HttpMethod.Post, _baseUriWithApiPath.ToString())
                 .WithPartialContent(expectedRequestContentApiVersion)
                 .WithPartialContent(expectedRequestContentOverwrite);
 

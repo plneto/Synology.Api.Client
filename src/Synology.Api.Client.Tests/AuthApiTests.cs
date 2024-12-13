@@ -1,8 +1,6 @@
-using System;
-using System.Collections.Generic;
 using System.Net;
 using System.Net.Http.Json;
-using System.Threading.Tasks;
+
 using AutoFixture;
 using FluentAssertions;
 using RichardSzalay.MockHttp;
@@ -53,7 +51,7 @@ namespace Synology.Api.Client.Tests
         #endregion
 
         [Fact]
-        public async void Login_ShouldCallCorrectUrl()
+        public async Task Login_ShouldCallCorrectUrl()
         {
             // Arrange
             var username = _fixture.Create<string>();
@@ -67,7 +65,7 @@ namespace Synology.Api.Client.Tests
             };
 
             //expect certain request to server
-            var request = _mockHtttp.Expect(System.Net.Http.HttpMethod.Get, _baseUriWithApiPath.ToString())
+            var request = _mockHtttp.Expect(HttpMethod.Get, _baseUriWithApiPath.ToString())
                  .WithQueryString(new Dictionary<string, string>
                  {
                     { "api" , _apiInfo.Name },
@@ -103,7 +101,7 @@ namespace Synology.Api.Client.Tests
         [InlineData(null)]
         [InlineData("")]
         [InlineData(" ")]
-        public async Task Login_UsernameIsNullOrWhitespace_ShouldThrow(string username)
+        public async Task Login_UsernameIsNullOrWhitespace_ShouldThrow(string? username)
         {
             // Arrange
             var password = _fixture.Create<string>();
@@ -112,7 +110,7 @@ namespace Synology.Api.Client.Tests
             var authApi = GetAuthApi();
 
             // Act
-            var actDelegate = () => authApi.LoginAsync(username, password, otpCode);
+            var actDelegate = () => authApi.LoginAsync(username!, password, otpCode);
 
             // Assert
             await Assert.ThrowsAsync<ArgumentNullException>(actDelegate);
@@ -122,7 +120,7 @@ namespace Synology.Api.Client.Tests
         [InlineData(null)]
         [InlineData("")]
         [InlineData(" ")]
-        public async Task Login_PasswordIsNullOrWhitespace_ShouldThrow(string password)
+        public async Task Login_PasswordIsNullOrWhitespace_ShouldThrow(string? password)
         {
             // Arrange
             var username = _fixture.Create<string>();
@@ -131,14 +129,14 @@ namespace Synology.Api.Client.Tests
             var authApi = GetAuthApi();
 
             // Act
-            var actDelegate = () => authApi.LoginAsync(username, password, otpCode);
+            var actDelegate = () => authApi.LoginAsync(username, password!, otpCode);
 
             // Assert
             await Assert.ThrowsAsync<ArgumentNullException>(actDelegate);
         }
 
         [Fact]
-        public async void Logout_CallsCorrectUrl()
+        public async Task Logout_CallsCorrectUrl()
         {
             // Arrange
             var sid = _fixture.Create<string>();
@@ -150,7 +148,7 @@ namespace Synology.Api.Client.Tests
             };
 
             //expect certain request to server
-            var request = _mockHtttp.Expect(System.Net.Http.HttpMethod.Get, _baseUriWithApiPath.ToString())
+            var request = _mockHtttp.Expect(HttpMethod.Get, _baseUriWithApiPath.ToString())
                  .WithQueryString(new Dictionary<string, string>
                  {
                     { "api" , _apiInfo.Name },
@@ -179,13 +177,13 @@ namespace Synology.Api.Client.Tests
         [InlineData(null)]
         [InlineData("")]
         [InlineData(" ")]
-        public async Task Logout_SidIsNullOrWhitespace_ShouldThrow(string sid)
+        public async Task Logout_SidIsNullOrWhitespace_ShouldThrow(string? sid)
         {
             // Arrange
             var authApi = GetAuthApi();
 
             // Act
-            var actDelegate = () => authApi.LogoutAsync(sid);
+            var actDelegate = () => authApi.LogoutAsync(sid!);
 
             // Assert
             await Assert.ThrowsAsync<ArgumentNullException>(actDelegate);

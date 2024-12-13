@@ -24,9 +24,9 @@ namespace Synology.Api.Client
             _httpClient = httpClient;
         }
 
-        public async Task<T?> GetAsync<T>(IApiInfo apiInfo, string apiMethod, Dictionary<string, string?> queryParams, ISynologySession? session = null)
+        public async Task<T> GetAsync<T>(IApiInfo apiInfo, string apiMethod, Dictionary<string, string?> queryParams, ISynologySession? session = null)
         {
-            var uri = GetBaseUri(_httpClient.BaseAddress, apiInfo.Path);
+            var uri = GetBaseUri(_httpClient.BaseAddress!, apiInfo.Path);
             var uriBuilder = new UriBuilder(uri);
 
             uriBuilder.Query = BuildQueryString(uriBuilder, apiInfo, apiMethod, queryParams, session);
@@ -35,9 +35,9 @@ namespace Synology.Api.Client
             return await HandleSynologyResponse<T>(response, apiInfo, apiMethod);
         }
 
-        public async Task<T?> PostAsync<T>(IApiInfo apiInfo, string apiMethod, HttpContent content, ISynologySession? session = null)
+        public async Task<T> PostAsync<T>(IApiInfo apiInfo, string apiMethod, HttpContent content, ISynologySession? session = null)
         {
-            var uri = GetBaseUri(_httpClient.BaseAddress, apiInfo.Path);
+            var uri = GetBaseUri(_httpClient.BaseAddress!, apiInfo.Path);
             var uriBuilder = new UriBuilder(uri);
 
             if (session != null)
@@ -61,7 +61,7 @@ namespace Synology.Api.Client
             return new Uri(baseUri + "/" + apiPath);
         }
 
-        private string BuildQueryString(UriBuilder uriBuilder, IApiInfo apiInfo, string apiMethod, Dictionary<string, string?> queryParams, ISynologySession? session = null)
+        private static string BuildQueryString(UriBuilder uriBuilder, IApiInfo apiInfo, string apiMethod, Dictionary<string, string?> queryParams, ISynologySession? session = null)
         {
             var query = HttpUtility.ParseQueryString(uriBuilder.Query);
             query["api"] = apiInfo.Name;
@@ -83,44 +83,55 @@ namespace Synology.Api.Client
                 query["_sid"] = session.Sid;
             }
 
-            return query.ToString();
+            return query.ToString()!;
         }
 
-        private async Task<T?> HandleSynologyResponse<T>(HttpResponseMessage httpResponse, IApiInfo apiInfo, string apiMethod)
+        private async Task<T> HandleSynologyResponse<T>(HttpResponseMessage httpResponse, IApiInfo apiInfo, string apiMethod)
         {
             switch (httpResponse.StatusCode)
             {
                 case HttpStatusCode.OK:
                     {
                         var response = await httpResponse.Content.ReadFromJsonAsync<ApiResponse<T>>();
-                        if (!response?.Success ?? true)
-                        {
-                            var errorDescription = GetErrorMessage(response?.Error?.Code ?? 0, apiInfo.Name);
-
-                            var synologyApiException = new SynologyApiException(apiInfo, apiMethod, response?.Error?.Code ?? 0, errorDescription);
-                            //add additional error details if present
-                            if (!(response?.Error?.Errors?.Any() ?? false)) 
-                                throw synologyApiException;
-                            
-                            foreach (var curError in response.Error.Errors)
-                            {
-                                var errorMessage = GetErrorMessage(curError.Code, apiInfo.Name);
-                                synologyApiException.Data.Add($"[{curError.Code}] {errorMessage}", curError.Path);
-                            }
-
-                            throw synologyApiException;
-                        }
+                        
+                        HandleErrors(apiInfo, apiMethod, response);
 
                         if (typeof(T) == typeof(BaseApiResponse))
                         {
-                            return (T)Activator.CreateInstance(typeof(T), new object[] { response.Success });
+                            return (T)Activator.CreateInstance(typeof(T), [response!.Success])!;
                         }
 
-                        return response.Data;
+                        return response!.Data;
                     }
                 default:
                     throw new UnexpectedResponseStatusException(httpResponse.StatusCode);
             }
+        }
+
+        private void HandleErrors<T>(IApiInfo apiInfo, string apiMethod, ApiResponse<T>? response)
+        {
+            if (response is { Success: true })
+            {
+                return;
+            }
+            
+            var errorDescription = GetErrorMessage(response?.Error?.Code ?? 0, apiInfo.Name);
+
+            var synologyApiException = new SynologyApiException(apiInfo, apiMethod, response?.Error?.Code ?? 0, errorDescription);
+            
+            //add additional error details if present
+            if (response?.Error?.Errors == null || !response.Error.Errors.Any())
+            {
+                throw synologyApiException;
+            }
+
+            foreach (var curError in response.Error.Errors)
+            {
+                var errorMessage = GetErrorMessage(curError.Code, apiInfo.Name);
+                synologyApiException.Data.Add($"[{curError.Code}] {errorMessage}", curError.Path);
+            }
+
+            throw synologyApiException;
         }
 
         private string GetErrorMessage(int errorCode, string apiName)

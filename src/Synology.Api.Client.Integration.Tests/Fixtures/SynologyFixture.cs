@@ -1,7 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
-
-namespace Synology.Api.Client.Integration.Tests.Fixtures
+﻿namespace Synology.Api.Client.Integration.Tests.Fixtures
 {
     public class SynologyFixture : IDisposable
     {

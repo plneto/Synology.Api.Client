@@ -7,6 +7,6 @@ namespace Synology.Api.Client.Apis.Auth.Models
         [JsonPropertyName("is_portal_port")]
         public bool IsPortalPort { get; set; }
 
-        public string? Sid { get; set; }
+        public string Sid { get; set; } = null!;
     }
 }

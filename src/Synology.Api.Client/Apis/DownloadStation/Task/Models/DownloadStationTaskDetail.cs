@@ -19,7 +19,7 @@ namespace Synology.Api.Client.Apis.DownloadStation.Task.Models
         [JsonPropertyName("create_time")]
         public long CreateTime { get; set; }
 
-        public string Destination { get; set; }
+        public string? Destination { get; set; }
 
         [JsonPropertyName("seedelapsed")]
         public long SeedElapsed { get; set; }
@@ -34,11 +34,11 @@ namespace Synology.Api.Client.Apis.DownloadStation.Task.Models
         public long TotalPieces { get; set; }
 
         [JsonPropertyName("unzip_password")]
-        public string UnzipPassword { get; set; }
+        public string? UnzipPassword { get; set; }
 
-        public string Uri { get; set; }
+        public string? Uri { get; set; }
 
-        public string Priority { get; set; }
+        public string? Priority { get; set; }
 
         [JsonPropertyName("waiting_seconds")]
         public long WaitingSeconds { get; set; }

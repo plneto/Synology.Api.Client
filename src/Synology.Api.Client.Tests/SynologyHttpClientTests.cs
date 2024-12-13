@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Net;
+﻿using System.Net;
 using System.Net.Http.Json;
-using System.Threading.Tasks;
 using AutoFixture;
 using FluentAssertions;
 using RichardSzalay.MockHttp;
@@ -19,21 +16,19 @@ namespace Synology.Api.Client.Tests
         private readonly SynologyFixture _synologyFixture;
         private readonly Fixture _fixture;
         private readonly IApiInfo _apiInfo;
-        private readonly MockHttpMessageHandler _mockHtttp;
-        private readonly Uri _baseUriWithApiPath;
+        private readonly MockHttpMessageHandler _mockHttp;
 
         public SynologyHttpClientTests(SynologyFixture synologyFixture)
         {
             _synologyFixture = synologyFixture;
             _fixture = new Fixture();
             _apiInfo = _synologyFixture.ApisInfo.InfoApi;
-            _mockHtttp = new MockHttpMessageHandler();
-            _baseUriWithApiPath = new Uri(_synologyFixture.BaseUri, _apiInfo.Path);
+            _mockHttp = new MockHttpMessageHandler();
         }
 
         public void Dispose()
         {
-            _mockHtttp.Dispose();
+            _mockHttp.Dispose();
         }
 
         [Fact]
@@ -48,16 +43,16 @@ namespace Synology.Api.Client.Tests
             };
 
             //expect certain request to server
-            var request = _mockHtttp.Expect(System.Net.Http.HttpMethod.Get, expectedPath)
+            _mockHttp.Expect(HttpMethod.Get, expectedPath)
                 .Respond(HttpStatusCode.OK, JsonContent.Create(expectedResponse));
 
-            var httpClient = _mockHtttp.ToHttpClient();
+            var httpClient = _mockHttp.ToHttpClient();
             httpClient.BaseAddress = _synologyFixture.BaseUri;
 
             ISynologyHttpClient synologyHttpclient = new SynologyHttpClient(httpClient);
 
             // Act
-            var result = await synologyHttpclient.GetAsync<BaseApiResponse>(_apiInfo, "apiMethod", new Dictionary<string, string>());
+            var result = await synologyHttpclient.GetAsync<BaseApiResponse>(_apiInfo, "apiMethod", new Dictionary<string, string?>());
 
             // Assert
             result.Should().BeEquivalentTo(expectedResponse);
@@ -75,16 +70,16 @@ namespace Synology.Api.Client.Tests
             };
 
             //expect certain request to server
-            var request = _mockHtttp.Expect(System.Net.Http.HttpMethod.Post, expectedPath)
+            _mockHttp.Expect(HttpMethod.Post, expectedPath)
                 .Respond(HttpStatusCode.OK, JsonContent.Create(expectedResponse));
 
-            var httpClient = _mockHtttp.ToHttpClient();
+            var httpClient = _mockHttp.ToHttpClient();
             httpClient.BaseAddress = _synologyFixture.BaseUri;
 
             ISynologyHttpClient synologyHttpclient = new SynologyHttpClient(httpClient);
 
             // Act
-            var result = await synologyHttpclient.PostAsync<BaseApiResponse>(_apiInfo, "apiMethod", null);
+            var result = await synologyHttpclient.PostAsync<BaseApiResponse>(_apiInfo, "apiMethod", null!);
 
             // Assert
             result.Should().BeEquivalentTo(expectedResponse);
@@ -115,16 +110,16 @@ namespace Synology.Api.Client.Tests
                 }
             };
 
-            var request = _mockHtttp.Expect(System.Net.Http.HttpMethod.Get, expectedPath)
+            _mockHttp.Expect(HttpMethod.Get, expectedPath)
                .Respond(HttpStatusCode.OK, JsonContent.Create(expectedResponse));
 
-            var httpClient = _mockHtttp.ToHttpClient();
+            var httpClient = _mockHttp.ToHttpClient();
             httpClient.BaseAddress = _synologyFixture.BaseUri;
 
             ISynologyHttpClient synologyHttpclient = new SynologyHttpClient(httpClient);
 
             // Act
-            var synologyApiException = await Assert.ThrowsAsync<SynologyApiException>(() => synologyHttpclient.GetAsync<BaseApiResponse>(_apiInfo, "apiMethod", new Dictionary<string, string>()));
+            var synologyApiException = await Assert.ThrowsAsync<SynologyApiException>(() => synologyHttpclient.GetAsync<BaseApiResponse>(_apiInfo, "apiMethod", new Dictionary<string, string?>()));
 
             // Assert
             synologyApiException.Data.Count.Should().BeGreaterThan(0);

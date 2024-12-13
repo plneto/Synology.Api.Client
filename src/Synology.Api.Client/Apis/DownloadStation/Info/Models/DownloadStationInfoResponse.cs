@@ -11,6 +11,6 @@ namespace Synology.Api.Client.Apis.DownloadStation.Info.Models
         public int Version;
 
         [JsonPropertyName("version_string")] 
-        public string VersionString;
+        public string? VersionString;
     }
 }

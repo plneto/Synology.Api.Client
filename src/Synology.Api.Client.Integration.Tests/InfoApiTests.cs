@@ -14,7 +14,7 @@ namespace Synology.Api.Client.Integration.Tests
         }
 
         [Fact]
-        public async void InfoApi_Query_Success()
+        public async Task InfoApi_Query_Success()
         {
             // arrange && act
             var response = await _fixture.Client.InfoApi().QueryAsync();

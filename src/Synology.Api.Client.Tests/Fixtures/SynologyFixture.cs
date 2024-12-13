@@ -1,5 +1,4 @@
-﻿using System;
-using Synology.Api.Client.ApiDescription;
+﻿using Synology.Api.Client.ApiDescription;
 
 namespace Synology.Api.Client.Tests.Fixtures
 {

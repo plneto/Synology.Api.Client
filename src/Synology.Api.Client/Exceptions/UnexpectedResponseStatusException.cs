@@ -12,7 +12,7 @@ namespace Synology.Api.Client.Exceptions
         {
         }
 
-        public UnexpectedResponseStatusException(string message, HttpStatusCode statusCode, Exception innerException = null)
+        public UnexpectedResponseStatusException(string message, HttpStatusCode statusCode, Exception? innerException = null)
             : base(message, innerException)
         {
             StatusCode = statusCode;
