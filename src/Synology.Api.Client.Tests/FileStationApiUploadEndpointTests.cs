@@ -1,7 +1,7 @@
 ﻿using System.IO.Abstractions;
 using System.IO.Abstractions.TestingHelpers;
-using System.Net.Http.Json;
 using System.Net;
+using System.Net.Http.Json;
 using System.Text;
 using AutoFixture;
 using FluentAssertions;
@@ -115,7 +115,7 @@ public class FileStationApiUploadEndpointTests : IClassFixture<SynologyFixture>,
         };
 
         var expectedFilename = Encoding.UTF8.GetBytes(NonAsciiFileName)
-            .Aggregate("", (current, b) => current + (char) b);
+            .Aggregate("", (current, b) => current + (char)b);
 
         var urlEncodedFilename = $"UTF-8''{Uri.EscapeDataString(NonAsciiFileName)}";
 
@@ -132,7 +132,7 @@ public class FileStationApiUploadEndpointTests : IClassFixture<SynologyFixture>,
                     .Where(y =>
                     {
                         var contentDisposition = y.Headers.ContentDisposition?.ToString();
-                            
+
                         return contentDisposition != null
                                && contentDisposition.Contains(expectedFilename)
                                && contentDisposition.Contains(urlEncodedFilename);

@@ -3,6 +3,6 @@
 public class DownloadStationPauseResponse
 {
     public int Error { get; set; }
-        
+
     public string? Id { get; set; }
 }

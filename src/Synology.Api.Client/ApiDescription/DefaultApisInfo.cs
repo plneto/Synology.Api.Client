@@ -21,7 +21,7 @@ public class DefaultApisInfo : IApisInfo
         {
             AuthApi = { Path = infoQueryResponse.AuthApi?.Path ?? current.AuthApi.Path },
             DownloadStationTaskApi = { Path = infoQueryResponse.DownloadStationTaskApi?.Path ?? current.DownloadStationTaskApi.Path },
-            DownloadStationInfoApi = {Path = infoQueryResponse.DownloadStationInfoApi?.Path ?? current.DownloadStationInfoApi.Path},
+            DownloadStationInfoApi = { Path = infoQueryResponse.DownloadStationInfoApi?.Path ?? current.DownloadStationInfoApi.Path },
             FileStationCopyMoveApi = { Path = infoQueryResponse.FileStationCopyMoveApi?.Path ?? current.FileStationCopyMoveApi.Path },
             FileStationCreateFolderApi = { Path = infoQueryResponse.FileStationCreateFolderApi?.Path ?? current.FileStationCreateFolderApi.Path },
             FileStationExtractApi = { Path = infoQueryResponse.FileStationExtractApi?.Path ?? current.FileStationExtractApi.Path },

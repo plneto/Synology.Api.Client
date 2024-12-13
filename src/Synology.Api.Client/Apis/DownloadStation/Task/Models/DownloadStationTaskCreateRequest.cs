@@ -13,7 +13,7 @@ public class DownloadStationTaskCreateRequest
         Uri = uri;
         Destination = destination;
     }
-        
+
     /// <summary>
     /// Optional. Accepts HTTP/FTP/magnet/ED2K links or the file
     /// path starting with a shared folder, separated by ","

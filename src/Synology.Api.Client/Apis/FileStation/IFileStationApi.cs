@@ -18,6 +18,6 @@ public interface IFileStationApi
     IFileStationUploadEndpoint UploadEndpoint();
 
     IFileStationExtractEndpoint ExtractEndpoint();
-        
+
     IFileStationSearchEndpoint SearchEndpoint();
 }

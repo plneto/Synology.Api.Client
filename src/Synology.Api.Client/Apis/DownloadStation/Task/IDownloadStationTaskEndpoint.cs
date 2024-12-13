@@ -1,7 +1,7 @@
-﻿using Synology.Api.Client.Apis.DownloadStation.Task.Models;
-using Synology.Api.Client.Shared.Models;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using Synology.Api.Client.Apis.DownloadStation.Task.Models;
+using Synology.Api.Client.Shared.Models;
 
 namespace Synology.Api.Client.Apis.DownloadStation.Task;
 

@@ -1,7 +1,4 @@
-﻿using Synology.Api.Client.ApiDescription;
-using Synology.Api.Client.Apis.FileStation.Upload.Models;
-using Synology.Api.Client.Session;
-using System;
+﻿using System;
 using System.IO;
 using System.IO.Abstractions;
 using System.Linq;
@@ -9,6 +6,9 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
+using Synology.Api.Client.ApiDescription;
+using Synology.Api.Client.Apis.FileStation.Upload.Models;
+using Synology.Api.Client.Session;
 
 namespace Synology.Api.Client.Apis.FileStation.Upload;
 

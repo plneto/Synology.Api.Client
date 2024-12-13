@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+
 using Synology.Api.Client.ApiDescription;
 using Synology.Api.Client.Apis.Auth.Models;
 using Synology.Api.Client.Shared.Models;
@@ -53,7 +54,7 @@ public class AuthApi : IAuthApi
         }
 
         return _synologyHttpClient.GetAsync<BaseApiResponse>(
-            _apiInfo, "logout", 
+            _apiInfo, "logout",
             new Dictionary<string, string?> { { "_sid", sid } });
     }
 }

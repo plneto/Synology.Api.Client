@@ -19,7 +19,7 @@ public class InfoEndpoint : IInfoEndpoint
     public Task<InfoQueryResponse> QueryAsync()
     {
         return _httpClient.GetAsync<InfoQueryResponse>(
-            _apiInfo, "query", 
+            _apiInfo, "query",
             new Dictionary<string, string?> { { "query", "all" } });
     }
 }

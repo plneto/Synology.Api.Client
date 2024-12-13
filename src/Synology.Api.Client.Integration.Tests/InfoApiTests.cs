@@ -22,13 +22,13 @@ public class InfoApiTests : IClassFixture<SynologyFixture>
         // assert
         response.Should().NotBeNull();
     }
-        
+
     [Fact]
     public void InfoApi_EnsureAllApisHaveAPathDefined_Success()
     {
         // arrange && act
         var apisInfo = _fixture.Client.ApisInfo;
-            
+
         // assert
         apisInfo.InfoApi.Path.Should().NotBeNullOrWhiteSpace();
         apisInfo.AuthApi.Path.Should().NotBeNullOrWhiteSpace();

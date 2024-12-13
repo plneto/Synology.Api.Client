@@ -1,6 +1,6 @@
-﻿using Xunit;
+﻿using FluentAssertions;
 using Synology.Api.Client.Extensions;
-using FluentAssertions;
+using Xunit;
 
 namespace Synology.Api.Client.Tests.Extensions;
 

@@ -3,6 +3,6 @@
 public class DownloadStationTaskDeleteResponse
 {
     public int Error { get; set; }
-        
+
     public string? Id { get; set; }
 }

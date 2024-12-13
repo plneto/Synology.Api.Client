@@ -67,7 +67,7 @@ public class SynologyHttpClient : ISynologyHttpClient
         query["api"] = apiInfo.Name;
         query["version"] = apiInfo.Version.ToString();
         query["method"] = apiMethod;
-            
+
         foreach (var curPair in queryParams)
         {
             query[curPair.Key] = curPair.Value;
@@ -91,18 +91,18 @@ public class SynologyHttpClient : ISynologyHttpClient
         switch (httpResponse.StatusCode)
         {
             case HttpStatusCode.OK:
-            {
-                var response = await httpResponse.Content.ReadFromJsonAsync<ApiResponse<T>>();
-                        
-                HandleErrors(apiInfo, apiMethod, response);
-
-                if (typeof(T) == typeof(BaseApiResponse))
                 {
-                    return (T)Activator.CreateInstance(typeof(T), [response!.Success])!;
-                }
+                    var response = await httpResponse.Content.ReadFromJsonAsync<ApiResponse<T>>();
 
-                return response!.Data;
-            }
+                    HandleErrors(apiInfo, apiMethod, response);
+
+                    if (typeof(T) == typeof(BaseApiResponse))
+                    {
+                        return (T)Activator.CreateInstance(typeof(T), [response!.Success])!;
+                    }
+
+                    return response!.Data;
+                }
             default:
                 throw new UnexpectedResponseStatusException(httpResponse.StatusCode);
         }
@@ -114,11 +114,11 @@ public class SynologyHttpClient : ISynologyHttpClient
         {
             return;
         }
-            
+
         var errorDescription = GetErrorMessage(response?.Error?.Code ?? 0, apiInfo.Name);
 
         var synologyApiException = new SynologyApiException(apiInfo, apiMethod, response?.Error?.Code ?? 0, errorDescription);
-            
+
         //add additional error details if present
         if (response?.Error?.Errors == null || !response.Error.Errors.Any())
         {

@@ -5,16 +5,16 @@ namespace Synology.Api.Client.Apis.DownloadStation.Info.Models;
 public class DownloadStationServerConfig
 {
     public DownloadStationServerConfig(
-        int? btMaxDownloadSpeed = null, 
-        int? btMaxUploadSpeed = null, 
-        bool? emulEnable = null, 
-        int? emulMaxDownloadSpeed = null, 
-        int? emulMaxUploadSpeed = null, 
-        int? ftpMaxDownloadSpeed = null, 
-        int? httpMaxDownloadSpeed = null, 
-        int? nzbMaxDownloadSpeed = null, 
-        bool? unzipServiceEnable = null, 
-        string? defaultDestination = null, 
+        int? btMaxDownloadSpeed = null,
+        int? btMaxUploadSpeed = null,
+        bool? emulEnable = null,
+        int? emulMaxDownloadSpeed = null,
+        int? emulMaxUploadSpeed = null,
+        int? ftpMaxDownloadSpeed = null,
+        int? httpMaxDownloadSpeed = null,
+        int? nzbMaxDownloadSpeed = null,
+        bool? unzipServiceEnable = null,
+        string? defaultDestination = null,
         string? emulDefaultDestination = null)
     {
         BtMaxDownloadSpeed = btMaxDownloadSpeed;

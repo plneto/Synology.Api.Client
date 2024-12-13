@@ -13,8 +13,8 @@ public class FileStationSearchStartRequest
     /// <param name="extension">Optional. Search for files whose extensions match a file type pattern in a case-insensitive glob pattern.</param>
     /// <exception cref="ArgumentException">Exception thrown when an argument from the request is not valid</exception>
     public FileStationSearchStartRequest(
-        string folderPath, 
-        bool recursive = true, 
+        string folderPath,
+        bool recursive = true,
         string pattern = "",
         string extension = "")
     {
@@ -22,13 +22,13 @@ public class FileStationSearchStartRequest
         {
             throw new ArgumentException("FolderPath cannot be null or white space.");
         }
-            
+
         FolderPath = folderPath;
         Pattern = pattern;
         Recursive = recursive;
         Extension = extension;
     }
-        
+
     /// <summary>
     /// A searched folder path starting with a shared folder. One or more folder paths to be searched, separated by commas "," and around brackets.
     /// </summary>

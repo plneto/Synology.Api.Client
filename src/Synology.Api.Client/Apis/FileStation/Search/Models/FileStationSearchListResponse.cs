@@ -8,7 +8,7 @@ public class FileStationSearchListResponse
     public int Total { get; set; }
 
     public int Offset { get; set; }
-        
+
     public bool Finished { get; set; }
 
     public IEnumerable<FileStationListShare> Files { get; set; } = [];

@@ -1,6 +1,6 @@
 using FluentAssertions;
-using Synology.Api.Client.Apis.DownloadStation.Task.Models;
 using Synology.Api.Client.Apis.DownloadStation.Info.Models;
+using Synology.Api.Client.Apis.DownloadStation.Task.Models;
 using Synology.Api.Client.Integration.Tests.Fixtures;
 using Xunit;
 
@@ -30,20 +30,20 @@ public class DownloadStationApiTests : IClassFixture<SynologyFixture>
         // assert
         listResponse.Should().NotBeNull();
     }
-        
+
     [Fact]
     public async Task DownloadStationApi_DownloadStation_CreateTaskByUriWithLogin()
     {
         // arrange && act
         var uri = ""; //file uri
         var request = new DownloadStationTaskCreateRequest(uri);
-            
+
         var createResponse = await _fixture
             .Client
             .DownloadStationApi()
             .TaskEndpoint()
             .CreateAsync(request);
-            
+
         // assert
         createResponse.Should().NotBeNull();
     }
@@ -71,10 +71,10 @@ public class DownloadStationApiTests : IClassFixture<SynologyFixture>
             .DownloadStationApi()
             .TaskEndpoint()
             .ListAsync();
-            
+
         var delRequest = new DownloadStationTaskDeleteRequest
         {
-            Ids = new List<string> {listTaskAfterAdd.Tasks.Last().Id},
+            Ids = new List<string> { listTaskAfterAdd.Tasks.Last().Id },
             ForceComplete = false
         };
 
@@ -83,7 +83,7 @@ public class DownloadStationApiTests : IClassFixture<SynologyFixture>
             .DownloadStationApi()
             .TaskEndpoint()
             .DeleteAsync(delRequest);
-            
+
         var listTaskAfter = await _fixture
             .Client
             .DownloadStationApi()
@@ -126,10 +126,10 @@ public class DownloadStationApiTests : IClassFixture<SynologyFixture>
             .ResumeAsync(id);
 
         resumeResponse.Should().NotBeNull();
-            
+
         var delRequest = new DownloadStationTaskDeleteRequest
         {
-            Ids = new List<string> {id},
+            Ids = new List<string> { id },
             ForceComplete = false
         };
 
@@ -145,13 +145,13 @@ public class DownloadStationApiTests : IClassFixture<SynologyFixture>
     {
         var request = new DownloadStationTaskCreateRequest(
             uri: "magnet:?xt=urn:btih:fef84077088ca87ffd8afd644d0ef957d96243c3&dn=archlinux-2023.01.01-x86_64.iso");
-            
+
         await _fixture
             .Client
             .DownloadStationApi()
             .TaskEndpoint()
             .CreateAsync(request);
-            
+
         var listTask = await _fixture
             .Client
             .DownloadStationApi()
@@ -199,7 +199,7 @@ public class DownloadStationApiTests : IClassFixture<SynologyFixture>
             .DownloadStationApi()
             .InfoEndpoint()
             .GetConfigAsync();
-            
+
         // Changing current config DownloadStation
         var config = new DownloadStationServerConfig(
             btMaxDownloadSpeed: getConfigResponse.BtMaxDownloadSpeed + 100,
@@ -219,7 +219,7 @@ public class DownloadStationApiTests : IClassFixture<SynologyFixture>
             .DownloadStationApi()
             .InfoEndpoint()
             .SetServerConfigAsync(config);
-            
+
         // Edit emulDefaultDestination
         await _fixture
             .Client
@@ -237,14 +237,14 @@ public class DownloadStationApiTests : IClassFixture<SynologyFixture>
             .DownloadStationApi()
             .InfoEndpoint()
             .GetConfigAsync();
-            
+
         // Changing config to original state
         await _fixture
             .Client
             .DownloadStationApi()
             .InfoEndpoint()
             .SetServerConfigAsync(getConfigResponse);
-            
+
         getConfigResponseNew.Should().BeEquivalentTo(config);
     }
 }
