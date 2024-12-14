@@ -18,6 +18,7 @@
 		<PackageTags>synology;api;client;dsm</PackageTags>
 		<PublishRepositoryUrl>true</PublishRepositoryUrl>
 		<ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+		<EmbedUntrackedSources>true</EmbedUntrackedSources>
 	</PropertyGroup>
 	
 	<ItemGroup>
