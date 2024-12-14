@@ -20,7 +20,7 @@ before_build:
   - dotnet restore ".\src\Synology.Api.Client.sln"
 
 build_script:
-  - dotnet build ".\src\Synology.Api.Client.sln"
+  - dotnet build ".\src\Synology.Api.Client.sln" -p:GeneratePackageOnBuild=false
 
 test_script:
   - dotnet test ".\src\Synology.Api.Client.Tests\Synology.Api.Client.Tests.csproj"
@@ -50,4 +50,3 @@ for:
         api_key:
           secure: XnCGQpOBhRsGroi0Zy6aP8vZncxkFj9zOVnucjDTql4ZHfEudDMOR0LzW0Mz34/q
         skip_symbols: false
-        artifact: /.*(\.|\.s)nupkg/
