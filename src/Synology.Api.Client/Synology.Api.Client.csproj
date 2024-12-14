@@ -17,8 +17,9 @@
 		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
 		<PackageTags>synology;api;client;dsm</PackageTags>
 		<PublishRepositoryUrl>true</PublishRepositoryUrl>
-		<ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+		<ContinuousIntegrationBuild Condition="'$(APPVEYOR)' == 'True' Or '$(APPVEYOR)' == 'true'">true</ContinuousIntegrationBuild>
 		<EmbedUntrackedSources>true</EmbedUntrackedSources>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
 	</PropertyGroup>
 	
 	<ItemGroup>
@@ -45,5 +46,9 @@
 		<PackageReference Include="System.Text.Encodings.Web" Version="8.0.0" />
 		<PackageReference Include="System.IO.Abstractions" Version="21.1.7" />
 	</ItemGroup>
-
+	
+	<ItemGroup>
+		<None Include="..\..\README.md" Pack="true" PackagePath="\" />
+	</ItemGroup>
+	
 </Project>
