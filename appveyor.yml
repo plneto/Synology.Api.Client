@@ -39,7 +39,7 @@ for:
       publish_nuget: true
 
     after_build:
-      - dotnet pack .\src\Synology.Api.Client\Synology.Api.Client.csproj -c Release -o .\artifacts --include-symbols -p:SymbolPackageFormat=snupkg
+      - dotnet pack .\src\Synology.Api.Client\Synology.Api.Client.csproj -c Release -o .\artifacts --include-symbols -p:SymbolPackageFormat=snupkg -p:ContinuousIntegrationBuild=true -p:PublishRepositoryUrl=true
 
     artifacts:
       - path: '**\*.nupkg'
