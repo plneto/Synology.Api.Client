@@ -12,10 +12,9 @@
 		<PackageProjectUrl>https://github.com/plneto/Synology.Api.Client</PackageProjectUrl>
 		<RepositoryUrl>https://github.com/plneto/Synology.Api.Client</RepositoryUrl>
 		<RepositoryType>Git</RepositoryType>
-		<PackageTags>synology dsm api client diskstation</PackageTags>
 		<IncludeSymbols>true</IncludeSymbols>
 		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
-		<PackageTags>synology;api;client;dsm</PackageTags>
+		<PackageTags>synology;api;client;dsm;diskstation</PackageTags>
 		<PublishRepositoryUrl>true</PublishRepositoryUrl>
 		<ContinuousIntegrationBuild Condition="'$(APPVEYOR)' == 'True' Or '$(APPVEYOR)' == 'true'">true</ContinuousIntegrationBuild>
 		<EmbedUntrackedSources>true</EmbedUntrackedSources>
