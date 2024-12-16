@@ -1,24 +1,22 @@
-﻿using System;
-using Synology.Api.Client.ApiDescription;
+﻿using Synology.Api.Client.ApiDescription;
 
-namespace Synology.Api.Client.Tests.Fixtures
+namespace Synology.Api.Client.Tests.Fixtures;
+
+public class SynologyFixture
 {
-    public class SynologyFixture
+    public SynologyFixture()
     {
-        public SynologyFixture()
-        {
-            ApisInfo = new DefaultApisInfo();
-        }
+        ApisInfo = new DefaultApisInfo();
+    }
 
-        public IApisInfo ApisInfo { get; }
+    public IApisInfo ApisInfo { get; }
 
-        public string BaseUrl => "http://dsm-url.com/webapi";
+    public string BaseUrl => "http://dsm-url.com/webapi";
 
-        public Uri BaseUri => new Uri(BaseUrl);
+    public Uri BaseUri => new Uri(BaseUrl);
 
-        public Uri GetBaseUriWithPath(string apiPath)
-        {
-            return new Uri(BaseUrl.TrimEnd('/') + "/" + apiPath.TrimStart('/'));
-        }
+    public Uri GetBaseUriWithPath(string apiPath)
+    {
+        return new Uri(BaseUrl.TrimEnd('/') + "/" + apiPath.TrimStart('/'));
     }
 }

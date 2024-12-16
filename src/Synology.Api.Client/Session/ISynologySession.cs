@@ -1,7 +1,6 @@
-﻿namespace Synology.Api.Client.Session
+﻿namespace Synology.Api.Client.Session;
+
+public interface ISynologySession
 {
-    public interface ISynologySession
-    {
-        string Sid { get; }
-    }
+    string Sid { get; }
 }

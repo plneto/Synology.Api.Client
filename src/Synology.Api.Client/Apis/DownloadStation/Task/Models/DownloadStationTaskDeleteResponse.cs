@@ -1,11 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
-namespace Synology.Api.Client.Apis.DownloadStation.Task.Models
+namespace Synology.Api.Client.Apis.DownloadStation.Task.Models;
+
+public class DownloadStationTaskDeleteResponse
 {
-    public class DownloadStationTaskDeleteResponse
-    {
-        [JsonPropertyName("failed_task")]
-        public IEnumerable<DownloadStationTaskFailedTaskResponse> FailedTask { get; set; }
-    }
+    [JsonPropertyName("failed_task")]
+    public IEnumerable<DownloadStationTaskFailedTaskResponse> FailedTask { get; set; }
 }

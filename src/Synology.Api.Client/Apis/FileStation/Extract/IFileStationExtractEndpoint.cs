@@ -2,16 +2,15 @@
 using Synology.Api.Client.Apis.FileStation.Extract.Models;
 using Synology.Api.Client.Shared.Models;
 
-namespace Synology.Api.Client.Apis.FileStation.Extract
+namespace Synology.Api.Client.Apis.FileStation.Extract;
+
+public interface IFileStationExtractEndpoint
 {
-    public interface IFileStationExtractEndpoint
-    {
-        Task<FileStationExtractStartResponse> StartAsync(string filePath, string destination, bool overwrite);
+    Task<FileStationExtractStartResponse> StartAsync(string filePath, string destination, bool overwrite);
 
-        Task<FileStationExtractStatusResponse> GetStatusAsync(string taskId);
+    Task<FileStationExtractStatusResponse> GetStatusAsync(string taskId);
 
-        Task<BaseApiResponse> StopAsync(string taskId);
+    Task<BaseApiResponse> StopAsync(string taskId);
 
-        Task<FileStationExtractListResponse> ListFilesAsync(string filePath);
-    }
+    Task<FileStationExtractListResponse> ListFilesAsync(string filePath);
 }

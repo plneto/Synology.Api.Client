@@ -1,3 +1,6 @@
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Synology.Api.Client.ApiDescription;
 using Synology.Api.Client.Apis.DownloadStation.Task.Models;
 using Synology.Api.Client.Session;
@@ -7,94 +10,93 @@ using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace Synology.Api.Client.Apis.DownloadStation.Task
+namespace Synology.Api.Client.Apis.DownloadStation.Task;
+
+public class DownloadStationTaskEndpoint : IDownloadStationTaskEndpoint
 {
-    public class DownloadStationTaskEndpoint : IDownloadStationTaskEndpoint
+    private readonly ISynologyHttpClient _synologyHttpClient;
+    private readonly IApiInfo _apiInfo;
+    private readonly ISynologySession _session;
+    private readonly string[] _additional;
+
+    public DownloadStationTaskEndpoint(ISynologyHttpClient synologyHttpClient, IApiInfo apiInfo, ISynologySession session)
     {
-        private readonly ISynologyHttpClient _synologyHttpClient;
-        private readonly IApiInfo _apiInfo;
-        private readonly ISynologySession _session;
-        private readonly string[] _additional;
+        _synologyHttpClient = synologyHttpClient;
+        _apiInfo = apiInfo;
+        _session = session;
+        _additional = ["detail", "file", "transfer"];
+    }
 
-        public DownloadStationTaskEndpoint(ISynologyHttpClient synologyHttpClient, IApiInfo apiInfo, ISynologySession session)
+    /// <summary>
+    /// No specific response. It returns an empty success response if completed without error.
+    /// Remark: At the moment only the uri variant works (the other parameters are not used).
+    /// This is due to errors in the official synology documentation. 
+    /// </summary>
+    /// <param name="request">Request parameters</param>
+    /// <returns></returns>
+    public Task<DownloadStationTaskCreateResponse> CreateAsync(DownloadStationTaskCreateRequest request)
+    {
+        var queryParams = new Dictionary<string, string?>
         {
-            _synologyHttpClient = synologyHttpClient;
-            _apiInfo = apiInfo;
-            _session = session;
-            _additional = ["detail", "file", "transfer"];
-        }
+            { "url", JsonSerializer.Serialize(request.Uri) },
+            { "destination", JsonSerializer.Serialize(request.Destination) },
+            { "type", JsonSerializer.Serialize("url") },
+            { "create_list", JsonSerializer.Serialize(true) }
+        };
 
-        /// <summary>
-        /// No specific response. It returns an empty success response if completed without error.
-        /// Remark: At the moment only the uri variant works (the other parameters are not used).
-        /// This is due to errors in the official synology documentation. 
-        /// </summary>
-        /// <param name="request">Request parameters</param>
-        /// <returns></returns>
-        public Task<DownloadStationTaskCreateResponse> CreateAsync(DownloadStationTaskCreateRequest request)
+        return _synologyHttpClient.GetAsync<DownloadStationTaskCreateResponse>(_apiInfo, "create", queryParams, session: _session);
+    }
+
+    public Task<DownloadStationTaskListResponse> ListAsync()
+    {
+        var queryParams = new Dictionary<string, string?>
         {
-            var queryParams = new Dictionary<string, string?>
-            {
-                { "url", JsonSerializer.Serialize(request.Uri) },
-                { "destination", JsonSerializer.Serialize(request.Destination) },
-                { "type", JsonSerializer.Serialize("url") },
-                { "create_list", JsonSerializer.Serialize(true) }
-            };
+            { "additional",  JsonSerializer.Serialize(_additional) }
+        };
 
-            return _synologyHttpClient.GetAsync<DownloadStationTaskCreateResponse>(_apiInfo, "create", queryParams, session: _session);
-        }
+    return _synologyHttpClient.GetAsync<DownloadStationTaskListResponse>(_apiInfo, "list", queryParams, _session);
+}
 
-        public Task<DownloadStationTaskListResponse> ListAsync()
+    public async Task<DownloadStationTask> GetInfoAsync(string id)
+    {
+        var queryParams = new Dictionary<string, string?>
         {
-            var queryParams = new Dictionary<string, string?>
-            {
-                { "additional",  JsonSerializer.Serialize(_additional) }
-            };
+            { "id",  JsonSerializer.Serialize(new []{id }) },
+            {"additional", JsonSerializer.Serialize(_additional) }
+        };
 
-            return _synologyHttpClient.GetAsync<DownloadStationTaskListResponse>(_apiInfo, "list", queryParams, _session);
-        }
+        var result = await _synologyHttpClient.GetAsync<DownloadStationTaskListResponse>(_apiInfo, "get", queryParams, _session);
+        return result.Task.First();
+    }
 
-        public async Task<DownloadStationTask> GetInfoAsync(string id)
+    public Task<DownloadStationTaskDeleteResponse> DeleteAsync(DownloadStationTaskDeleteRequest data)
+    {
+        var queryParam = new Dictionary<string, string?>
         {
-            var queryParams = new Dictionary<string, string?>
-            {
-                { "id",  JsonSerializer.Serialize(new []{id }) },
-                {"additional", JsonSerializer.Serialize(_additional) }
-            };
+            { "id", JsonSerializer.Serialize(data.Ids) },
+            { "force_complete",JsonSerializer.Serialize(data.ForceComplete) }
+        };
 
-            var result = await _synologyHttpClient.GetAsync<DownloadStationTaskListResponse>(_apiInfo, "get", queryParams, _session);
-            return result.Task.First();
-        }
+        return _synologyHttpClient.GetAsync<DownloadStationTaskDeleteResponse>(_apiInfo, "delete", queryParam, _session);
+    }
 
-        public Task<DownloadStationTaskDeleteResponse> DeleteAsync(DownloadStationTaskDeleteRequest data)
+    public Task<BaseApiResponse> PauseAsync(params string[] ids)
+    {
+        var queryParam = new Dictionary<string, string?>
         {
-            var queryParam = new Dictionary<string, string?>
-            {
-                { "id", JsonSerializer.Serialize(data.Ids) },
-                { "force_complete",JsonSerializer.Serialize(data.ForceComplete) }
-            };
+            { "id", JsonSerializer.Serialize(ids) }
+        };
 
-            return _synologyHttpClient.GetAsync<DownloadStationTaskDeleteResponse>(_apiInfo, "delete", queryParam, _session);
-        }
+        return _synologyHttpClient.GetAsync<BaseApiResponse>(_apiInfo, "pause", queryParam, _session);
+    }
 
-        public Task<BaseApiResponse> PauseAsync(params string[] ids)
+    public Task<DownloadStationTaskResumeResponse> ResumeAsync(params string[] ids)
+    {
+        var queryParam = new Dictionary<string, string?>
         {
-            var queryParam = new Dictionary<string, string?>
-            {
-                { "id", JsonSerializer.Serialize(ids) }
-            };
+            { "id", JsonSerializer.Serialize(ids) }
+        };
 
-            return _synologyHttpClient.GetAsync<BaseApiResponse>(_apiInfo, "pause", queryParam, _session);
-        }
-
-        public Task<DownloadStationTaskResumeResponse> ResumeAsync(params string[] ids)
-        {
-            var queryParam = new Dictionary<string, string?>
-            {
-                { "id", JsonSerializer.Serialize(ids) }
-            };
-
-            return _synologyHttpClient.GetAsync<DownloadStationTaskResumeResponse>(_apiInfo, "resume", queryParam, _session);
-        }
+        return _synologyHttpClient.GetAsync<DownloadStationTaskResumeResponse>(_apiInfo, "resume", queryParam, _session);
     }
 }

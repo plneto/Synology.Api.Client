@@ -1,4 +1,4 @@
-version: 0.2.{build}
+version: 0.3.{build}
 
 image: Visual Studio 2022
 
@@ -20,7 +20,7 @@ before_build:
   - dotnet restore ".\src\Synology.Api.Client.sln"
 
 build_script:
-  - dotnet build ".\src\Synology.Api.Client.sln"
+  - dotnet build ".\src\Synology.Api.Client.sln" -p:GeneratePackageOnBuild=false
 
 test_script:
   - dotnet test ".\src\Synology.Api.Client.Tests\Synology.Api.Client.Tests.csproj"
@@ -36,7 +36,7 @@ for:
     configuration: Release
 
     build:
-      publish_nuget: true
+      publish_nuget: false
 
     after_build:
       - dotnet pack .\src\Synology.Api.Client\Synology.Api.Client.csproj -c Release -o .\artifacts --include-symbols -p:SymbolPackageFormat=snupkg
@@ -48,6 +48,6 @@ for:
     deploy:
       - provider: NuGet
         api_key:
-          secure: N8LcRt4KOHLKIuIGvJmTeT/uzT/dnDlLAZ29mUl36cxS3VYRM+DlS3hRwYTAaU+w
+          secure: XnCGQpOBhRsGroi0Zy6aP8vZncxkFj9zOVnucjDTql4ZHfEudDMOR0LzW0Mz34/q
         skip_symbols: false
         artifact: /.*(\.|\.s)nupkg/

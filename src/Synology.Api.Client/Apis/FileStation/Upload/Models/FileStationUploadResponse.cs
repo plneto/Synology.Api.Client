@@ -1,13 +1,12 @@
-﻿namespace Synology.Api.Client.Apis.FileStation.Upload.Models
+﻿namespace Synology.Api.Client.Apis.FileStation.Upload.Models;
+
+public class FileStationUploadResponse
 {
-    public class FileStationUploadResponse
-    {
-        public bool BlSkip { get; set; }
+    public bool BlSkip { get; set; }
 
-        public string File { get; set; }
+    public string? File { get; set; }
 
-        public int Pid { get; set; }
+    public int Pid { get; set; }
 
-        public int Progress { get; set; }
-    }
+    public int Progress { get; set; }
 }

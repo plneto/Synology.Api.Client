@@ -6,26 +6,25 @@ using Synology.Api.Client.Apis.Info;
 using Synology.Api.Client.Session;
 using System.Threading.Tasks;
 
-namespace Synology.Api.Client
+namespace Synology.Api.Client;
+
+public interface ISynologyClient
 {
-    public interface ISynologyClient
-    {
-        IApisInfo ApisInfo { get; set; }
+    IApisInfo ApisInfo { get; set; }
 
-        ISynologySession Session { get; set; }
+    ISynologySession? Session { get; set; }
 
-        bool IsLoggedIn { get; }
+    bool IsLoggedIn { get; }
 
-        IInfoEndpoint InfoApi();
+    IInfoEndpoint InfoApi();
 
-        IAuthApi AuthApi();
+    IAuthApi AuthApi();
 
-        IDownloadStationApi DownloadStationApi();
+    IDownloadStationApi DownloadStationApi();
 
-        IFileStationApi FileStationApi();
+    IFileStationApi FileStationApi();
 
-        Task LoginAsync(string username, string password, string otpCode = "");
+    Task LoginAsync(string username, string password, string otpCode = "");
 
-        Task LogoutAsync();
-    }
+    Task LogoutAsync();
 }
