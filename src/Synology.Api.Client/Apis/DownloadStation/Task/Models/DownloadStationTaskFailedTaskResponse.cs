@@ -1,9 +1,8 @@
-﻿namespace Synology.Api.Client.Apis.DownloadStation.Task.Models
-{
-    public class DownloadStationTaskFailedTaskResponse
-    {
-        public int Error { get; set; }
+﻿namespace Synology.Api.Client.Apis.DownloadStation.Task.Models;
 
-        public string Id { get; set; }
-    }
+public class DownloadStationTaskFailedTaskResponse
+{
+    public int Error { get; set; }
+
+    public string? Id { get; set; }
 }

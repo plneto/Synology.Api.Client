@@ -1,14 +1,11 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Synology.Api.Client.ApiDescription;
 using Synology.Api.Client.Apis.DownloadStation.Task.Models;
 using Synology.Api.Client.Session;
 using Synology.Api.Client.Shared.Models;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace Synology.Api.Client.Apis.DownloadStation.Task;
 
@@ -39,10 +36,14 @@ public class DownloadStationTaskEndpoint : IDownloadStationTaskEndpoint
         var queryParams = new Dictionary<string, string?>
         {
             { "url", JsonSerializer.Serialize(request.Uri) },
-            { "destination", JsonSerializer.Serialize(request.Destination) },
             { "type", JsonSerializer.Serialize("url") },
             { "create_list", JsonSerializer.Serialize(true) }
         };
+
+        if (request.Destination != null)
+        {
+            queryParams.Add("destination", JsonSerializer.Serialize(request.Destination));
+        }
 
         return _synologyHttpClient.GetAsync<DownloadStationTaskCreateResponse>(_apiInfo, "create", queryParams, session: _session);
     }
@@ -54,8 +55,8 @@ public class DownloadStationTaskEndpoint : IDownloadStationTaskEndpoint
             { "additional",  JsonSerializer.Serialize(_additional) }
         };
 
-    return _synologyHttpClient.GetAsync<DownloadStationTaskListResponse>(_apiInfo, "list", queryParams, _session);
-}
+        return _synologyHttpClient.GetAsync<DownloadStationTaskListResponse>(_apiInfo, "list", queryParams, _session);
+    }
 
     public async Task<DownloadStationTask> GetInfoAsync(string id)
     {
@@ -66,7 +67,7 @@ public class DownloadStationTaskEndpoint : IDownloadStationTaskEndpoint
         };
 
         var result = await _synologyHttpClient.GetAsync<DownloadStationTaskListResponse>(_apiInfo, "get", queryParams, _session);
-        return result.Task.First();
+        return result.Task!.First();
     }
 
     public Task<DownloadStationTaskDeleteResponse> DeleteAsync(DownloadStationTaskDeleteRequest data)

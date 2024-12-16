@@ -8,5 +8,5 @@ public class DownloadStationTaskListResponse
 
     public int Offset { get; set; }
 
-    public IEnumerable<DownloadStationTask> Task { get; set; }
+    public IEnumerable<DownloadStationTask>? Task { get; set; }
 }

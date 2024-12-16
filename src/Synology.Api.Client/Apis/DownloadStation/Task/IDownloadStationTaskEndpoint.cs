@@ -1,8 +1,6 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Synology.Api.Client.Apis.DownloadStation.Task.Models;
 using Synology.Api.Client.Shared.Models;
-using System.Threading.Tasks;
 
 public interface IDownloadStationTaskEndpoint
 {
