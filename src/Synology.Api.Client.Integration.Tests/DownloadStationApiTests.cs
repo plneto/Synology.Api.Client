@@ -74,7 +74,7 @@ public class DownloadStationApiTests : IClassFixture<SynologyFixture>
 
         var delRequest = new DownloadStationTaskDeleteRequest
         {
-            Ids = new List<string> { listTaskAfterAdd.Tasks.Last().Id },
+            Ids = new List<string> { listTaskAfterAdd.Task.Last().Id },
             ForceComplete = false
         };
 
@@ -111,7 +111,7 @@ public class DownloadStationApiTests : IClassFixture<SynologyFixture>
             .TaskEndpoint()
             .ListAsync();
 
-        var id = listTask.Tasks.Last().Id;
+        var id = listTask.Task.Last().Id;
 
         await _fixture
             .Client
@@ -162,7 +162,7 @@ public class DownloadStationApiTests : IClassFixture<SynologyFixture>
             .Client
             .DownloadStationApi()
             .TaskEndpoint()
-            .PauseAsync(listTask.Tasks.Last().Id);
+            .PauseAsync(listTask.Task.Last().Id);
 
         pauseResponse.Should().NotBeNull();
     }
