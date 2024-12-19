@@ -1,10 +1,4 @@
-﻿using Synology.Api.Client.ApiDescription;
-using Synology.Api.Client.Constants;
-using Synology.Api.Client.Errors;
-using Synology.Api.Client.Exceptions;
-using Synology.Api.Client.Session;
-using Synology.Api.Client.Shared.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -12,6 +6,12 @@ using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 using System.Web;
+using Synology.Api.Client.ApiDescription;
+using Synology.Api.Client.Constants;
+using Synology.Api.Client.Errors;
+using Synology.Api.Client.Exceptions;
+using Synology.Api.Client.Session;
+using Synology.Api.Client.Shared.Models;
 
 namespace Synology.Api.Client;
 

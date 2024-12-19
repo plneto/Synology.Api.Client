@@ -1,8 +1,8 @@
-﻿using Synology.Api.Client.ApiDescription;
-using Synology.Api.Client.Session;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Synology.Api.Client.ApiDescription;
+using Synology.Api.Client.Session;
 
 namespace Synology.Api.Client;
 
