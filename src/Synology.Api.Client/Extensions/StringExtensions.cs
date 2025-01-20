@@ -2,5 +2,5 @@
 
 public static class StringExtensions
 {
-    public static string ToQuottedString(this string value) => $"\"{value}\"";
+    public static string ToQuotedString(this string value) => $"\"{value}\"";
 }

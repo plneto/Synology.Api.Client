@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.Json;
 using System.Threading.Tasks;
 using Synology.Api.Client.ApiDescription;
 using Synology.Api.Client.Apis.DownloadStation.Task.Models;
@@ -37,13 +36,13 @@ public class DownloadStationTaskEndpoint : IDownloadStationTaskEndpoint
         var queryParams = new Dictionary<string, string?>
         {
             { "url", request.Uri.ToCommaSeparatedAroundBrackets() },
-            { "type", "url".ToQuottedString() },
+            { "type", "url".ToQuotedString() },
             { "create_list", true.ToLowerString() }
         };
 
         if (request.Destination != null)
         {
-            queryParams.Add("destination", JsonSerializer.Serialize(request.Destination));
+            queryParams.Add("destination", request.Destination.ToQuotedString());
         }
 
         return _synologyHttpClient.GetAsync<DownloadStationTaskCreateResponse>(_apiInfo, "create", queryParams, session: _session);
@@ -64,7 +63,7 @@ public class DownloadStationTaskEndpoint : IDownloadStationTaskEndpoint
         var queryParams = new Dictionary<string, string?>
         {
             { "id",  new[] { id }.ToCommaSeparatedAroundBrackets() },
-            {"additional", _additional.ToCommaSeparatedAroundBrackets() }
+            { "additional", _additional.ToCommaSeparatedAroundBrackets() }
         };
 
         var result = await _synologyHttpClient.GetAsync<DownloadStationTaskGetResponse>(_apiInfo, "get", queryParams, _session);
@@ -76,7 +75,7 @@ public class DownloadStationTaskEndpoint : IDownloadStationTaskEndpoint
         var queryParam = new Dictionary<string, string?>
         {
             { "id", data.Ids.ToCommaSeparatedAroundBrackets() },
-            { "force_complete",JsonSerializer.Serialize(data.ForceComplete) }
+            { "force_complete", data.ForceComplete.ToLowerString() }
         };
 
         return _synologyHttpClient.GetAsync<DownloadStationTaskDeleteResponse>(_apiInfo, "delete", queryParam, _session);
