@@ -2,11 +2,11 @@
 
 namespace Synology.Api.Client.Apis.DownloadStation.Task.Models;
 
-public class DownloadStationTaskListResponse
+public class DownloadStationTaskGetResponse
 {
     public int Total { get; set; }
 
     public int Offset { get; set; }
 
-    public IEnumerable<DownloadStationTask>? Task { get; set; }
+    public IEnumerable<DownloadStationTask>? Tasks { get; set; }
 }

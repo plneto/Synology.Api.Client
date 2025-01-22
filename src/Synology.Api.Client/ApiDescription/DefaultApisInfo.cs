@@ -50,7 +50,7 @@ public class DefaultApisInfo : IApisInfo
     public IApiInfo DownloadStationInfoApi { get; set; } = new ApiInfo(
         ApiNames.DownloadStationInfoApiName,
         "DownloadStation/info.cgi",
-        1,
+        2,
         DownloadStationSessionName);
 
     public IApiInfo FileStationCopyMoveApi { get; set; } = new ApiInfo(

@@ -10,7 +10,7 @@ public class DownloadStationTaskCreateRequest
     /// <param name="destination">Optional. Download destination path starting with a shared folder</param>
     public DownloadStationTaskCreateRequest(string uri, string? destination = null)
     {
-        Uri = uri;
+        Uri = new string[] { uri };
         Destination = destination;
     }
 
@@ -19,7 +19,7 @@ public class DownloadStationTaskCreateRequest
     /// path starting with a shared folder, separated by ","
     /// </summary>
     /// <returns></returns>
-    public string Uri { get; }
+    public string[] Uri { get; }
 
     /// <summary>
     /// Optional. Download destination path starting with a shared folder
