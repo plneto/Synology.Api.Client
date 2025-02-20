@@ -21,7 +21,7 @@ const string sharedFolderPath = "/DataVault/Departments/IT";
  * 5. Logout
  */
 
-Console.WriteLine("Starting Synology API Client .NET 7 sample project");
+Console.WriteLine("Starting Synology API Client .NET 8 sample project");
 
 var client = new SynologyClient(dsmUrl);
 
