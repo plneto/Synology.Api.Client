@@ -82,6 +82,21 @@ public class FileStationUploadEndpoint : IFileStationUploadEndpoint
         return SendRequest(fileContent, destination, overwrite);
     }
 
+    public Task<FileStationUploadResponse> UploadStreamAsync(Stream stream, string filename, string destination, bool overwrite)
+    {
+        if (string.IsNullOrWhiteSpace(filename))
+        {
+            throw new ArgumentNullException(nameof(filename));
+        }
+
+        if (string.IsNullOrWhiteSpace(destination))
+        {
+            throw new ArgumentNullException(nameof(destination));
+        }
+
+        return SendRequest(GetFileContent(stream, filename), destination, overwrite);
+    }
+
     private Task<FileStationUploadResponse> SendRequest(StreamContent fileContent, string destination, bool overwrite)
     {
         var boundary = Guid.NewGuid().ToString();
