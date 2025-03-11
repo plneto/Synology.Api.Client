@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.IO;
+using System.Threading.Tasks;
 using Synology.Api.Client.Apis.FileStation.Upload.Models;
 
 namespace Synology.Api.Client.Apis.FileStation.Upload;
@@ -40,4 +41,14 @@ public interface IFileStationUploadEndpoint
     /// <param name="overwrite">Overwrite the destination file if one exists, or skip the upload.</param>
     /// <returns>Returns <see cref="FileStationUploadResponse"/></returns>
     Task<FileStationUploadResponse> UploadAsync(byte[] bytes, string filename, string destination, bool overwrite);
+
+    /// <summary>
+    /// Upload a file through a stream
+    /// </summary>
+    /// <param name="stream">The stream that contains file data.</param>
+    /// <param name="filename">The name used to save the file.</param>
+    /// <param name="destination">A destination folder path starting with a shared folder to which files can be uploaded.</param>
+    /// <param name="overwrite">Overwrite the destination file if one exists, or skip the upload.</param>
+    /// <returns>Returns <see cref="FileStationUploadResponse"/></returns>
+    Task<FileStationUploadResponse> UploadStreamAsync(Stream stream, string filename, string destination, bool overwrite);
 }
