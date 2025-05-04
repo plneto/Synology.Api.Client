@@ -13,8 +13,6 @@ public class DownloadStationApiTests : IClassFixture<SynologyFixture>
     public DownloadStationApiTests(SynologyFixture fixture)
     {
         _fixture = fixture;
-
-        _fixture.LoginAsync().Wait();
     }
 
     [Fact]

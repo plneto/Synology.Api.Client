@@ -79,7 +79,7 @@ public class SynologyHttpClientTests : IClassFixture<SynologyFixture>, IDisposab
         ISynologyHttpClient synologyHttpclient = new SynologyHttpClient(httpClient);
 
         // Act
-        var result = await synologyHttpclient.PostAsync<BaseApiResponse>(_apiInfo, "apiMethod", null!);
+        var result = await synologyHttpclient.PostAsync<BaseApiResponse>(_apiInfo, "apiMethod", null);
 
         // Assert
         result.Should().BeEquivalentTo(expectedResponse);

@@ -45,7 +45,7 @@ public class FileStationListEndpoint : IFileStationListEndpoint
             { "pattern", patternValue },
             { "filetype", fileStationListRequest.FileType ?? "all" },
             { "goto_path", fileStationListRequest.GoToPath },
-            { "additional", additionalParams.ToCommaSeparatedAroundBrackets() }
+            { "additional", additionalParams.ToJsonArray() }
         };
 
         return _synologyHttpClient.GetAsync<FileStationListResponse>(
@@ -61,7 +61,7 @@ public class FileStationListEndpoint : IFileStationListEndpoint
 
         var queryParams = new Dictionary<string, string?>
         {
-            { "additional",  additionalParams.ToCommaSeparatedAroundBrackets() }
+            { "additional",  additionalParams.ToJsonArray() }
         };
 
         return _synologyHttpClient.GetAsync<FileStationListShareResponse>(

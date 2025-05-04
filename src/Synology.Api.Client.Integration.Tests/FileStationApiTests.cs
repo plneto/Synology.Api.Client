@@ -14,8 +14,6 @@ public class FileStationApiTests : IClassFixture<SynologyFixture>
     public FileStationApiTests(SynologyFixture fixture)
     {
         _fixture = fixture;
-
-        _fixture.LoginAsync().Wait();
     }
 
     [Fact]
@@ -110,7 +108,6 @@ public class FileStationApiTests : IClassFixture<SynologyFixture>
         // assert
         uploadResponse.Should().NotBeNull();
     }
-
 
     [Fact]
     public async Task FileStation_UploadFromByteArray_Success()
@@ -278,9 +275,12 @@ public class FileStationApiTests : IClassFixture<SynologyFixture>
     public async Task FileStation_SearchStart_Success()
     {
         // arrange
-        var request = new FileStationSearchStartRequest(
-            "/shared_folder/dir",
-            extension: "rar");
+        var request = new FileStationSearchStartRequest
+        {
+            FolderPath = "/shared_folder/dir",
+            Pattern = "*",
+            Recursive = true
+        };
 
         // act
         var startSearchResponse = await _fixture

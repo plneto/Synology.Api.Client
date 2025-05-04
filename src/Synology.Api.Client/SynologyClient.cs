@@ -31,8 +31,6 @@ public class SynologyClient : ISynologyClient
         httpClient.BaseAddress = new Uri($"{dsmUrl.TrimEnd('/')}/webapi");
 
         _synologyHttpClient = new SynologyHttpClient(httpClient);
-
-        Task.Run(() => UpdateApisInfoAsync()).Wait();
     }
 
     public IApisInfo ApisInfo { get; set; } = new DefaultApisInfo();

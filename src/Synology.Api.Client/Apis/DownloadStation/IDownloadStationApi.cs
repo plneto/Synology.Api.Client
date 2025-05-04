@@ -1,5 +1,4 @@
 ﻿using Synology.Api.Client.Apis.DownloadStation.Info;
-using Synology.Api.Client.Apis.DownloadStation.Task;
 
 namespace Synology.Api.Client.Apis.DownloadStation;
 

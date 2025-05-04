@@ -1,6 +1,8 @@
-﻿namespace Synology.Api.Client.Integration.Tests.Fixtures;
+﻿using Xunit;
 
-public class SynologyFixture : IDisposable
+namespace Synology.Api.Client.Integration.Tests.Fixtures;
+
+public class SynologyFixture : IAsyncLifetime
 {
     public SynologyFixture()
     {
@@ -12,6 +14,16 @@ public class SynologyFixture : IDisposable
 
         Client = new SynologyClient(DsmUrl);
     }
+    
+    public async Task InitializeAsync()
+    {
+        await Client.LoginAsync(Username, Password, OtpCode);
+    }
+
+    public async Task DisposeAsync()
+    {
+        await Client.LogoutAsync();
+    }
 
     public string DsmUrl { get; }
 
@@ -21,15 +33,5 @@ public class SynologyFixture : IDisposable
 
     public string OtpCode { get; }
 
-    public ISynologyClient Client { get; private set; }
-
-    public async Task LoginAsync()
-    {
-        await Client.LoginAsync(Username, Password, OtpCode);
-    }
-
-    public void Dispose()
-    {
-        Client.LogoutAsync().Wait();
-    }
+    public ISynologyClient Client { get; }
 }

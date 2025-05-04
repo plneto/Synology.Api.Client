@@ -36,10 +36,10 @@ public class FileStationCreateFolderEndpoint : IFileStationCreateFolderEndpoint
 
         return new Dictionary<string, string?>
         {
-            { "folder_path",  folderPaths.ToCommaSeparatedAroundBrackets() },
-            { "name",  folderNames.ToCommaSeparatedAroundBrackets() },
+            { "folder_path",  folderPaths.ToJsonArray() },
+            { "name",  folderNames.ToJsonArray() },
             { "force_parent",  createParentFolders.ToLowerString() },
-            { "additional",  additionalParams.ToCommaSeparatedAroundBrackets() }
+            { "additional",  additionalParams.ToJsonArray() }
         };
     }
 }

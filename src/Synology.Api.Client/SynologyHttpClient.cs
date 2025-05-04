@@ -35,7 +35,7 @@ public class SynologyHttpClient : ISynologyHttpClient
         return await HandleSynologyResponse<T>(response, apiInfo, apiMethod);
     }
 
-    public async Task<T> PostAsync<T>(IApiInfo apiInfo, string apiMethod, HttpContent content, ISynologySession? session = null)
+    public async Task<T> PostAsync<T>(IApiInfo apiInfo, string apiMethod, HttpContent? content, ISynologySession? session = null)
     {
         var uri = GetBaseUri(_httpClient.BaseAddress!, apiInfo.Path);
         var uriBuilder = new UriBuilder(uri);

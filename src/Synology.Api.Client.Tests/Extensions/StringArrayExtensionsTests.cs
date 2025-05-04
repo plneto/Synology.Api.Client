@@ -13,7 +13,7 @@ public class StringArrayExtensionsTests
         var words = new[] { "Hello", "World" };
 
         // act
-        var result = words.ToCommaSeparatedAroundBrackets();
+        var result = words.ToJsonArray();
 
         // assert
         result.Should().BeEquivalentTo(@"[""Hello"",""World""]");
@@ -26,7 +26,7 @@ public class StringArrayExtensionsTests
         var words = Array.Empty<string>();
 
         // act
-        var result = words.ToCommaSeparatedAroundBrackets();
+        var result = words.ToJsonArray();
 
         // assert
         result.Should().BeEquivalentTo("[]");

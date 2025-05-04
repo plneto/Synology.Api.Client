@@ -67,7 +67,7 @@ public class FileStationCopyMoveEndpoint : IFileStationCopyMoveEndpoint
     {
         return new Dictionary<string, string?>
         {
-            { "path",  paths.ToCommaSeparatedAroundBrackets() },
+            { "path",  paths.ToJsonArray() },
             { "dest_folder_path", destination },
             { "overwrite", overwrite.ToLowerString() },
             { "remove_src", isMoveAction.ToLowerString() }

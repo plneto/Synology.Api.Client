@@ -35,7 +35,7 @@ public class DownloadStationTaskEndpoint : IDownloadStationTaskEndpoint
     {
         var queryParams = new Dictionary<string, string?>
         {
-            { "url", request.Uri.ToCommaSeparatedAroundBrackets() },
+            { "url", request.Uri.ToJsonArray() },
             { "type", "url".ToQuotedString() },
             { "create_list", true.ToLowerString() }
         };
@@ -52,7 +52,7 @@ public class DownloadStationTaskEndpoint : IDownloadStationTaskEndpoint
     {
         var queryParams = new Dictionary<string, string?>
         {
-            { "additional",  _additional.ToCommaSeparatedAroundBrackets() }
+            { "additional",  _additional.ToJsonArray() }
         };
 
         return _synologyHttpClient.GetAsync<DownloadStationTaskListResponse>(_apiInfo, "list", queryParams, _session);
@@ -62,8 +62,8 @@ public class DownloadStationTaskEndpoint : IDownloadStationTaskEndpoint
     {
         var queryParams = new Dictionary<string, string?>
         {
-            { "id",  new[] { id }.ToCommaSeparatedAroundBrackets() },
-            { "additional", _additional.ToCommaSeparatedAroundBrackets() }
+            { "id",  new[] { id }.ToJsonArray() },
+            { "additional", _additional.ToJsonArray() }
         };
 
         var result = await _synologyHttpClient.GetAsync<DownloadStationTaskGetResponse>(_apiInfo, "get", queryParams, _session);
@@ -74,7 +74,7 @@ public class DownloadStationTaskEndpoint : IDownloadStationTaskEndpoint
     {
         var queryParam = new Dictionary<string, string?>
         {
-            { "id", data.Ids.ToCommaSeparatedAroundBrackets() },
+            { "id", data.Ids.ToJsonArray() },
             { "force_complete", data.ForceComplete.ToLowerString() }
         };
 
@@ -85,7 +85,7 @@ public class DownloadStationTaskEndpoint : IDownloadStationTaskEndpoint
     {
         var queryParam = new Dictionary<string, string?>
         {
-            { "id", ids.ToCommaSeparatedAroundBrackets() }
+            { "id", ids.ToJsonArray() }
         };
 
         return _synologyHttpClient.GetAsync<BaseApiResponse>(_apiInfo, "pause", queryParam, _session);
@@ -95,7 +95,7 @@ public class DownloadStationTaskEndpoint : IDownloadStationTaskEndpoint
     {
         var queryParam = new Dictionary<string, string?>
         {
-            { "id", ids.ToCommaSeparatedAroundBrackets() }
+            { "id", ids.ToJsonArray() }
         };
 
         return _synologyHttpClient.GetAsync<DownloadStationTaskResumeResponse>(_apiInfo, "resume", queryParam, _session);
